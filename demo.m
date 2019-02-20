@@ -4,48 +4,59 @@ env = init_env;
 w_train = {[1 0 0], [0 1 0]};
 w_test = {[1 1 0], [0 0 1]};
 
-%for iter = 1:10
+for iter = 1:20
 
-%[pi_test_UVFA, pi_test_SF, V, V_test, psi, Vmax] = sim(env, w_train, w_test);
-load demo.mat
+    [pi_test_UVFA, pi_test_SF, V, V_test, psi, Vmax] = sim(env, w_train, w_test);
 
-for t = 1:length(w_test)
+    for t = 1:length(w_test)
 
-    % test UVFA
-    r = 0;
-    s = 1;
-    while true
-        r = r + env.phi{s} * w_test{t}';
-        if env.terminal(s)
-            break
+        % test UVFA
+        r = 0;
+        s = 1;
+        while true
+            r = r + env.phi{s} * w_test{t}';
+            if env.terminal(s)
+                break
+            end
+            a = pi_test_UVFA{t}(s);
+            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
-        a = pi_test_UVFA{t}(s);
-        s = find(mnrnd(1, squeeze(env.T(s, a, :))));
-    end
-    tot_r(t, 1) = r;
+        tot_r(t, 1, iter) = r;
 
-    % test SF 
-    r = 0;
-    s = 1;
-    while true 
-        r = r + env.phi{s} * w_test{t}';
-        if env.terminal(s)
-            break
+        % test SF 
+        r = 0;
+        s = 1;
+        while true 
+            r = r + env.phi{s} * w_test{t}';
+            if env.terminal(s)
+                break
+            end
+            a = pi_test_SF{t}(s);
+            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
-        a = pi_test_SF{t}(s);
-        s = find(mnrnd(1, squeeze(env.T(s, a, :))));
+        tot_r(t, 2, iter) = r;
     end
-    tot_r(t, 2) = r;
+
 end
 
-%end
-
 figure;
+
+sem = @(x) std(x) / sqrt(length(x));
 
 % plot performance on test tasks
 for t = 1:length(w_test)
     subplot(2, length(w_test), t);
-    bar([1 2], tot_r(t,:));
+
+    for i = 1:2
+        r = squeeze(tot_r(t, i, :));
+        m(i) = mean(r);
+        se(i) = sem(r);
+    end
+
+    hold on;
+    bar([1 2], m);
+    errorbar([1 2], m, se, 'color', [0 0 0], 'linestyle', 'none');
+    xticks([1 2]);
     xticklabels({'UVFA', 'SF'});
     ylabel('total reward');
     title(sprintf('test w = [%.1f %.1f %.1f]', w_test{t}));
