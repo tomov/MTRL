@@ -81,47 +81,61 @@ end
 
 
 % train UVFA
+
+X = [];
+y = [];
+for t = 1:length(w_train)
+    for s = env.S
+        s_onehot = zeros(1, env.N);
+        s_onehot(s) = 1;
+        x = [s_onehot w_train{t}];
+        X = [X; x];
+        y = [y; V{t}(s)];
+    end
+end
+X = repmat(X, 10, 1);
+y = repmat(y, 10, 1);
+X = X'; % UGH matlab
+y = y'; 
+
+UVFA = fitnet(10);
+UVFA = train(UVFA, X, y);
+
+yy = UVFA(X);
+perf = perform(UVFA, yy, y);
+perf
+
+
+
+% see what UVFA will do
 %
-%X = [];
-%y = [];
-%for t = 1:length(w_train)
-%    for s = env.S
-%        s_onehot = zeros(1, env.N);
-%        s_onehot(s) = 1;
-%        x = [s_onehot w_train{t}];
-%        X = [X; x];
-%        y = [y; V{t}(s)];
-%    end
-%end
-%X = repmat(X, 10, 1);
-%y = repmat(y, 10, 1);
-%X = X'; % UGH matlab
-%y = y'; 
-%
-%UVFA = fitnet(10);
-%UVFA = train(UVFA, X, y);
-%
-%yy = UVFA(X);
-%perf = perform(UVFA, yy, y);
-%perf
-%
-%
-%
-%% see what it will do
-%%
-%for t = 1:length(w_test)
-%    V_test{t} = zeros(1, env.N);
-%    for s = 1:env.N
-%        s_onehot = zeros(1, env.N);
-%        s_onehot(s) = 1;
-%        x = [s_onehot w_test{t}];
-%        V_test{t}(s) = UVFA(x');
-%    end
-%end
-%
+for t = 1:length(w_test)
+    % get values
+    V_test{t} = zeros(1, env.N);
+    for s = 1:env.N
+        s_onehot = zeros(1, env.N);
+        s_onehot(s) = 1;
+        x = [s_onehot w_test{t}];
+        V_test{t}(s) = UVFA(x');
+    end
+
+    % compute policies
+    for s = 1:env.N
+        best = -Inf;
+        pi_test_UVFA{t}(s) = NaN;
+        for a = env.A
+            tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * V_test{t}));
+            if best < tmp
+                best = tmp;
+                pi_test_UVFA{t}(s) = a;
+            end
+        end
+    end
+end
+
 
 % get SFs using iteration
-%
+
 for t = 1:length(w_train)
     fprintf('t = %d\n', t);
 
@@ -150,6 +164,31 @@ for t = 1:length(w_train)
 
         if delta < threshold
             break;
+        end
+    end
+end
+
+
+% see what SF will do 
+for t = 1:length(w_test)
+    % compute Vmax
+    Vmax{t} = zeros(1, env.N);
+    for tt = 1:length(w_train)
+        for s = 1:env.N
+            Vmax{t}(s) = max(Vmax{t}(s), V{tt}(s));
+        end
+    end
+    
+    % compute policies
+    for s = 1:env.N
+        best = -Inf;
+        pi_test_SF{t}(s) = NaN;
+        for a = env.A
+            tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * Vmax{t}));
+            if best < tmp
+                best = tmp;
+                pi_test_SF{t}(s) = a;
+            end
         end
     end
 end
