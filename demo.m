@@ -43,9 +43,9 @@ figure;
 
 sem = @(x) std(x) / sqrt(length(x));
 
-% plot performance on test tasks
+% plot performance on test tasks, fig for each test task
 for t = 1:length(w_test)
-    subplot(2, length(w_test), t);
+    subplot(3, length(w_test), t);
 
     for i = 1:2
         r = squeeze(tot_r(t, i, :));
@@ -62,6 +62,33 @@ for t = 1:length(w_test)
     title(sprintf('test w = [%.1f %.1f %.1f]', w_test{t}));
 end
 
+% plot performance on test tasks, fig for each algo
+labels = {};
+for t = 1:length(w_test)
+    labels{t} = sprintf('w = [%.1f %.1f %.1f]', w_test{t});
+end
+titles = {'UVFA', 'SF'};
+for i = 1:2
+    subplot(3, 2, 2 + i);
+
+    for t = 1:length(w_test)
+        r = squeeze(tot_r(t, i, :));
+        m(t) = mean(r);
+        se(t) = sem(r);
+    end
+
+    hold on;
+    bar(m);
+    errorbar(m, se, 'color', [0 0 0], 'linestyle', 'none');
+    xticks(1:length(m));
+
+    xticklabels(labels);
+    xtickangle(40);
+    ylabel('total reward');
+    title(titles{i});
+    xlabel('test task');
+end
+
 % plot MDP as graph
 E = zeros(env.N, env.N);
 for s = 1:env.N
@@ -73,7 +100,7 @@ for s = 1:env.N
 end
 G = digraph(E);
 
-subplot(2, 1, 2);
+subplot(3, 1, 3);
 h = plot(G);
 for s = 1:env.N
     labelnode(h, s, sprintf('phi(%d) = [%.1f %.1f %.1f]', s, env.phi{s}));
