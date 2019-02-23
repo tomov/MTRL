@@ -386,15 +386,43 @@ function checkKeyPressed(e) {
 }
 
 
+// Retrieve assignmentID, workerID, ScenarioID, and environment from URL
+//    assignmentID = turkGetParam(‘assignmentId’);
+//       workerID = turkGetParam(‘workerId’);
+
+var fullurl = window.location.href;
+
+// extract URL parameters (FROM: https://s3.amazonaws.com/mturk-public/externalHIT_v1.js)
+function turkGetParam(name) {
+  var regexS = "[\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var tmpURL = fullurl;
+  var results = regex.exec(tmpURL);
+  if (results == null) {
+    return "";
+  } else {
+    return results[1];
+  }
+}
+
 function logTrial() {
     var RT_str = (RTs.toString()).replace(/,/g, ' ');
     var path_str = (path.toString()).replace(/,/g, ' ');
     var key_str = (keys.toString()).replace(/,/g, ' ');
+    var goal_str = ("[" + goal.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
-    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal.toString() + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "\n";
+    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
+}
+
+function logBonus() {
+    assignmentID = turkGetParam('assignmentId');
+    workerID = turkGetParam('workerId');
+    var row = workerID.toString() + "," + (bonus/100).toFixed(2) + "\n";
+    console.log(row);
+    $.post("results_data.php", {postresult: row, postfile: bonus_filename});
 }
 
 
