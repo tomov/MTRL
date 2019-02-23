@@ -1,0 +1,10 @@
+html, body {
+    height: 99%;
+}
+
+.trial_page {
+    background-color: black;
+    text-align: center;
+    color: white;
+    min-height: 99%;
+}
