@@ -20,11 +20,11 @@
   <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
       <h3>Consent form for participation in this online experiment</h3>
       <p>
-          Designed by: Momchil Tomov<br>
+          Designed by: Momchil Tomov and Eric Schulz<br>
       </p>
       <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
       <p>The study provides information about the nature of learning and decision making</p>
-      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $2.5</b> for your participation.</p>
+      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $1.0</b> for your participation and up to <b>$1.50 additional bonus</b>.</p>
       <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
       <br>
       <p>By clicking on the button below, you agree to the following:</p>
@@ -39,19 +39,22 @@
 
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
       <h2>Magic Castle</h2>
-      TODO
-      <p>Imagine you are a tourist and you have to navigate the subway network in an unfamiliar town.</p>
-      <p>On each trial, you will have to navigate from a starting station to a goal station, which will appear on the screen for 2 seconds:</p>
+      <p>Imagine you are a tradesperson scavenging a medieval castle for resources to trade.</p>
+      <p>There are three types of resources -- wood, stone, and iron -- that you can sell for different prices.</p>
+      <p>Every day, you will see today's market price for each resource:</p>
       <p><img src="images/new_trial.png" height="300px" ></p>
-      <p>The trial will begin with a 3..2..1.. countdown, during which you can plan your trip:
-      <p><img src="images/countdown.png" height="300px" ></p>
-      <p>Please try to plan your trip as quickly as possible.</p>
-      <p>During your trip, you will see the name of the current station in the middle of the screen, surrounded by its neighboring stations in all four directions:</p>
-      <p><img src="images/trial.png" height="300px"></p>
-      <p>You can navigate between stations using the <b>arrow keys</b> (up, down, left, right). A circle means that there is no station in that direction.</p>
-      <p>Once you reach the goal station, press the <b>space key</b> to end the trial and start the next trial:</p>
-      <p><img src="images/success.png" height="300px"></p>
-      <p>There will be 82 trials in the experiment. All stations are named after cities.</p>
+      <p>In this example, wood sells for $1 per unit, stone sells for $0.50 per unit, and iron cannot be sold.</p>
+      <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
+      <p><img src="images/doors.png" height="300px" ></p>
+      <p>You can choose a door and go to the next room using the <b>arrow keys</b> (left, up, right). Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>Other rooms have resources which you can sell at today's market prices:</p>
+      <p><img src="images/resources.png" height="300px" ></p>
+      <p>In this room, there are 80 units of wood, 100 units of stone, and 80 units of iron.</p>
+      <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earning for the day will be displayed below:</p>
+      <p><img src="images/earn.png" height="300px"></p>
+      <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 80 = $0 for the iron, adding up to a total of $130.</p>
+      <p>There will be 102 days (trials) in the experiment.</p>
+      <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $1.30 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
 
@@ -102,8 +105,8 @@
             0 100 150
             0 0 90
             2
-            1 -> 1 0 0 x 40
-            1 -> 0 1 0 x 40
+            1 -> 1 0 0 x 4
+            1 -> 0 1 0 x 4
             2
             1 -> 1 1 0 x 1
             1 -> 0 0 1 x 1
@@ -134,7 +137,7 @@
       <p id="goal_state" style="position: absolute; left: 10%; top: 10%; text-align: left;">Goal</p>
 
       <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
-      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>arrow keys</b> (left, up, right). Press <b>space</b> when you reach the final room.</p>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>arrow keys</b> (left, up, right). Press <b>space</b> to sell the resouces in the final room.<br/> You have <span id='trials_left'></span> days left.</p>
   </div>
 
   <div id="test_page" style="font-size: 22px; display:block;" align = "center" >
@@ -155,13 +158,13 @@
   <script type="text/javascript">
       $("#consent_page").hide();
       $("#captcha").hide();
-      $("#instruction_page").hide();
-      $("#new_trial_page").show();
+      $("#instruction_page").show();
+      $("#new_trial_page").hide();
       $("#trial_page").hide();
       $("#test_page").hide();
       $("#final_page").hide();
 
-      initExp();
+      //initExp();
 
       $("#agree").click(function () {
         $("#captcha").show();

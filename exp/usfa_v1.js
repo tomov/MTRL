@@ -174,7 +174,7 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    exp.feature_names = shuffle(exp.feature_names);
+    //exp.feature_names = shuffle(exp.feature_names);
 
     return exp;
 }
@@ -271,6 +271,13 @@ function nextTrial() {
     start = trials[trial_idx].s;
     cur = start;
     goal = trials[trial_idx].w;
+
+    if (stage == "train") {
+        trials_left = exp.train_trials.length + exp.test_trials.length - trial_idx;
+    } else {
+        trials_left = exp.test_trials.length - trial_idx;
+    }
+    $('#trials_left').html(trials_left.toString());
 
     RT_tot = 0;
     RTs = [];
@@ -380,7 +387,6 @@ function checkKeyPressed(e) {
 
 
 function logTrial() {
-    // TODO logBonus from exp_v4
     var RT_str = (RTs.toString()).replace(/,/g, ' ');
     var path_str = (path.toString()).replace(/,/g, ' ');
     var key_str = (keys.toString()).replace(/,/g, ' ');
