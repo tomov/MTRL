@@ -255,7 +255,9 @@ function nextTrial() {
             // kick off test phase
             stage = "test";
             trial_idx = -1;
-            $("#test_page").show();
+
+            //$("#test_page").show();
+            nextTrial(); // directly advance to next trial
         } else {
             // finished
             bonus = rewards[Math.floor(Math.random() * rewards.length)];
@@ -274,7 +276,6 @@ function nextTrial() {
     RTs = [];
     keys = [];
     path = [cur];
-    // TODO reward from exp_4
 
     redraw();
     $("#new_trial_page").show();
@@ -310,7 +311,6 @@ function checkKeyPressed(e) {
         RTs.push(RT);
         keys.push((e).keyCode);
         RT_tot += RT;
-        // TODO cum reward -- see exp_v4
         var next = -1;
         $("#message").text("");
 
@@ -323,8 +323,9 @@ function checkKeyPressed(e) {
             next = exp.adj[cur - 1][2];
         } 
 
-        // TODO stuff
-        if (stage == "train") {
+        if (stage == "train" || stage == "test" || true) {
+            // always go to next state, even in test phase
+
             // move to next state 
             if (next >= 0) {
                 cur = next;
@@ -359,18 +360,18 @@ function checkKeyPressed(e) {
                 }
             }
         } else { // stage == "test"
-            // end trial after first button press TODO remove
-            if (next >= 0) {
-                reward = 0;
-                path.push(next);
-                stateColor("grey");
-                in_trial = false;
-                logTrial();
-                sleep(1000).then(() => {
-                    stateColor("white");
-                    nextTrial();
-                });
-            }
+            // end trial after first button press
+            //if (next >= 0) {
+            //    reward = 0;
+            //    path.push(next);
+            //    stateColor("grey");
+            //    in_trial = false;
+            //    logTrial();
+            //    sleep(1000).then(() => {
+            //        stateColor("white");
+            //        nextTrial();
+            //    });
+            //}
         }
     }
 
@@ -420,7 +421,7 @@ function redraw() {
         $("#door2").show();
         $("#door3").show();
     } else {
-        $("#cur_state").text(""); // TODO rm 
+        $("#cur_state").text("");
         $("#door1").hide();
         $("#door2").hide();
         $("#door3").hide();
