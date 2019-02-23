@@ -159,22 +159,7 @@ function readTasks(lines, l, n) {
 function genExp(exp) {
     console.log("genExp");
 
-    // shuffle state names for nonterminal states only
-    //var non_term_names = [];
-    //for (var i = 0; i < exp.N; i++) {
-    //    if (!exp.is_term[i]) {
-    //        non_term_names.push(exp.names[i]);
-    //    }
-    //}
-    ////non_term_names = shuffle(non_term_names); TODO uncomm
-    //var j = 0;
-    //for (var i = 0; i < exp.N; i++) {
-    //    if (!exp.is_term[i]) {
-    //        exp.names[i] = non_term_names[j];
-    //        j++;
-    //    }
-    //}
-    // jk shuffle all names
+    // shuffle state names
     exp.names = shuffle(exp.names);
 
     // generate training trials
@@ -184,13 +169,12 @@ function genExp(exp) {
     exp.test_trials = genTrials(exp.test);
 
     // randomly shuffle next states
-    // TODO enable
     for (var i = 0; i < exp.N; i++) {
-    //    exp.adj[i] = shuffle(exp.adj[i]);
+        exp.adj[i] = shuffle(exp.adj[i]);
     }
 
     // shuffle feature names
-    // exp.feature_names = shuffle(exp.feature_names); TODO uncomm
+    exp.feature_names = shuffle(exp.feature_names);
 
     return exp;
 }
@@ -411,21 +395,24 @@ function redraw() {
     cur_name = exp.names[cur - 1]; // + " (" + cur.toString() + ")";
 
     goal_str = "";
+    goal_str_small = "";
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
         }
-        goal_str += "$" + goal[i].toString() + " / " + exp.feature_names[i];
+        // TODO less hacky with img
+        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='50px'>";
+        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='15px'><br />";
     }
-    $("#goal_state").html(goal_str);
+    $("#goal_state").html(goal_str_small);
     $("#prices").html(goal_str);
 
     if (!exp.is_term[cur - 1]) {
         $("#cur_state").text(cur_name);
         // TODO dynamic DOM
-        $("#phi1").text("");
-        $("#phi2").text("");
-        $("#phi3").text("");
+        $("#phi1").html("");
+        $("#phi2").html("");
+        $("#phi3").html("");
         $("#door1").attr("src", exp.names[exp.adj[cur - 1][0] - 1]);
         $("#door2").attr("src", exp.names[exp.adj[cur - 1][1] - 1]);
         $("#door3").attr("src", exp.names[exp.adj[cur - 1][2] - 1]);
@@ -438,9 +425,9 @@ function redraw() {
         $("#door2").hide();
         $("#door3").hide();
         // TODO dynamic DOM
-        $("#phi1").text(exp.phi[cur - 1][0].toString() + " x " + exp.feature_names[0]);
-        $("#phi2").text(exp.phi[cur - 1][1].toString() + " x " + exp.feature_names[1]);
-        $("#phi3").text(exp.phi[cur - 1][2].toString() + " x " + exp.feature_names[2]);
+        $("#phi1").html(exp.phi[cur - 1][0].toString() + " x <img src='" + exp.feature_names[0] + "' height='50px'>");
+        $("#phi2").html(exp.phi[cur - 1][1].toString() + " x <img src='" + exp.feature_names[1] + "' height='50px'>");
+        $("#phi3").html(exp.phi[cur - 1][2].toString() + " x <img src='" + exp.feature_names[2] + "' height='50px'>");
     }
 }
 
