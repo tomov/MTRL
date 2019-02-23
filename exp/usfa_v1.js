@@ -160,20 +160,22 @@ function genExp(exp) {
     console.log("genExp");
 
     // shuffle state names for nonterminal states only
-    var non_term_names = [];
-    for (var i = 0; i < exp.N; i++) {
-        if (!exp.is_term[i]) {
-            non_term_names.push(exp.names[i]);
-        }
-    }
-    //non_term_names = shuffle(non_term_names); TODO uncomm
-    var j = 0;
-    for (var i = 0; i < exp.N; i++) {
-        if (!exp.is_term[i]) {
-            exp.names[i] = non_term_names[j];
-            j++;
-        }
-    }
+    //var non_term_names = [];
+    //for (var i = 0; i < exp.N; i++) {
+    //    if (!exp.is_term[i]) {
+    //        non_term_names.push(exp.names[i]);
+    //    }
+    //}
+    ////non_term_names = shuffle(non_term_names); TODO uncomm
+    //var j = 0;
+    //for (var i = 0; i < exp.N; i++) {
+    //    if (!exp.is_term[i]) {
+    //        exp.names[i] = non_term_names[j];
+    //        j++;
+    //    }
+    //}
+    // jk shuffle all names
+    exp.names = shuffle(exp.names);
 
     // generate training trials
     exp.train_trials = genTrials(exp.train);
@@ -420,11 +422,21 @@ function redraw() {
 
     if (!exp.is_term[cur - 1]) {
         $("#cur_state").text(cur_name);
+        // TODO dynamic DOM
         $("#phi1").text("");
         $("#phi2").text("");
         $("#phi3").text("");
+        $("#door1").attr("src", exp.names[exp.adj[cur - 1][0] - 1]);
+        $("#door2").attr("src", exp.names[exp.adj[cur - 1][1] - 1]);
+        $("#door3").attr("src", exp.names[exp.adj[cur - 1][2] - 1]);
+        $("#door1").show();
+        $("#door2").show();
+        $("#door3").show();
     } else {
         $("#cur_state").text(""); // TODO rm 
+        $("#door1").hide();
+        $("#door2").hide();
+        $("#door3").hide();
         // TODO dynamic DOM
         $("#phi1").text(exp.phi[cur - 1][0].toString() + " x " + exp.feature_names[0]);
         $("#phi2").text(exp.phi[cur - 1][1].toString() + " x " + exp.feature_names[1]);
