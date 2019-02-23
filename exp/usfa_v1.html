@@ -49,11 +49,11 @@
       <p>You can choose a door and go to the next room using the <b>arrow keys</b> (left, up, right). Note that you can only go forward; you cannot go back to the previous room.</p>
       <p>Other rooms have resources which you can sell at today's market prices:</p>
       <p><img src="images/resources.png" height="300px" ></p>
-      <p>In this room, there are 80 units of wood, 100 units of stone, and 80 units of iron.</p>
-      <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earning for the day will be displayed below:</p>
+      <p>In this room, there are 80 units of wood, 100 units of stone, and 90 units of iron.</p>
+      <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earnings for the day will be displayed below:</p>
       <p><img src="images/earn.png" height="300px"></p>
-      <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 80 = $0 for the iron, adding up to a total of $130.</p>
-      <p>There will be 102 days (trials) in the experiment.</p>
+      <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 90 = $0 for the iron, adding up to a total of $130.</p>
+      <p>There will be 100 days (trials) in the experiment.</p>
       <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $1.30 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
@@ -105,8 +105,8 @@
             0 100 150
             0 0 90
             2
-            1 -> 1 0 0 x 4
-            1 -> 0 1 0 x 4
+            1 -> 1 0 0 x 49
+            1 -> 0 1 0 x 49
             2
             1 -> 1 1 0 x 1
             1 -> 0 0 1 x 1
@@ -116,6 +116,7 @@
 
   <div id = "new_trial_page" class="trial_page" >
       <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h3 style="font-size: 20px;">Today's market prices:</h3>
           <h1 id="prices" style="font-size: 50px;">PRICES</h1>
       </div>
   </div>
@@ -156,9 +157,9 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").hide();
+      $("#consent_page").show();
       $("#captcha").hide();
-      $("#instruction_page").show();
+      $("#instruction_page").hide();
       $("#new_trial_page").hide();
       $("#trial_page").hide();
       $("#test_page").hide();

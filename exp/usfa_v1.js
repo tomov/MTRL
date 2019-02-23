@@ -174,7 +174,7 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    //exp.feature_names = shuffle(exp.feature_names);
+    exp.feature_names = shuffle(exp.feature_names);
 
     return exp;
 }
