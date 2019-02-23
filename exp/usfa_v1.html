@@ -120,12 +120,11 @@
   <div id = "trial_page" class="trial_page" >
       <h1 id="cur_state" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">CUR STATE</h1>
 
-      <p id="phis" style="position: absolute; left: 0; top: 45%; width: 100%; text-align: center;">
+      <div id="phis" style="position: absolute; left: 0; top: 45%; width: 100%; text-align: center;">
           <h3 id="phi1">phi 1</h3><br />
           <h3 id="phi2">phi 2</h3><br />
           <h3 id="phi3">phi 3</h3><br />
-          <h1 id="total">total</h1>
-      </p>
+      </div>
 
       <p id="goal_state" style="position: absolute; left: 10%; top: 10%; text-align: left;">Goal</p>
 
@@ -149,15 +148,15 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").show();
+      $("#consent_page").hide();
       $("#captcha").hide();
       $("#instruction_page").hide();
-      $("#new_trial_page").hide();
+      $("#new_trial_page").show();
       $("#trial_page").hide();
       $("#test_page").hide();
       $("#final_page").hide();
 
-      //initExp();
+      initExp();
 
       $("#agree").click(function () {
         $("#captcha").show();

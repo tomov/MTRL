@@ -28,7 +28,7 @@ function initExp() {
 
 // Read experiment template from textarea
 // N
-// r u l is_term
+// l u r is_term
 // ...
 // name
 // ...
@@ -60,7 +60,7 @@ function readExp() {
             b.push(parseInt(a[j], 10));
         }
         exp.adj.push(b);
-        exp.is_term.push(a[3]);
+        exp.is_term.push(parseInt(a[3], 10));
     }
     l = exp.N + 1; // current line
 
@@ -164,7 +164,7 @@ function genExp(exp) {
             non_term_names.push(exp.names[i]);
         }
     }
-    non_term_names = shuffle(non_term_names);
+    //non_term_names = shuffle(non_term_names); TODO uncomm
     var j = 0;
     for (var i = 0; i < exp.N; i++) {
         if (!exp.is_term[i]) {
@@ -186,7 +186,7 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    exp.feature_names = shuffle(exp.feature_names);
+    // exp.feature_names = shuffle(exp.feature_names); TODO uncomm
 
     return exp;
 }
@@ -213,7 +213,7 @@ function genTrials(desc) {
             trials.push(genTrial(desc[i], j));
         }
     }
-    trials.sort(function(a, b) {return 0.5 - Math.random()});
+    trials = shuffle(trials);
 
     for (var i = 0; i < desc.length; i++) {
         if (desc[i].pos == -1) {
@@ -324,11 +324,11 @@ function checkKeyPressed(e) {
         $("#message").text("");
 
         // get next state
-        if ((e).keyCode == "39") {
+        if ((e).keyCode == "37") {
             next = exp.adj[cur - 1][0];
         } else if ((e).keyCode == "38") {
             next = exp.adj[cur - 1][1];
-        } else if ((e).keyCode == "37") {
+        } else if ((e).keyCode == "39") {
             next = exp.adj[cur - 1][2];
         } 
 
@@ -358,7 +358,7 @@ function checkKeyPressed(e) {
                     $("#message").text("You earned $" + total.toString() + "!!");
                     in_trial = false;
                     logTrial();
-                    sleep(1000).then(() => {
+                    sleep(2000).then(() => {
                         nextTrial();
                     });
                 } else {
@@ -403,15 +403,21 @@ function redraw() {
 
     goal_str = "";
     for (var i = 0; i < exp.D; i++) {
+        if (i > 0) { 
+            goal_str += "<br />";
+        }
         goal_str += "$" + goal[i].toString() + " / " + exp.feature_names[i];
     }
-    $("#goal_state").text(goal_str);
-    $("#prices").text(goal_str);
+    $("#goal_state").html(goal_str);
+    $("#prices").html(goal_str);
 
-    if (exp.is_term[cur - 1]) {
+    if (!exp.is_term[cur - 1]) {
         $("#cur_state").text(cur_name);
+        $("#phi1").text("");
+        $("#phi2").text("");
+        $("#phi3").text("");
     } else {
-        $("#cur_state").text(cur_name); // TODO rm 
+        $("#cur_state").text(""); // TODO rm 
         // TODO dynamic DOM
         $("#phi1").text(exp.phi[cur - 1][0].toString() + " x " + exp.feature_names[0]);
         $("#phi2").text(exp.phi[cur - 1][1].toString() + " x " + exp.feature_names[1]);
