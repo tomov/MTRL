@@ -8,6 +8,7 @@ function initExp() {
 
     subj_id = "1" + Math.random().toString().substring(3,8);
     file_name = 'results/' + subj_id + ".csv";
+    bonus_filename = 'results/bonus.csv';
 
     stage = "train";
     trial_idx = -1;
@@ -16,11 +17,12 @@ function initExp() {
     RTs = [];
     keys = [];
     path = [];
+    rewards = [];
     cur = -1;
     start = -1;
     goal = -1;
 
-    $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, RT_tot, timestamp, datetime\n", postfile: file_name })
+    $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, RT_tot, reward, timestamp, datetime\n", postfile: file_name })
 
     nextTrial();
 }
@@ -269,8 +271,11 @@ function nextTrial() {
             trial_idx = -1;
             $("#test_page").show();
         } else {
-            // fin
+            // finished
+            bonus = rewards[Math.floor(Math.random() * rewards.length)];
+            $('#bonus').text((bonus/100).toFixed(2));
             $("#final_page").show();
+            logBonus();
         }
         return;
     }
@@ -350,12 +355,13 @@ function checkKeyPressed(e) {
             // if goal is reached => start next trial
             if ((e).key === ' ' || (e).key === 'Spacebar') {
                 if (exp.is_term[cur - 1]) {
-                    var total = 0;
+                    reward = 0;
                     for (var i = 0; i < exp.D; i++) {
-                        total += goal[i] * exp.phi[cur - 1][i];
+                        reward += goal[i] * exp.phi[cur - 1][i];
                     }
+                    rewards.push(reward);
                     $("#message").css("color", "green");
-                    $("#message").text("You earned $" + total.toString() + "!!");
+                    $("#message").text("You earned $" + reward.toString() + "!!");
                     in_trial = false;
                     logTrial();
                     sleep(2000).then(() => {
@@ -369,6 +375,7 @@ function checkKeyPressed(e) {
         } else { // stage == "test"
             // end trial after first button press TODO remove
             if (next >= 0) {
+                reward = 0;
                 path.push(next);
                 stateColor("grey");
                 in_trial = false;
@@ -392,7 +399,7 @@ function logTrial() {
     var key_str = (keys.toString()).replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
-    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal.toString() + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + t.toString() + "," + d.toString() + "\n";
+    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal.toString() + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
 }
