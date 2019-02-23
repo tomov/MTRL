@@ -27,6 +27,21 @@ function initExp() {
 
 
 // Read experiment template from textarea
+// N
+// r u l is_term
+// ...
+// name
+// ...
+// D
+// feature name
+// ...
+// phi
+// ...
+// ntrain
+// s -> w x reps
+// ...
+// ntest
+// s -> w x reps
 //
 function readExp() {
     console.log("readExp");
@@ -37,13 +52,15 @@ function readExp() {
 
     // read adjacency 
     exp.adj = [];
+    exp.is_term = [];
     for (var i = 1; i <= exp.N; i++) {
         var a = lines[i].trim().split(" ");
         var b = [];
-        for (var j = 0; j < 4; j++) {
+        for (var j = 0; j < 3; j++) {
             b.push(parseInt(a[j], 10));
         }
         exp.adj.push(b);
+        exp.is_term.push(a[3]);
     }
     l = exp.N + 1; // current line
 
@@ -54,37 +71,36 @@ function readExp() {
         l++;
     }
 
+    // # of features
+    exp.D = parseInt(lines[l], 10);
+    l++;
+
+    // read feature names
+    exp.feature_names = [];
+    for (var i = 0; i < exp.D; i++) {
+        exp.feature_names.push(lines[l].trim());
+        l++;
+    }
+
+    // read state features
+    exp.phi = [];
+    for (var i = 0; i < exp.N; i++) {
+        var a = lines[l].trim().split(" ");
+        l++;
+        var b = [];
+        for (var j = 0; j < exp.D; j++) {
+            b.push(parseFloat(a[j]));
+        }
+        exp.phi.push(b);
+    }
+
     // read training tasks
-    //exp.ntrain = parseInt(lines[l], 10);
-    //l++;
-    //exp.train = [];
-    //for (var i = 0; i < exp.ntrain; i++) {
-    //    var a = lines[l].trim().split(" ");
-    //    l++;
-    //    var task = {};
-    //    task.s = parseInt(a[0], 10);
-    //    task.g = parseInt(a[1], 10);
-    //    task.n = parseInt(a[2], 10);
-    //    exp.train.push(task);
-    //}
     exp.ntrain = parseInt(lines[l], 10);
     l++;
     exp.train = readTasks(lines, l, exp.ntrain);
     l += exp.ntrain;
 
     // read test tasks
-    //exp.ntest = parseInt(lines[l], 10);
-    //l++;
-    //exp.test = [];
-    //for (var i = 0; i < exp.ntest; i++) {
-    //    var a = lines[l].trim().split(" ");
-    //    l++;
-    //    var task = {};
-    //    task.s = parseInt(a[0], 10);
-    //    task.g = parseInt(a[1], 10);
-    //    task.n = parseInt(a[2], 10);
-    //    exp.test.push(task);
-    //}
     exp.ntest = parseInt(lines[l], 10);
     l++;
     exp.test = readTasks(lines, l, exp.ntest);
@@ -125,10 +141,10 @@ function readTasks(lines, l, n) {
             task.s.push(parseInt(s[j], 10));
         }
 
-        task.g = [];
-        g = b[1].trim().split(" ");
-        for (var j = 0; j < g.length; j++) {
-            task.g.push(parseInt(g[j], 10));
+        task.w = [];
+        w = b[1].trim().split(" ");
+        for (var j = 0; j < w.length; j++) {
+            task.w.push(parseFloat(w[j]));
         }
 
         tasks.push(task);
@@ -141,8 +157,21 @@ function readTasks(lines, l, n) {
 function genExp(exp) {
     console.log("genExp");
 
-    // shuffle state names
-    exp.names.sort(function(a, b) {return 0.5 - Math.random()});
+    // shuffle state names for nonterminal states only
+    var non_term_names = [];
+    for (var i = 0; i < exp.N; i++) {
+        if (!exp.is_term[i]) {
+            non_term_names.push(exp.names[i]);
+        }
+    }
+    non_term_names = shuffle(non_term_names);
+    var j = 0;
+    for (var i = 0; i < exp.N; i++) {
+        if (!exp.is_term[i]) {
+            exp.names[i] = non_term_names[j];
+            j++;
+        }
+    }
 
     // generate training trials
     exp.train_trials = genTrials(exp.train);
@@ -150,50 +179,27 @@ function genExp(exp) {
     // generate test trials
     exp.test_trials = genTrials(exp.test);
 
-    // randomly flip graph
-    exp.flip_horiz = Math.floor(Math.random() * 2);
-    if (exp.flip_horiz) {
-        for (var i = 0; i < exp.N; i++) {
-            var tmp = exp.adj[i][0];
-            exp.adj[i][0] = exp.adj[i][2];
-            exp.adj[i][2] = tmp;
-        }
-    }
-    exp.flip_vert = Math.floor(Math.random() * 2);
-    if (exp.flip_vert) {
-        for (var i = 0; i < exp.N; i++) {
-            var tmp = exp.adj[i][1];
-            exp.adj[i][1] = exp.adj[i][3];
-            exp.adj[i][3] = tmp;
-        }
+    // randomly shuffle next states
+    // TODO enable
+    for (var i = 0; i < exp.N; i++) {
+    //    exp.adj[i] = shuffle(exp.adj[i]);
     }
 
-    // optionally rotate graph
-    // DON'T do it -- left/right arrow keys are symmetrical; up/down not so much
-    //exp.rotate = Math.floor(Math.random() * 4);
-    //for (var i = 0; i < exp.N; i++) {
-    //    var a = exp.adj[i].slice();
-    //    for (var j = 0; j < 4; j++) {
-    //        exp.adj[i][j] = a[(j + exp.rotate) % 4];
-    //    }
-    //}
+    // shuffle feature names
+    exp.feature_names = shuffle(exp.feature_names);
+
     return exp;
 }
 
 
 function genTrial(desc, j) {
     var task = {};
-    do {
-        task.s = desc.s[Math.floor(Math.random() * desc.s.length)];
-        task.g = desc.g[Math.floor(Math.random() * desc.g.length)];
-        task.j = j;
-        if (task.s <= 0) {
-            task.s = Math.floor(Math.random() * exp.N) + 1;
-        }
-        if (task.g <= 0) {
-            task.g = Math.floor(Math.random() * exp.N) + 1;
-        }
-    } while (task.s == task.g);
+    task.s = desc.s[Math.floor(Math.random() * desc.s.length)];
+    task.w = desc.w;
+    task.j = j;
+    if (task.s <= 0) {
+        task.s = Math.floor(Math.random() * exp.N) + 1;
+    }
     return task;
 }
 
@@ -271,12 +277,13 @@ function nextTrial() {
 
     start = trials[trial_idx].s;
     cur = start;
-    goal = trials[trial_idx].g;
+    goal = trials[trial_idx].w;
 
     RT_tot = 0;
     RTs = [];
     keys = [];
     path = [cur];
+    // TODO reward from exp_4
 
     redraw();
     $("#new_trial_page").show();
@@ -285,23 +292,9 @@ function nextTrial() {
     sleep(2000).then(() => {
         $("#new_trial_page").hide();
         $("#trial_page").show();
-        $("#countdown").text("3...");
-        stateColor("grey");
-        sleep(1000).then(() => {
-            $("#countdown").text("2...");
-            sleep(1000).then(() => {
-                $("#countdown").text("1...");
-                sleep(1000).then(() => {
-                    $("#countdown").text("GO!");
-                    stateColor("white");
-                    in_trial = true;
-                    last_keypress_time = (new Date()).getTime();
-                    sleep(1000).then(() => {
-                        $("#countdown").text("");
-                    });
-                });
-            });
-        });
+        stateColor("white");
+        in_trial = true;
+        last_keypress_time = (new Date()).getTime();
     });
 }
 
@@ -326,6 +319,7 @@ function checkKeyPressed(e) {
         RTs.push(RT);
         keys.push((e).keyCode);
         RT_tot += RT;
+        // TODO cum reward -- see exp_v4
         var next = -1;
         $("#message").text("");
 
@@ -336,10 +330,9 @@ function checkKeyPressed(e) {
             next = exp.adj[cur - 1][1];
         } else if ((e).keyCode == "37") {
             next = exp.adj[cur - 1][2];
-        } else if ((e).keyCode == "40") {
-            next = exp.adj[cur - 1][3];
-        }
+        } 
 
+        // TODO stuff
         if (stage == "train") {
             // move to next state 
             if (next >= 0) {
@@ -356,9 +349,13 @@ function checkKeyPressed(e) {
 
             // if goal is reached => start next trial
             if ((e).key === ' ' || (e).key === 'Spacebar') {
-                if (cur == goal) {
+                if (exp.is_term[cur - 1]) {
+                    var total = 0;
+                    for (var i = 0; i < exp.D; i++) {
+                        total += goal[i] * exp.phi[cur - 1][i];
+                    }
                     $("#message").css("color", "green");
-                    $("#message").text("SUCCESS!!");
+                    $("#message").text("You earned $" + total.toString() + "!!");
                     in_trial = false;
                     logTrial();
                     sleep(1000).then(() => {
@@ -370,7 +367,7 @@ function checkKeyPressed(e) {
                 }
             }
         } else { // stage == "test"
-            // end trial after first button press
+            // end trial after first button press TODO remove
             if (next >= 0) {
                 path.push(next);
                 stateColor("grey");
@@ -389,6 +386,7 @@ function checkKeyPressed(e) {
 
 
 function logTrial() {
+    // TODO logBonus from exp_v4
     var RT_str = (RTs.toString()).replace(/,/g, ' ');
     var path_str = (path.toString()).replace(/,/g, ' ');
     var key_str = (keys.toString()).replace(/,/g, ' ');
@@ -402,26 +400,23 @@ function logTrial() {
 
 function redraw() {
     cur_name = exp.names[cur - 1]; // + " (" + cur.toString() + ")";
-    start_name = exp.names[start - 1]; // + " (" + start.toString() + ")";
-    goal_name = exp.names[goal - 1]; // + " (" + goal.toString() + ")";
-    var adj_names = [];
-    for (var i = 0; i < 4; i++) {
-        if (exp.adj[cur - 1][i] <= 0) {
-            adj_names.push("&#11044;");
-        } else {
-            adj_names.push(exp.names[exp.adj[cur - 1][i] - 1]);
-        }
+
+    goal_str = "";
+    for (var i = 0; i < exp.D; i++) {
+        goal_str += "$" + goal[i].toString() + " / " + exp.feature_names[i];
     }
+    $("#goal_state").text(goal_str);
+    $("#prices").text(goal_str);
 
-    $("#cur_state").text(cur_name);
-    $("#goal_state").text("Go to " + goal_name);
-    $("#right_state").html(adj_names[0]);
-    $("#up_state").html(adj_names[1]);
-    $("#left_state").html(adj_names[2]);
-    $("#down_state").html(adj_names[3]);
-
-    $("#from_state").text(start_name);
-    $("#to_state").text(goal_name);
+    if (exp.is_term[cur - 1]) {
+        $("#cur_state").text(cur_name);
+    } else {
+        $("#cur_state").text(cur_name); // TODO rm 
+        // TODO dynamic DOM
+        $("#phi1").text(exp.phi[cur - 1][0].toString() + " x " + exp.feature_names[0]);
+        $("#phi2").text(exp.phi[cur - 1][1].toString() + " x " + exp.feature_names[1]);
+        $("#phi3").text(exp.phi[cur - 1][2].toString() + " x " + exp.feature_names[2]);
+    }
 }
 
 
