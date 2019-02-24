@@ -1,4 +1,5 @@
-in_trial = false;
+check_fails = 0;
+in_trial = 0; // 0 = not in trial; 1 = new trial page; 2 = in trial
 
 function initExp() {
     console.log("initExp");
@@ -12,7 +13,7 @@ function initExp() {
 
     stage = "train";
     trial_idx = -1;
-    in_trial = false;
+    in_trial = 0;
 
     RTs = [];
     keys = [];
@@ -22,7 +23,7 @@ function initExp() {
     start = -1;
     goal = -1;
 
-    $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, RT_tot, reward, timestamp, datetime\n", postfile: file_name })
+    $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
     nextTrial();
 }
@@ -241,7 +242,7 @@ function nextTrial() {
 
     $("#trial_page").hide();
     $("#message").text("");
-    in_trial = false;
+    in_trial = 0;
 
     trial_idx++;
     if (stage == "train") {
@@ -286,32 +287,26 @@ function nextTrial() {
 
     redraw();
     $("#new_trial_page").show();
-
-    // countdown
-    sleep(2000).then(() => {
-        $("#new_trial_page").hide();
-        $("#trial_page").show();
-        stateColor("white");
-        in_trial = true;
-        last_keypress_time = (new Date()).getTime();
-    });
-}
-
-
-function stateColor(color) {
-    $("#cur_state").css("color", color);
-    $("#right_state").css("color", color);
-    $("#up_state").css("color", color);
-    $("#left_state").css("color", color);
-    $("#down_state").css("color", color);
 }
 
 
 function checkKeyPressed(e) {
     var e = window.event || e;
 
-    if (in_trial) {
-        console.log("key press " + e.which);
+    console.log("key press " + e.which);
+
+    if (in_trial == 1) { // new trial page (prices)
+
+        if ((e).key === ' ' || (e).key === 'Spacebar') {
+
+            // begin trial (previously countdown in nextTrial)
+            $("#new_trial_page").hide();
+            $("#trial_page").show();
+            in_trial = 2;
+            last_keypress_time = (new Date()).getTime();
+        }
+
+    } else if (in_trial == 2) { // in trial
 
         RT = (new Date()).getTime() - last_keypress_time;
         last_keypress_time = (new Date()).getTime();
@@ -322,67 +317,68 @@ function checkKeyPressed(e) {
         $("#message").text("");
 
         // get next state
-        if ((e).keyCode == "37") {
+        if ((e).key == "1") {
             next = exp.adj[cur - 1][0];
-        } else if ((e).keyCode == "38") {
+        } else if ((e).key == "2") {
             next = exp.adj[cur - 1][1];
-        } else if ((e).keyCode == "39") {
+        } else if ((e).key == "3") {
             next = exp.adj[cur - 1][2];
         } 
 
-        if (stage == "train" || stage == "test" || true) {
-            // always go to next state, even in test phase
+        // move to next state 
+        if (next >= 0) {
 
-            // move to next state 
-            if (next >= 0) {
-                cur = next;
-                stateColor("grey");
-                in_trial = false;
-                path.push(next);
-               // sleep(750).then(() => {
-                    stateColor("white");
-                    in_trial = true;
-                    redraw();
-               // });
+            if (next == exp.adj[cur - 1][0]) {
+                $("#door1").css("border", "5px solid white");
+            } else if (next == exp.adj[cur - 1][1]) {
+                $("#door2").css("border", "5px solid white");
+            } else if (next == exp.adj[cur - 1][3]) {
+                $("#door3").css("border", "5px solid white");
             }
 
-            // if goal is reached => start next trial
-            if ((e).key === ' ' || (e).key === 'Spacebar') {
-                if (exp.is_term[cur - 1]) {
-                    reward = 0;
-                    for (var i = 0; i < exp.D; i++) {
-                        reward += goal[i] * exp.phi[cur - 1][i];
-                    }
-                    rewards.push(reward);
-                    $("#message").css("color", "green");
-                    $("#message").text("You earned $" + reward.toString() + "!!");
-                    in_trial = false;
-                    logTrial();
-                    sleep(2000).then(() => {
-                        nextTrial();
-                    });
-                } else {
-                    $("#message").css("color", "red");
-                    $("#message").text("Incorrect");
-                }
+            cur = next;
+            in_trial = 0;
+            path.push(next);
+
+            sleep(1000).then(() => {
+                $("#door1").css("border", "");
+                $("#door2").css("border", "");
+                $("#door3").css("border", "");
+                in_trial = 2;
+                redraw();
+            });
+        }
+
+        // if goal is reached => start next trial
+        if ((e).key === ' ' || (e).key === 'Spacebar') {
+            if (exp.is_term[cur - 1]) {
+                rewards.push(reward);
+                in_trial = 0;
+                logTrial();
+                nextTrial();
             }
-        } else { // stage == "test"
-            // end trial after first button press
-            //if (next >= 0) {
-            //    reward = 0;
-            //    path.push(next);
-            //    stateColor("grey");
-            //    in_trial = false;
-            //    logTrial();
-            //    sleep(1000).then(() => {
-            //        stateColor("white");
-            //        nextTrial();
-            //    });
-            //}
         }
     }
 
     return true;
+}
+
+// check answers on check_page page
+// return true if all correct
+function instructionsCheck() {
+    checked = 1;
+    //check if correct answers are provided
+    if (document.getElementById('icheck1').checked) {var ch1 = 1}
+    if (document.getElementById('icheck2').checked) {var ch2 = 1}
+    if (document.getElementById('icheck3').checked) {var ch3 = 1}
+    //are all of the correct
+    var checksum=ch1+ch2+ch3;
+
+    if (checksum === 3){
+        return true;
+    } else{
+        return false;
+    }
 }
 
 
@@ -412,7 +408,7 @@ function logTrial() {
     var goal_str = ("[" + goal.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
-    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "\n";
+    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
 }
@@ -427,23 +423,37 @@ function logBonus() {
 
 
 function redraw() {
-    cur_name = exp.names[cur - 1]; // + " (" + cur.toString() + ")";
+    // calculate reward
+    if exp.is_term[cur - 1] {
+        reward = 0;
+        for (var i = 0; i < exp.D; i++) {
+            reward += goal[i] * exp.phi[cur - 1][i];
+        }
+    }
 
+    // generate goal and reward strings
     goal_str = "";
     goal_str_small = "";
+    sum_str = "";
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
+            sum_str += " + ";
         }
         // TODO less hacky with img
         goal_str += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='50px'>";
         goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='15px'><br />";
+        sum_str += exp.phi[cur - 1][i].toString() + "<img src = " + exp.feature_names[i] + "' height='20px'> x $" + goal[i].toString();
     }
+    
+    // show goal / prices
     $("#goal_state").html(goal_str_small);
     $("#prices").html(goal_str);
 
+    // show doors or resources
+    $("#cur_door").attr("src", exp.names[cur - 1]);
     if (!exp.is_term[cur - 1]) {
-        $("#cur_state").text(cur_name);
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 20px; color: green;'> $" + reward.toString() + "</span>");
         // TODO dynamic DOM
         $("#phi1").html("");
         $("#phi2").html("");
@@ -455,7 +465,7 @@ function redraw() {
         $("#door2").show();
         $("#door3").show();
     } else {
-        $("#cur_state").text("");
+        $("#message").html("");
         $("#door1").hide();
         $("#door2").hide();
         $("#door3").hide();

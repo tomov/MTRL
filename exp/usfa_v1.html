@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title> Magic Castle </title>
+    <title> Medieval Trading </title>
     <!--Load in ajax and jquery related API's-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="jquery-1.10.2.min.js"></script>
@@ -38,7 +38,7 @@
 
 
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
-      <h2>Magic Castle</h2>
+      <h2>Medieval Trading</h2>
       <p>Imagine you are a tradesperson scavenging a medieval castle for resources to trade.</p>
       <p>There are three types of resources -- wood, stone, and iron -- that you can sell for different prices.</p>
       <p>Every day, you will see today's market price for each resource:</p>
@@ -46,13 +46,15 @@
       <p>In this example, wood sells for $1 per unit, stone sells for $0.50 per unit, and iron cannot be sold.</p>
       <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
       <p><img src="images/doors.png" height="300px" ></p>
-      <p>You can choose a door and go to the next room using the <b>arrow keys</b> (left, up, right). Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>You can choose a door and go to the next room using the <b>number keys 1,2,3</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
       <p>Other rooms have resources which you can sell at today's market prices:</p>
       <p><img src="images/resources.png" height="300px" ></p>
       <p>In this room, there are 80 units of wood, 100 units of stone, and 90 units of iron.</p>
       <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earnings for the day will be displayed below:</p>
       <p><img src="images/earn.png" height="300px"></p>
-      <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 90 = $0 for the iron, adding up to a total of $130.</p>
+      <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 90 = $0 for the iron, adding up to a total of $130 for the day.</p>
+      <p><b>Your goal is to earn as much as you can each day by finding the room with resources that will sell for the most.</b></p>
+      <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The rooms with resources will always have the same amount of resources.</p>
       <p>There will be 80 days (trials) in the experiment.</p>
       <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $1.30 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
@@ -114,15 +116,50 @@
   </div>
 
 
+
+  <div id = "check_page" style="font-size: 22px; display:block;">
+      <h2>Medieval Trading</h2>
+      <fieldset>
+        <legend>Please answer a few questions before we begin.</legend>
+        <fieldset style="float:left;width:400px;margin:5px">
+            What is your task?<br>
+            <input type="radio" name="q1"  >Fight dungeon dragons in a medieval castle.<br>
+            <input type="radio" name="q1" id="icheck1" >Maximize earnings by selling resources.<br>
+            <input type="radio" name="q1" >Build a medieval castle.<br>
+            <input type="radio" name="q1" >I do not know.<br>
+        </fieldset>
+        <fieldset style="float:left;width:400px;margin:5px">
+            How many days (trials) are there?<br>
+            <input type="radio" name="q2">1<br>
+            <input type="radio" name="q2">10<br>
+            <input type="radio" name="q2"  id="icheck2">100<br>
+            <input type="radio" name="q2">1000<br>
+        </fieldset>
+        <fieldset style="float:left;width:400px;margin:5px">
+             Today, wood sells for $1, stone sells for $0, and iron sells for $1. You found 50 units of wood, 60 units of stone, and 80 units of iron, and you sell all of them. How much will you earn?<br>
+            <input type="radio" name="q3">$50<br>
+            <input type="radio" name="q3">$60<br>
+            <input type="radio" name="q3">$80<br>
+            <input type="radio" name="q3" id="icheck3">$130<br>
+        </fieldset>
+      </fieldset>
+      <br><br><br><br>
+      <p>You will only be directed to the next page if you manage to answer all of the questions correctly.</p>
+      <button type="button" name="button"; id="check_answers"; >Check answers</button>  
+  </div>
+
+
+
   <div id = "new_trial_page" class="trial_page" >
       <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
           <h3 style="font-size: 20px;">Today's market prices:</h3>
           <h1 id="prices" style="font-size: 50px;">PRICES</h1>
       </div>
+
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Press <b>space</b> to enter castle.</p>
   </div>
 
   <div id = "trial_page" class="trial_page" >
-      <!--<h1 id="cur_state" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">CUR STATE</h1> -->
       <div id="doors" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
           <img id="door1" src="" height="40%"> &emsp;
           <img id="door2" src="" height="40%"> &emsp;
@@ -135,6 +172,7 @@
           <h1 id="phi3" style="font-size: 50px;">phi 3</h1>
       </div>
 
+      <img id="cur_door" src="" height="20%" style="position: absolute; right: 10%; top: 10%; text-align: right;">
       <p id="goal_state" style="position: absolute; left: 10%; top: 10%; text-align: left;">Goal</p>
 
       <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
@@ -157,10 +195,11 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").show();
+      $("#consent_page").hide();
       $("#captcha").hide();
       $("#instruction_page").hide();
-      $("#new_trial_page").hide();
+      $("#check_page").hide();
+      $("#new_trial_page").show();
       $("#trial_page").hide();
       $("#test_page").hide();
       $("#final_page").hide();
@@ -168,26 +207,42 @@
       //initExp();
 
       $("#agree").click(function () {
-        $("#captcha").show();
+          // skip captcha b/c we have the instruction check 
+          /*
+          $("#captcha").show();
 
-        var response = grecaptcha.getResponse();
-        var correctCaptcha = function(response) {
-            console.log(response);
-            if (response.length == 0) console.log("You can't proceed!");
-            else {
-              $("#captcha").hide();
-              $("#consent_page").hide();
-              $("#instruction_page").show();
-            }
-        };
+          var response = grecaptcha.getResponse();
+          var correctCaptcha = function(response) {
+              console.log(response);
+              if (response.length == 0) console.log("You can't proceed!");
+              else {
+                $("#captcha").hide();
+                $("#consent_page").hide();
+                $("#instruction_page").show();
+              }
+          };
 
-        window.correctCaptcha = correctCaptcha;
+          window.correctCaptcha = correctCaptcha;
+          */
       })
 
       $("#continue").click(function () {
           $("#instruction_page").hide();
-          initExp();
+          $("#check_page").show()
       })
+
+      $("#check_answers").click(function () {
+          if (instructionsCheck()) {
+              $("#check_answers").hide();
+              initExp();
+          } else {
+              check_fails++;
+              alert('You have answered some of the questions wrong. Please read the instructions again.');
+              $("#check_answers").hide();
+              $("#instruction_page").show();
+          }
+      })
+
 
       $("#advance").click(function () {
           $("#test_page").hide();
