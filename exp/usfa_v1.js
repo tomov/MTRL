@@ -286,6 +286,7 @@ function nextTrial() {
     path = [cur];
 
     redraw();
+    in_trial = 1;
     $("#new_trial_page").show();
 }
 
@@ -314,7 +315,6 @@ function checkKeyPressed(e) {
         keys.push((e).keyCode);
         RT_tot += RT;
         var next = -1;
-        $("#message").text("");
 
         // get next state
         if ((e).key == "1") {
@@ -329,11 +329,11 @@ function checkKeyPressed(e) {
         if (next >= 0) {
 
             if (next == exp.adj[cur - 1][0]) {
-                $("#door1").css("border", "5px solid white");
+                $("#door1").css("border", "10px solid white");
             } else if (next == exp.adj[cur - 1][1]) {
-                $("#door2").css("border", "5px solid white");
-            } else if (next == exp.adj[cur - 1][3]) {
-                $("#door3").css("border", "5px solid white");
+                $("#door2").css("border", "10px solid white");
+            } else if (next == exp.adj[cur - 1][2]) {
+                $("#door3").css("border", "10px solid white");
             }
 
             cur = next;
@@ -424,7 +424,7 @@ function logBonus() {
 
 function redraw() {
     // calculate reward
-    if exp.is_term[cur - 1] {
+    if (exp.is_term[cur - 1]) {
         reward = 0;
         for (var i = 0; i < exp.D; i++) {
             reward += goal[i] * exp.phi[cur - 1][i];
@@ -442,18 +442,18 @@ function redraw() {
         }
         // TODO less hacky with img
         goal_str += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='50px'>";
-        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='15px'><br />";
-        sum_str += exp.phi[cur - 1][i].toString() + "<img src = " + exp.feature_names[i] + "' height='20px'> x $" + goal[i].toString();
+        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='20px'><br />";
+        sum_str += exp.phi[cur - 1][i].toString() + " <img src='" + exp.feature_names[i] + "' height='20px'> x $" + goal[i].toString();
     }
     
     // show goal / prices
-    $("#goal_state").html(goal_str_small);
+    $("#goal_state").html("Prices:<br />" + goal_str_small);
     $("#prices").html(goal_str);
 
     // show doors or resources
     $("#cur_door").attr("src", exp.names[cur - 1]);
     if (!exp.is_term[cur - 1]) {
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 20px; color: green;'> $" + reward.toString() + "</span>");
+        $("#message").html("");
         // TODO dynamic DOM
         $("#phi1").html("");
         $("#phi2").html("");
@@ -461,18 +461,16 @@ function redraw() {
         $("#door1").attr("src", exp.names[exp.adj[cur - 1][0] - 1]);
         $("#door2").attr("src", exp.names[exp.adj[cur - 1][1] - 1]);
         $("#door3").attr("src", exp.names[exp.adj[cur - 1][2] - 1]);
-        $("#door1").show();
-        $("#door2").show();
-        $("#door3").show();
+        $("#doors").show();
+        $("#phis").hide();
     } else {
-        $("#message").html("");
-        $("#door1").hide();
-        $("#door2").hide();
-        $("#door3").hide();
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: green;'> $" + reward.toString() + "</span>");
         // TODO dynamic DOM
-        $("#phi1").html(exp.phi[cur - 1][0].toString() + " x <img src='" + exp.feature_names[0] + "' height='50px'>");
-        $("#phi2").html(exp.phi[cur - 1][1].toString() + " x <img src='" + exp.feature_names[1] + "' height='50px'>");
-        $("#phi3").html(exp.phi[cur - 1][2].toString() + " x <img src='" + exp.feature_names[2] + "' height='50px'>");
+        $("#phi1").html(exp.phi[cur - 1][0].toString() + " &emsp; <img src='" + exp.feature_names[0] + "' height='50px'>");
+        $("#phi2").html(exp.phi[cur - 1][1].toString() + " &emsp; <img src='" + exp.feature_names[1] + "' height='50px'>");
+        $("#phi3").html(exp.phi[cur - 1][2].toString() + " &emsp; <img src='" + exp.feature_names[2] + "' height='50px'>");
+        $("#doors").hide();
+        $("#phis").show();
     }
 }
 

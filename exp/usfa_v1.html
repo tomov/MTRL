@@ -46,16 +46,15 @@
       <p>In this example, wood sells for $1 per unit, stone sells for $0.50 per unit, and iron cannot be sold.</p>
       <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
       <p><img src="images/doors.png" height="300px" ></p>
-      <p>You can choose a door and go to the next room using the <b>number keys 1,2,3</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>. As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. Note that you can only go forward; you cannot go back to the previous room.</p>
       <p>Other rooms have resources which you can sell at today's market prices:</p>
       <p><img src="images/resources.png" height="300px" ></p>
       <p>In this room, there are 80 units of wood, 100 units of stone, and 90 units of iron.</p>
-      <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earnings for the day will be displayed below:</p>
-      <p><img src="images/earn.png" height="300px"></p>
       <p>In this example, you earned $1 x 80 = $80 for the wood, $0.50 x 100 = $50 for the stone, and $0 x 90 = $0 for the iron, adding up to a total of $130 for the day.</p>
-      <p><b>Your goal is to earn as much as you can each day by finding the room with resources that will sell for the most.</b></p>
+      <p>You can press the <b>space key</b> to sell the resources and begin the next day. Your earnings for the day will be displayed below.</p>
+      <p><b>Your goal is to earn as much as you can by finding the room with resources that will sell for the most on the given day.</b></p>
       <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The rooms with resources will always have the same amount of resources.</p>
-      <p>There will be 80 days (trials) in the experiment.</p>
+      <p>There will be 100 days (trials) in the experiment.</p>
       <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $1.30 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
@@ -107,8 +106,8 @@
             0 100 150
             0 0 90
             2
-            1 -> 1 0 0 x 39
-            1 -> 0 1 0 x 39
+            1 -> 1 0 0 x 49
+            1 -> 0 1 0 x 49
             2
             1 -> 1 1 0 x 1
             1 -> 0 0 1 x 1
@@ -121,29 +120,29 @@
       <h2>Medieval Trading</h2>
       <fieldset>
         <legend>Please answer a few questions before we begin.</legend>
-        <fieldset style="float:left;width:400px;margin:5px">
-            What is your task?<br>
+        <fieldset style="width:500px;margin:5px">
+            What is your task?<br><br />
             <input type="radio" name="q1"  >Fight dungeon dragons in a medieval castle.<br>
             <input type="radio" name="q1" id="icheck1" >Maximize earnings by selling resources.<br>
             <input type="radio" name="q1" >Build a medieval castle.<br>
             <input type="radio" name="q1" >I do not know.<br>
         </fieldset>
-        <fieldset style="float:left;width:400px;margin:5px">
-            How many days (trials) are there?<br>
+        <fieldset style="width:500px;margin:5px">
+            How many days (trials) are there?<br><br />
             <input type="radio" name="q2">1<br>
             <input type="radio" name="q2">10<br>
             <input type="radio" name="q2"  id="icheck2">100<br>
             <input type="radio" name="q2">1000<br>
         </fieldset>
-        <fieldset style="float:left;width:400px;margin:5px">
-             Today, wood sells for $1, stone sells for $0, and iron sells for $1. You found 50 units of wood, 60 units of stone, and 80 units of iron, and you sell all of them. How much will you earn?<br>
+        <fieldset style="width:500px;margin:5px">
+            Today, wood sells for $1, stone sells for $0, and iron sells for $1. You found 30 units of wood, 50 units of stone, and 80 units of iron, and you sell all of them. How much will you earn?<br> <br />
+            <input type="radio" name="q3">$30<br>
             <input type="radio" name="q3">$50<br>
-            <input type="radio" name="q3">$60<br>
             <input type="radio" name="q3">$80<br>
-            <input type="radio" name="q3" id="icheck3">$130<br>
+            <input type="radio" name="q3" id="icheck3">$110<br>
         </fieldset>
       </fieldset>
-      <br><br><br><br>
+      <br><br><br>
       <p>You will only be directed to the next page if you manage to answer all of the questions correctly.</p>
       <button type="button" name="button"; id="check_answers"; >Check answers</button>  
   </div>
@@ -156,11 +155,19 @@
           <h1 id="prices" style="font-size: 50px;">PRICES</h1>
       </div>
 
-      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Press <b>space</b> to enter castle.</p>
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Press <b>space</b> to enter the castle.</p>
   </div>
 
+
+
   <div id = "trial_page" class="trial_page" >
+      <img id="cur_door" src="" height="15%" style="position: absolute; right: 5%; top: 5%; text-align: right;">
+      <h2 id="goal_state" style="position: absolute; left: 5%; top: 5%; text-align: left;">Goal</h2>
+
       <div id="doors" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h1 style="position: absolute; left: 25%; top: -25%; text-align: center; font-size: 300%;">1</h1>
+          <h1 style="position: absolute; left: 50%; top: -25%; text-align: center; font-size: 300%;">2</h1>
+          <h1 style="position: absolute; left: 75%; top: -25%; text-align: center; font-size: 300%;">3</h1>
           <img id="door1" src="" height="40%"> &emsp;
           <img id="door2" src="" height="40%"> &emsp;
           <img id="door3" src="" height="40%">
@@ -172,11 +179,8 @@
           <h1 id="phi3" style="font-size: 50px;">phi 3</h1>
       </div>
 
-      <img id="cur_door" src="" height="20%" style="position: absolute; right: 10%; top: 10%; text-align: right;">
-      <p id="goal_state" style="position: absolute; left: 10%; top: 10%; text-align: left;">Goal</p>
-
       <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
-      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>arrow keys</b> (left, up, right). Press <b>space</b> to sell the resouces in the final room.<br/> You have <span id='trials_left'></span> days left.</p>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>number keys 1, 2, 3</b>. Press <b>space</b> to sell the resouces and begin the next day.<br/> You have <span id='trials_left'></span> days left.</p>
   </div>
 
   <div id="test_page" style="font-size: 22px; display:block;" align = "center" >
@@ -197,9 +201,9 @@
   <script type="text/javascript">
       $("#consent_page").hide();
       $("#captcha").hide();
-      $("#instruction_page").hide();
+      $("#instruction_page").show();
       $("#check_page").hide();
-      $("#new_trial_page").show();
+      $("#new_trial_page").hide();
       $("#trial_page").hide();
       $("#test_page").hide();
       $("#final_page").hide();
@@ -224,6 +228,9 @@
 
           window.correctCaptcha = correctCaptcha;
           */
+
+          $("#consent_page").hide();
+          $("#instruction_page").show()
       })
 
       $("#continue").click(function () {
@@ -233,12 +240,12 @@
 
       $("#check_answers").click(function () {
           if (instructionsCheck()) {
-              $("#check_answers").hide();
+              $("#check_page").hide();
               initExp();
           } else {
               check_fails++;
-              alert('You have answered some of the questions wrong. Please read the instructions again.');
-              $("#check_answers").hide();
+              alert('You have answered some of the questions incorrectly. Please read the instructions again.');
+              $("#check_page").hide();
               $("#instruction_page").show();
           }
       })
