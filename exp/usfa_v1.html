@@ -44,6 +44,7 @@
       <p>Every day, you will see today's market price for each resource:</p>
       <p><img src="images/new_trial.png" height="300px" ></p>
       <p>In this example, wood sells for $1 per unit, stone sells for $0.50 per unit, and iron cannot be sold.</p>
+      <p>Press the <b>space key</b> to enter the castle.</p>
       <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
       <p><img src="images/doors.png" height="300px" ></p>
       <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>. As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. Note that you can only go forward; you cannot go back to the previous room.</p>
@@ -199,9 +200,9 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").hide();
+      $("#consent_page").show();
       $("#captcha").hide();
-      $("#instruction_page").show();
+      $("#instruction_page").hide();
       $("#check_page").hide();
       $("#new_trial_page").hide();
       $("#trial_page").hide();
@@ -215,8 +216,7 @@
           /*
           $("#captcha").show();
 
-          var response = grecaptcha.getResponse();
-          var correctCaptcha = function(response) {
+          var response = grecaptcha.getResponse(); var correctCaptcha = function(response) {
               console.log(response);
               if (response.length == 0) console.log("You can't proceed!");
               else {
