@@ -99,6 +99,11 @@ title(sprintf('Humans (N = %d)', size(data, 1)));
 xlabel('test task');
 
 
+%
+% ----------- specific for usfa_v1
+%
+
+
 % UVFA baseline for usfa_v1
 UVFA_null = 1;
 [h, p, ci, stat] = ttest(rs{1}, UVFA_null);
