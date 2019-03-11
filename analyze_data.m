@@ -1,11 +1,6 @@
 % analyze behavioral data from chunking experiment
 
-%[data, Ts] = load_data('exp/results', 165); % for exp_v3_7 (mail delivery map aka exp 3 scaled up)
-%[data, Ts] = load_data('exp/results', 105); % for exp_v3_8 (subway 18 map aka mail delivery scaled down)
-%[data, Ts] = load_data('exp/results', 81); % for exp_v1_6 (subway 10 but no assoc)
-%[data, Ts] = load_data('exp/results', 101); % for exp_v2_1 (subway 10 no adj, no assoc)
-%[data, Ts, ~, durs] = load_data('exp/results', 205); % for exp_v2_2 (subway 18 no adj, no assoc)
-%[data, Ts, ~, durs] = load_data('exp/results', 100); %  usfa_v1
+%[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_prelim', 100); %  usfa_v1
 load data.mat
 
 %data = data(durs < 50, :);
