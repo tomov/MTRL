@@ -123,7 +123,7 @@ for t = 1:length(w_train)
             psi{t}{s} = env.phi{s};
             for s_new = 1:env.N
                 psi{t}{s} = psi{t}{s} + env.T(s, a, s_new) * gamma * psi{t}{s_new};
-                fprintf('          a = %d, s_new = %d, T(s,a,s_new) = %f, psi{t}{s_new} = [%f %f %f]\n', a, s_new, env.T(s, a, s_new), psi{t}{s_new});
+                fprintf('          a = %d, s_new = %d, T(s,a,s_new) = %f, psi{t}{s_new} = [%f %f %f %f]\n', a, s_new, env.T(s, a, s_new), psi{t}{s_new});
             end
 
             delta = max(delta, norm(old - psi{t}{s}));
@@ -152,10 +152,12 @@ for t = 1:length(w_test)
         pi_test_SF{t}(s) = NaN;
         for a = env.A
             tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * Vmax{t}));
-            if best < tmp
+            if best <= tmp % TODO make random choices when indifferent; currently order matters b/c of ties
                 best = tmp;
                 pi_test_SF{t}(s) = a;
             end
         end
     end
 end
+
+save shit.mat

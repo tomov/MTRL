@@ -1,6 +1,6 @@
 % init experimental environment
 %
-function env = init_env
+function env = init_env_v1_1
 
 env.N = 13;
 env.S = 1:env.N;
@@ -23,19 +23,20 @@ env.T(4, 2, 12) = 1;
 env.T(4, 3, 13) = 1;
 
 % features phi(s)
-env.phi{1} = [0 0 0];
-env.phi{2} = [0 0 0];
-env.phi{3} = [0 0 0];
-env.phi{4} = [0 0 0];
-env.phi{5} = [0 0 0.9];
-env.phi{6} = [1 0 0.9];
-env.phi{7} = [0 0 0.9];
-env.phi{8} = [0.9 0 0.9];
-env.phi{9} = [0.8 0.8 0.9];
-env.phi{10} = [0 0.9 0.9];
-env.phi{11} = [0 0 0.9];
-env.phi{12} = [0 1 1.5];
-env.phi{13} = [0 0 0.9];
+% TODO make random choices when indifferent; currently order matters b/c of ties
+env.phi{1} = [0 0 0 0];
+env.phi{2} = [0 0 0 0];
+env.phi{3} = [0 0 0 0];
+env.phi{4} = [0 0 0 0];
+env.phi{5} = [0 0.1 0.9 0.9];
+env.phi{6} = [1 0 0.9 0.9];
+env.phi{7} = [0 0 0.9 1.6];
+env.phi{8} = [0.9 0 0.9 0.9];
+env.phi{9} = [0.8 0.8 0.9 0.9];
+env.phi{10} = [0 0.9 0.9 0.9];
+env.phi{11} = [0 0 0.9 0.9];
+env.phi{12} = [0 1 1.6 0.9];
+env.phi{13} = [0 0 0.9 0.9];
 
 % terminal states
 env.terminal = zeros(1, env.N);

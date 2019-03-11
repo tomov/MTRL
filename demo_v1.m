@@ -1,6 +1,6 @@
 clear all;
 
-env = init_env;
+env = init_env_v1;
 w_train = {[1 0 0], [0 1 0]};
 w_test = {[1 1 0], [0 0 1]};
 

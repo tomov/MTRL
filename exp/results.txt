@@ -4,5 +4,14 @@ usfa_v1.html
     hit: [Toyota] momchil medieval usfa_v1 (2dc99b239c44ee89cd3816df815949786758c12c)
     task: http://mturk.gershmanlab.webfactional.com/momchil/castle/usfa_v1.html
     data: exp/results/usfa_v1_prelim
+    methods: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g4ce14460c7_0_0
     results: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g4cf668968e_0_0
+    sim: demo_v1.m
 
+usfa_v1_1.html
+
+    task: http://mturk.gershmanlab.webfactional.com/momchil/castle/usfa_v1_1.html
+    data: 
+    methods: 
+    results: 
+    sim: demo_v1_1.m
