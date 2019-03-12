@@ -6,7 +6,7 @@ w_test = {[1 1 0], [0 0 1]};
 
 for iter = 1:20
 
-    [pi_test_UVFA, pi_test_SF, V, V_test, psi, Vmax] = sim(env, w_train, w_test);
+    [pi_test_UVFA, pi_test_SF, V, V_test, psi, Vmax] = simul(env, w_train, w_test);
 
     for t = 1:length(w_test)
 

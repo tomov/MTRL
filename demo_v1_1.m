@@ -1,12 +1,13 @@
 clear all;
 
-env = init_env_v1_1;
+env = init_env_v1_2;
+%env = init_env_v1_1;
 w_train = {[1 0 0 0], [0 1 0 0]};
 w_test = {[1 1 0 0], [0 0 1 0], [0 0 0 1]};
 
-for iter = 1:20
+for iter = 1:60
 
-    [pi_test_UVFA, pi_test_SF, V, V_test, psi, Vmax] = sim(env, w_train, w_test);
+    [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB] = simul(env, w_train, w_test);
 
     for t = 1:length(w_test)
 
@@ -32,9 +33,24 @@ for iter = 1:20
                 break
             end
             a = pi_test_SF{t}(s);
+            s
+            a
             s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
         tot_r(t, 2, iter) = r;
+
+        % test MB 
+        r = 0;
+        s = 1;
+        while true 
+            r = r + env.phi{s} * w_test{t}';
+            if env.terminal(s)
+                break
+            end
+            a = pi_test_MB{t}(s);
+            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
+        end
+        tot_r(t, 3, iter) = r;
     end
 
 end
@@ -57,10 +73,10 @@ for t = 1:length(w_test)
     end
 
     hold on;
-    bar([1 2], m);
-    errorbar([1 2], m, se, 'color', [0 0 0], 'linestyle', 'none');
-    xticks([1 2]);
-    xticklabels({'UVFA', 'SF'});
+    bar([1 3], m);
+    errorbar([1 3], m, se, 'color', [0 0 0], 'linestyle', 'none');
+    xticks([1 3]);
+    xticklabels({'UVFA', 'SF&GPI', 'MB'});
     ylabel('total reward');
     title(sprintf('test w = [%.1f %.1f %.1f %.1f]', w_test{t}));
 end
@@ -70,9 +86,9 @@ labels = {};
 for t = 1:length(w_test)
     labels{t} = sprintf('w = [%.1f %.1f %.1f %.1f]', w_test{t});
 end
-titles = {'UVFA', 'SF'};
-for i = 1:2
-    subplot(3, 2, 2 + i);
+titles = {'UVFA', 'SF&GPI', 'MB'};
+for i = 1:3
+    subplot(3, 3, 3 + i);
 
     for t = 1:length(w_test)
         r = squeeze(tot_r(t, i, :));
