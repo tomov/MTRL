@@ -1,6 +1,6 @@
 % init experimental environment
 %
-function env = init_env_v1_1
+function env = init_env_v1_1a
 
 env.N = 13;
 env.S = 1:env.N;
@@ -30,9 +30,9 @@ env.phi{3} = [0 0 0 0];
 env.phi{4} = [0 0 0 0];
 env.phi{5} = [0 0.1 0.9 0.9];
 env.phi{6} = [1 0 0.9 0.9];
-env.phi{7} = [0 0 0.9 0];
+env.phi{7} = [0 0 0.9 1.6];
 env.phi{8} = [0.9 0 0.9 0.9];
-env.phi{9} = [0.8 0.8 0.9 1.6];
+env.phi{9} = [0.8 0.8 0.9 0.9];
 env.phi{10} = [0 0.9 0.9 0.9];
 env.phi{11} = [0 0 0.9 0.9];
 env.phi{12} = [0 1 1.6 0.9];
