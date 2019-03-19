@@ -1,6 +1,8 @@
 clear all;
 
 env = init_env_v1;
+filename = 'demo_v1.mat';
+
 w_train = {[1 0 0], [0 1 0]};
 w_test = {[1 1 0], [0 0 1]};
 
@@ -39,6 +41,8 @@ for iter = 1:20
 
 end
 
+save(filename);
+
 figure;
 
 sem = @(x) std(x) / sqrt(length(x));
@@ -58,14 +62,14 @@ for t = 1:length(w_test)
     errorbar([1 2], m, se, 'color', [0 0 0], 'linestyle', 'none');
     xticks([1 2]);
     xticklabels({'UVFA', 'SF'});
-    ylabel('total reward');
-    title(sprintf('test w = [%.1f %.1f %.1f]', w_test{t}));
+    ylabel('test reward');
+    title(sprintf('test w = [%.0f %.0f %.0f]', w_test{t}));
 end
 
 % plot performance on test tasks, fig for each algo
 labels = {};
 for t = 1:length(w_test)
-    labels{t} = sprintf('w = [%.1f %.1f %.1f]', w_test{t});
+    labels{t} = sprintf('w = [%.0f %.0f %.0f]', w_test{t});
 end
 titles = {'UVFA', 'SF'};
 for i = 1:2
@@ -84,7 +88,7 @@ for i = 1:2
 
     xticklabels(labels);
     xtickangle(40);
-    ylabel('total reward');
+    ylabel('test reward');
     title(titles{i});
     xlabel('test task');
 end
@@ -103,9 +107,10 @@ G = digraph(E);
 subplot(3, 1, 3);
 h = plot(G);
 for s = 1:env.N
-    labelnode(h, s, sprintf('phi(%d) = [%.1f %.1f %.1f]', s, env.phi{s}));
+    labelnode(h, s, sprintf('phi(%d) = [%.0f %.0f %.0f]', s, env.phi{s} * 10));
 end
 ylim([-0.5 4]);
 xlim([0.5 11]);
 set(gca, 'xtick', []);
 set(gca, 'ytick', []);
+xlabel('note: all features x 10 (for vizualization)');
