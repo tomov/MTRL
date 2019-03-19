@@ -7,34 +7,8 @@ load data.mat
 
 sem = @(x) std(x) / sqrt(length(x));
 
-r = [];
-s = [];
-g = {};
-len = [];
-group = [];
-dir = []; % direction = 2nd state on path
-ord = []; % ordinal of trial type within phase (e.g. "first 1->6", "second 1->6", etc)
-subj_group = [];
-subj_len = [];
-s_id = [];
-for subj = 1:size(data,1) % for each subject
-    phase = 2; % training exp_v3_7, usually it's 2 = test
-    for i = 1:length(data(subj, phase).s) % for each trial 
-        which = find(data(subj, phase).s == data(subj, phase).s(i) & strcmp(data(subj, phase).g, data(subj, phase).g(i)));
-        clear o;
-        o(which) = find(which);
-        ord = [ord; o(i)];
-        r = [r; data(subj, phase).r(i)];
-        s = [s; data(subj, phase).s(i)];
-        g = [g; data(subj, phase).g(i)];
-        len = [len; data(subj, phase).len(i)];
-        dir = [dir; data(subj, phase).path{i}(2)];
-        group = [group; data(subj, phase).group(i)];
-        s_id = [s_id; subj];
-    end
-    subj_group = [subj_group; data(subj,1).group(1)];
-    subj_len = [subj_len; mean(data(subj, 1).len)];
-end
+tbl = data2table(data);
+N = size(data, 1);
 
 
 % show learning
@@ -73,8 +47,8 @@ ms = [];
 sems = [];
 rs = {};
 for t = 1:length(goals)
-    which = strcmp(g, goals{t}); % ord is usually just 1
-    rs{t} = r(which) / 100;
+    which = strcmp(tbl.g, goals{t}); % ord is usually just 1
+    rs{t} = tbl.r(which) / 100;
 
     ms = [ms mean(rs{t})];
     sems = [sems sem(rs{t})];
@@ -89,7 +63,7 @@ xticks(1:length(ms));
 
 xticklabels(goals);
 xtickangle(40);
-ylabel('total reward');
+ylabel('test reward');
 title(sprintf('Humans (N = %d)', size(data, 1)));
 xlabel('test task');
 
