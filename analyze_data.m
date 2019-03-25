@@ -12,6 +12,7 @@ sem = @(x) std(x) / sqrt(length(x));
 tbl = data2table(data);
 N = size(data, 1);
 
+%{
 
 % show learning
 %
@@ -212,7 +213,131 @@ for t = 1:length(goals)
 
 end
 
+%
+% split training histograms (prev plot) by optimal vs. suboptimal on [1 1 0] vs. [0 0 1]
+%
+
+ms = {[], []; [], []};
+sems = {[], []; [], []};
+
+for i = 5:13 % TODO hardcoded
+    f = [];
+    test_c2_1 = [];
+    test_c2_2 = [];
+    for subj = 1:N
+        which = tbl.s_id == subj & tbl.c2 == i & tbl.phase == 1;
+        f = [f; sum(which)]; % # of visits to terminal state i for test task t during training
+        test_c2_1 = [test_c2_1; tbl.c2(tbl.s_id == subj & strcmp(goals{1}, tbl.g))]; % the subject's terminal state for test task 1
+        test_c2_2 = [test_c2_2; tbl.c2(tbl.s_id == subj & strcmp(goals{2}, tbl.g))]; % the subject's terminal state for test task 2
+    end
+    f11 = f(test_c2_1 == test_optim(1) & test_c2_2 == test_optim(2));
+    f12 = f(test_c2_1 ~= test_optim(1) & test_c2_2 == test_optim(2));
+    f21 = f(test_c2_1 == test_optim(1) & test_c2_2 ~= test_optim(2));
+    f22 = f(test_c2_1 ~= test_optim(1) & test_c2_2 ~= test_optim(2));
+
+    ms{1,1} = [ms{1,1} mean(f11)];
+    ms{1,2} = [ms{1,2} mean(f12)];
+    ms{2,1} = [ms{2,1} mean(f21)];
+    ms{2,2} = [ms{2,2} mean(f22)];
+
+    sems{1,1} = [sems{1,1} sem(f11)];
+    sems{1,2} = [sems{1,2} sem(f12)];
+    sems{2,1} = [sems{2,1} sem(f21)];
+    sems{2,2} = [sems{2,2} sem(f22)];
+end
+
+n(1,1) = numel(f11);
+n(1,2) = numel(f12);
+n(2,1) = numel(f21);
+n(2,2) = numel(f22);
+
+figure;
+
+labels = {sprintf('optimal on %s, optimal on %s', goals{1}, goals{2}), sprintf('suboptimal on %s, optimal on %s', goals{1}, goals{2}); sprintf('optimal on %s, suboptimal on %s', goals{1}, goals{2}), sprintf('suboptimal on %s, suboptimal on %s', goals{1}, goals{2})};
+
+for r = 1:2
+    for c = 1:2
+        subplot(2, 2, (r-1)*2 + c);
+
+        bar(5:13, ms{r,c});
+        hold on;
+        errorbar(5:13, ms{r,c}, sems{r,c}, 'color', [0 0 0], 'linestyle', 'none');
+        xticks(5:13);
+        xlim([4.5 13.5]);
+        xlabel('final state');
+        ylabel('# visits during training');
+        title(labels{r,c});
+        if r == 2 && c == 1
+            text(6, 45, sprintf('N = %d', n(r,c)));
+        else
+            text(8, 25, sprintf('N = %d', n(r,c)));
+        end
+    end
+end
+
+p1 = (n(1,1) + n(2,1)) / N; % empirical P(optimal on task 1)
+p2 = (n(1,1) + n(1,2)) / N; % empirical P(optimal on task 2)
+observed = [n(1,1) n(1,2) n(2,1) n(2,2)]; % observed frequencies
+expected = [p1*p2  (1-p1)*p2 p1*(1-p2) (1-p1)*(1-p2)] * N; % expected frequencies
+nparams = 2; % p1 and p2
+
+[h, p, stats] = chi2gof([1 2 3 4], 'freq', observed, 'expected', expected, 'ctrs', [1 2 3 4], 'nparams', nparams);
+
+fprintf('\nAre the subject counts consistent with performance on the two test tasks being independent? chi2(%d) = %.4f, p = %.4f\n', stats.df, stats.chi2stat, p);
 
 %
-% is # visits to (0.8 0.8) same as # visits to 
+% is # visits to (0.8 0.8) same as # visits to where we plan to put the model-based test?
 %
+
+states = [9, 7];
+
+f = {[], []};
+
+for i = 1:2
+    for subj = 1:N
+        which = tbl.s_id == subj & tbl.c2 == states(i) & tbl.phase == 1;
+        f{i} = [f{i}; sum(which)];
+    end
+end
+
+ms = [mean(f{1}) mean(f{2})];
+sems = [sem(f{1}) sem(f{2})];
+
+figure;
+
+bar(ms);
+hold on;
+errorbar(ms, sems, 'color', [0 0 0], 'linestyle', 'none');
+xticklabels(states);
+xlabel('final state');
+ylabel('# visits during training');
+
+[h, p, ci, stats] = ttest2(f{1}, f{2});
+fprintf('\nAre the # of visits to the compromise state (9) more than the less interesting state (7) (that we could use to test model-based)? t(%d) = %.4f, p = %.4f\n', stats.df, stats.tstat, p);
+
+%}
+
+%
+% does training score track test score?
+%
+
+r_train = [];
+r_test = [];
+for subj = 1:N
+    r_train = [r_train; sum(tbl.r(tbl.s_id == subj & tbl.phase == 1))];
+    r_test = [r_test; sum(tbl.r(tbl.s_id == subj & tbl.phase == 2))];
+end
+
+coef1 = polyfit(r_train, r_test, 1);
+coef2 = polyfit(r_train, r_test, 2);
+
+figure;
+scatter(r_train, r_test);
+hold on;
+plot(sort(r_train), polyval(coef2, sort(r_train)));
+title('training perf vs test perf');
+ylabel('cumulative test reward');
+xlabel('cumulative training reward');
+
+[r, p] = corr(r_train, r_test);
+fprintf('Are training and test perf correlated? r = %.4f, p = %.4f (N = %d)\n', r, p, N);
