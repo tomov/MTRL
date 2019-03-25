@@ -24,6 +24,7 @@ for iter = 1:60
             a = pi_test_UVFA{t}(s);
             s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
+        term(t, 1, iter) = s;
         tot_r(t, 1, iter) = r;
 
         % test SF 
@@ -35,10 +36,9 @@ for iter = 1:60
                 break
             end
             a = pi_test_SF{t}(s);
-            s
-            a
             s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
+        term(t, 2, iter) = s;
         tot_r(t, 2, iter) = r;
 
         % test MB 
@@ -52,6 +52,7 @@ for iter = 1:60
             a = pi_test_MB{t}(s);
             s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
+        term(t, 3, iter) = s;
         tot_r(t, 3, iter) = r;
 
         % test MF 
@@ -65,6 +66,7 @@ for iter = 1:60
             a = pi_test_MF(s);
             s = find(mnrnd(1, squeeze(env.T(s, a, :))));
         end
+        term(t, 4, iter) = s;
         tot_r(t, 4, iter) = r;
     end
 
@@ -83,16 +85,18 @@ sem = @(x) std(x) / sqrt(length(x));
 for t = 1:length(w_test)
     subplot(3, length(w_test), t);
 
-    for i = 1:2
+    clear m;
+    clear se;
+    for i = 1:4
         r = squeeze(tot_r(t, i, :));
         m(i) = mean(r);
         se(i) = sem(r);
     end
 
     hold on;
-    bar([1 4], m);
-    errorbar([1 4], m, se, 'color', [0 0 0], 'linestyle', 'none');
-    xticks([1 4]);
+    bar([1:4], m);
+    errorbar([1:4], m, se, 'color', [0 0 0], 'linestyle', 'none');
+    xticks([1:4]);
     xticklabels({'UVFA', 'SF&GPI', 'MB', 'MF'});
     ylabel('test reward');
     title(sprintf('test w = [%.0f %.0f %.0f %.0f]', w_test{t}));
@@ -105,8 +109,10 @@ for t = 1:length(w_test)
 end
 titles = {'UVFA', 'SF&GPI', 'MB', 'MF'};
 for i = 1:4
-    subplot(3, 4, 3 + i);
+    subplot(3, 4, 4 + i);
 
+    clear m;
+    clear se;
     for t = 1:length(w_test)
         r = squeeze(tot_r(t, i, :));
         m(t) = mean(r);
@@ -147,3 +153,35 @@ set(gca, 'xtick', []);
 set(gca, 'ytick', []);
 title('MDP');
 xlabel('note: all features x 10 (for vizualization)');
+
+
+% histogram of final test states
+%
+
+figure;
+
+plot_idx = 0;
+for i = 1:4
+
+    for t = 1:length(w_test)
+        
+        cnt = [];
+        for s = 5:13 % TODO hardcoded
+            which = squeeze(term(t, i, :)) == s;
+            cnt(s) = sum(which);
+        end
+
+        plot_idx = plot_idx + 1;
+        subplot(4, length(w_test), plot_idx);
+
+        bar(cnt);
+
+        title(labels{t});
+        xticks(5:13);
+        xlim([4.5 13.5]);
+        xlabel('final state');
+        if t == 1
+            ylabel(titles{i});
+        end
+    end
+end

@@ -118,7 +118,7 @@ function [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB, pi_te
             pi_test_SF{t}(s) = NaN;
             for a = env.A
                 tmp = sum(squeeze(env.T(s, a, :))' .* (gamma * Vmax{t}));
-                if best <= tmp % TODO make random choices when indifferent; currently order matters b/c of ties
+                if best < tmp || (best == tmp && rand < 0.5) % TODO break ties better 
                     best = tmp;
                     pi_test_SF{t}(s) = a;
                 end
@@ -143,11 +143,11 @@ function [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB, pi_te
     % unroll training tasks
     ws = [];
     for t = 1:length(w_train)
-        for i = 1:50
+        for i = 1:200
             ws = [ws; w_train{t}];
         end
     end
-    ws = ws(randperm(size(ws, 1)));
+    ws = ws(randperm(size(ws, 1)), :);
 
     % Q-learn
     Q = rand(env.N, length(env.A)); % to break ties initially
@@ -169,11 +169,13 @@ function [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB, pi_te
 
             % next state and reward
             s_new = find(mnrnd(1, squeeze(env.T(s, a, :))));
-            r = env.phi{s_new} * w_test{t}';
+            r = env.phi{s_new} * ws(i,:)';
 
             [~, a_new] = max(Q(s_new,:)); % best next action
 
             Q(s,a) = Q(s,a) + alpha * (r + gamma * Q(s_new,a_new) - Q(s,a));
+
+            s = s_new;
         end
     end
 
@@ -181,6 +183,7 @@ function [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB, pi_te
     for s = 1:env.N
         [~, pi_test_MF(s)] = max(Q(s,:));
     end
+
 
 end
 
