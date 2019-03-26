@@ -1,71 +1,45 @@
 clear all;
 
 %env = init_env_v1_2;
-env = init_env_v1_1a;
-filename = 'demo_v1_1a.mat';
+env = init_env_v1_1c;
+filename = 'demo_v1_1c.mat';
 
-w_train = {[1 0 0 0], [0 1 0 0]};
-w_test = {[1 1 0 0], [0 0 1 0], [0 0 0 1]};
+w_train = {[1 0 0 0], [0 1 0 0], [1 0 0 0], [0 1 0 0]};
+w_test = {[1 1 0 0], [0 0 1 0], [0 0 0 1]}; 
+params = init_params();
 
 for iter = 1:60
 
-    [pi_test_UVFA, pi_test_SF, V, V_test_UVFA, psi, Vmax, pi_test_MB, pi_test_MF] = simul(env, w_train, w_test);
+    UVFA = train_UVFA(env, w_train, params.gamma, 100);
+    pi_test_UVFA = test_UVFA(env, w_test, params.gamma, UVFA);
+
+    psi = train_SFGPI(env, w_train, params.gamma);
+    pi_test_SF = test_SFGPI(env, w_test, params.gamma, psi);
+
+    pi_test_MB = test_MB(env, w_test, params.gamma);
+
+    Q = train_MF(env, w_train, params.gamma, params.alpha, params.eps);
+    pi_test_MF = test_MF(env, w_test, Q);
 
     for t = 1:length(w_test)
 
         % test UVFA
-        r = 0;
-        s = 1;
-        while true
-            r = r + env.phi{s} * w_test{t}';
-            if env.terminal(s)
-                break
-            end
-            a = pi_test_UVFA{t}(s);
-            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
-        end
+        [r, s] = test_perf(env, pi_test_UVFA{t}, w_test{t});
         term(t, 1, iter) = s;
         tot_r(t, 1, iter) = r;
 
         % test SF 
-        r = 0;
-        s = 1;
-        while true 
-            r = r + env.phi{s} * w_test{t}';
-            if env.terminal(s)
-                break
-            end
-            a = pi_test_SF{t}(s);
-            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
-        end
+        [r, s] = test_perf(env, pi_test_SF{t}, w_test{t});
         term(t, 2, iter) = s;
         tot_r(t, 2, iter) = r;
 
         % test MB 
-        r = 0;
-        s = 1;
-        while true 
-            r = r + env.phi{s} * w_test{t}';
-            if env.terminal(s)
-                break
-            end
-            a = pi_test_MB{t}(s);
-            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
-        end
+        [r, s] = test_perf(env, pi_test_MB{t}, w_test{t});
         term(t, 3, iter) = s;
         tot_r(t, 3, iter) = r;
 
         % test MF 
-        r = 0;
-        s = 1;
-        while true 
-            r = r + env.phi{s} * w_test{t}';
-            if env.terminal(s)
-                break
-            end
-            a = pi_test_MF(s);
-            s = find(mnrnd(1, squeeze(env.T(s, a, :))));
-        end
+        [r, s] = test_perf(env, pi_test_MF, w_test{t});
         term(t, 4, iter) = s;
         tot_r(t, 4, iter) = r;
     end
