@@ -7,7 +7,7 @@ function [UVFA, V] = train_UVFA(env, w_train, gamma, niters)
     % value iteration -- V{t}(s) = value f'n for task t, state s
     %
     for t = 1:length(w_train)
-        fprintf('t = %d\n', t);
+        %fprintf('t = %d\n', t);
 
         [V{t}, pi{t}] = value_iteration(env, w_train{t}, gamma);
     end

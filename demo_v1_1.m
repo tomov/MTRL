@@ -1,11 +1,11 @@
 clear all;
 
 %env = init_env_v1_2;
-env = init_env_v1_1c;
-filename = 'demo_v1_1c.mat';
+env = init_env_v1_1d;
+filename = 'demo_v1_1d.mat';
 
-w_train = {[1 0 0 0], [0 1 0 0], [1 0 0 0], [0 1 0 0]};
-w_test = {[1 1 0 0], [0 0 1 0], [0 0 0 1]}; 
+w_train = {[1 -2 0], [-2 1 0], [1 -1 0], [-1 1 0]};
+w_test = {[1 1 0], [0 0 1 ]};  
 params = init_params();
 N = 60;
 

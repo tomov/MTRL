@@ -12,7 +12,7 @@ function [V, pi] = value_iteration(env, w, gamma)
     while true
         delta = 0;
         for s = env.S
-            fprintf('   s = %d\n', s);
+            %fprintf('   s = %d\n', s);
             v = V(s);
 
             r = env.phi{s} * w';
@@ -20,7 +20,7 @@ function [V, pi] = value_iteration(env, w, gamma)
             best = -Inf;
             for a = env.A
                 tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * V));
-                fprintf('           a = %d, tmp = %f\n', s, tmp);
+                %fprintf('           a = %d, tmp = %f\n', s, tmp);
                 if best < tmp
                     best = tmp;
                     pi(s) = a;

@@ -13,7 +13,7 @@ function Q = train_MF(env, w_train, gamma, alpha, eps)
     ws = ws(randperm(size(ws, 1)), :);
 
     % Q-learn
-    Q = rand(env.N, length(env.A)); % to break ties initially
+    Q = rand(env.N, length(env.A)) * 0.01; % to break ties initially
     eps = 0.9;
     alpha = 0.1;
     for i = 1:size(ws,1)
@@ -32,11 +32,17 @@ function Q = train_MF(env, w_train, gamma, alpha, eps)
 
             % next state and reward
             s_new = find(mnrnd(1, squeeze(env.T(s, a, :))));
+
             r = env.phi{s_new} * ws(i,:)';
 
             [~, a_new] = max(Q(s_new,:)); % best next action
 
             Q(s,a) = Q(s,a) + alpha * (r + gamma * Q(s_new,a_new) - Q(s,a));
+
+            if s_new == 7
+                fprintf('s_new = 7, Q(s,a) = %.1f, r = %.1f\n', Q(s,a), r);
+            end
+
 
             s = s_new;
         end
