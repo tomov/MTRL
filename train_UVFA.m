@@ -42,5 +42,4 @@ function [UVFA, V] = train_UVFA(env, w_train, gamma, niters)
 
     yy = UVFA(X);
     perf = perform(UVFA, yy, y);
-    perf
 
