@@ -262,6 +262,9 @@ function nextTrial() {
         } else {
             // finished
             bonus = rewards[Math.floor(Math.random() * rewards.length)];
+            if (bonus < 0) {
+                bonus = 0;
+            }
             $('#bonus').text((bonus/100).toFixed(2));
             $("#final_page").show();
             logBonus();
