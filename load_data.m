@@ -55,6 +55,8 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new] = load_data(dirname, expected
         end
         Ts{subj} = T;
 
+        disp(files(idx).name);
+
         skip_subj = false;
 
         % TODO dedupe with init_D_from_csv.m
@@ -63,6 +65,8 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new] = load_data(dirname, expected
         max_RT = 0;
         phase = 1;
         j = 1; % idx within phase
+
+
         for i = 1:size(T,1)
             stage = strip(T.stage{i});
             switch phase

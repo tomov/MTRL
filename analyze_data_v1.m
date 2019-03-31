@@ -2,8 +2,8 @@
 
 clear all;
 
-%[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1d_prelim', 100); %  usfa_v1_1d
-load data.mat
+[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_prelim', 100); %  usfa_v1
+%load data.mat
 
 %data = data(durs < 50, :);
 
@@ -103,15 +103,11 @@ figure;
 
 fprintf('\n\n Are the optimal test states chosen more frequently than chance?  \n');
 
-interesting_test_states{1} = {[6], [9], [12], [5 7 8 10 11 13]};
-interesting_test_states{2} = {[7], [12], [9], [5 6 8 10 11 13]};
-
-final_states = 5:13;
-test_optim = [9, 7];
+test_optim = [9, 12];
 train_optim = [6, 12];
 for t = 1:length(goals)
     cnt{t} = [];
-    for i = final_states 
+    for i = 5:13 % TODO hardcoded
         which = tbl.c2 == i & strcmp(tbl.g, goals{t});
         cnt{t}(i) = sum(which); % # of visits to terminal state i during test task t
     end
@@ -119,7 +115,7 @@ for t = 1:length(goals)
     subplot(1, length(goals), t);
     bar(cnt{t});
     title(sprintf('w = %s', goals{t}));
-    xticks(final_states);
+    xticks(5:13);
     xlim([4.5 13.5]);
     xlabel('final state');
     ylabel('# subjects');
@@ -127,48 +123,16 @@ for t = 1:length(goals)
     fprintf('\nw = %s\n', goals{t});
 
     % generous test -- assume null = random walk
-    for j = 1:length(interesting_test_states{t})
-        if length(interesting_test_states{t}{j}) == 1
-            s = interesting_test_states{t}{j};
-            c = cnt{t}(s);
-            p = myBinomTest(c, N, 1/9);
-            fprintf('(generous) two-tailed binomial test (%d out of %d subjects went to state %d; chance is ~%d): p = %.6f\n', c, N, s, round(N/9), p);
-        end
-    end
+    c = cnt{t}(test_optim(t));
+    p = myBinomTest(c, N, 1/9);
+    fprintf('(generous) two-tailed binomial test (%d out of %d subjects went to optimal state %d; chance is ~%d): p = %.6f\n', c, N, test_optim(t), round(N/9), p);
 
     % conservative test -- assume null = random of test optimal & training optimal policies
-    for j = 1:length(interesting_test_states{t})
-        if length(interesting_test_states{t}{j}) == 1
-            s = interesting_test_states{t}{j};
-            c = cnt{t}(s);
-            finals = unique([s train_optim]);
-            p = myBinomTest(c, sum(cnt{t}(finals)), 1/length(finals));
-            fprintf('(conservative) two-tailed binomial (%d out of %d subjects went to optimal state %d; chance is ~%d): p = %.6f\n', c, sum(cnt{t}(finals)), s, round(mean(cnt{t}(finals))), p);
-        end
-    end
-
-    fprintf('\n');
-
-    states = final_states;
-    N_left = N;
-    for j = 1:length(interesting_test_states{t})
-        expected = repmat(N_left/length(states), 1, length(states));
-        observed = cnt{t}(states);
-        nparams = 0;
-        [h, p, stats] = chi2gof(1:length(states), 'freq', observed, 'expected', expected, 'ctrs', 1:length(states), 'nparams', nparams);
-
-        fprintf('Did the test choice counts for task %s states [%s] happen by chance? chi2(%d) = %.4f, p = %.4f\n', goals{t}, sprintf('%d ', states), stats.df, stats.chi2stat, p);
-
-        % exclude interesting state
-        states(ismember(states, interesting_test_states{t}{j})) = [];
-        N_left = N_left - sum(cnt{t}(interesting_test_states{t}{j}));
-    end
-
+    c = cnt{t}(test_optim(t));
+    finals = unique([test_optim(t) train_optim]);
+    p = myBinomTest(c, sum(cnt{t}(finals)), 1/length(finals));
+    fprintf('(conservative) two-tailed binomial (%d out of %d subjects went to optimal state %d; chance is ~%d): p = %.6f\n', c, sum(cnt{t}(finals)), test_optim(t), round(mean(cnt{t}(finals))), p);
 end
-
-
-
-
 
 %
 % does P(find test state) depend on # visits to that state during training?
@@ -206,7 +170,7 @@ end
 
 
 %
-% histogram of training states
+% histogram of final training states
 %
 
 figure;
@@ -214,14 +178,9 @@ figure;
 fprintf('\n\n  For subjects that find the optimal test state, which states do they visit during training? What about the suboptimal subjects?  \n\n');
 
 for t = 1:length(goals)
-
-    ms = {};
-    sems = {};
-    for j = 1:length(interesting_test_states{t})
-        ms = [ms, {[]}];
-        sems = [sems, {[]}];
-    end
-    for i = final_states
+    ms = {[], []};
+    sems = {[], []};
+    for i = 5:13 % TODO hardcoded
         f = [];
         test_c2 = [];
         for subj = 1:N
@@ -229,30 +188,29 @@ for t = 1:length(goals)
             f = [f; sum(which)]; % # of visits to terminal state i for test task t during training
             test_c2 = [test_c2; tbl.c2(tbl.s_id == subj & strcmp(goals{t}, tbl.g))]; % the subject's terminal state for test task t
         end
+        f1 = f(test_c2 == test_optim(t));
+        f2 = f(test_c2 ~= test_optim(t));
 
-        for j = 1:length(interesting_test_states{t})
-            ff = f(ismember(test_c2, interesting_test_states{t}{j}));
-            ms{j} = [ms{j} mean(ff)];
-            sems{j} = [sems{j} sem(ff)];
-        end
+        ms{1} = [ms{1} mean(f1)];
+        ms{2} = [ms{2} mean(f2)];
+        sems{1} = [sems{1} sem(f1)];
+        sems{2} = [sems{2} sem(f2)];
     end
 
-    for i = 1:length(interesting_test_states{t})
-        subplot(length(interesting_test_states{t}), length(goals), (i-1)*length(goals) + t);
-        bar(final_states, ms{i});
+    labels = {sprintf('optimal on %s', goals{t}), sprintf('suboptimal on %s', goals{t})};
+    for i = 1:2
+        subplot(length(goals), 2, (i-1)*2 + t);
+        bar(5:13, ms{i});
         hold on;
-        errorbar(final_states, ms{i}, sems{i}, 'color', [0 0 0], 'linestyle', 'none');
-
-        title(sprintf('went to one of [%s] on %s', sprintf('%d ', interesting_test_states{t}{i}), goals{t}));
-        xticks(final_states);
+        errorbar(5:13, ms{i}, sems{i}, 'color', [0 0 0], 'linestyle', 'none');
+        title(labels{i});
+        xticks(5:13);
         xlim([4.5 13.5]);
         xlabel('final state');
         ylabel('# visits during training');
     end
 
 end
-
-%{
 
 %
 % split training histograms (prev plot) by optimal vs. suboptimal on [1 1 0] vs. [0 0 1]
@@ -261,7 +219,7 @@ end
 ms = {[], []; [], []};
 sems = {[], []; [], []};
 
-for i = final_states 
+for i = 5:13 % TODO hardcoded
     f = [];
     test_c2_1 = [];
     test_c2_2 = [];
@@ -300,10 +258,10 @@ for r = 1:2
     for c = 1:2
         subplot(2, 2, (r-1)*2 + c);
 
-        bar(final_states, ms{r,c});
+        bar(5:13, ms{r,c});
         hold on;
-        errorbar(final_states, ms{r,c}, sems{r,c}, 'color', [0 0 0], 'linestyle', 'none');
-        xticks(final_states);
+        errorbar(5:13, ms{r,c}, sems{r,c}, 'color', [0 0 0], 'linestyle', 'none');
+        xticks(5:13);
         xlim([4.5 13.5]);
         xlabel('final state');
         ylabel('# visits during training');
@@ -356,8 +314,6 @@ ylabel('# visits during training');
 [h, p, ci, stats] = ttest2(f{1}, f{2});
 fprintf('\nAre the # of visits to the compromise state (9) more than the less interesting state (7) (that we could use to test model-based)? t(%d) = %.4f, p = %.4f\n', stats.df, stats.tstat, p);
 
-%}
-
 
 %
 % does training score track test score?
@@ -383,5 +339,3 @@ xlabel('cumulative training reward');
 
 [r, p] = corr(r_train, r_test);
 fprintf('Are training and test perf correlated? r = %.4f, p = %.4f (N = %d)\n', r, p, N);
-
-%}

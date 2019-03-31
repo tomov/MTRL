@@ -4,14 +4,17 @@ usfa_v1.html
     hit: [Toyota] momchil medieval usfa_v1 (2dc99b239c44ee89cd3816df815949786758c12c)
     task: http://mturk.gershmanlab.webfactional.com/momchil/castle/usfa_v1.html
     data: exp/results/usfa_v1_prelim
+    analyze: analyze_data_v1.m
     methods: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g4ce14460c7_0_0
     results: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g4cf668968e_0_0
     sim: demo_v1.m
 
-usfa_v1_1.html
+usfa_v1_1d.html
 
-    task: http://mturk.gershmanlab.webfactional.com/momchil/castle/usfa_v1_1.html
-    data: 
-    methods: 
-    results: 
-    sim: demo_v1_1.m
+    hit: Project: [Toyota] momchil medieval usfa_v1_1d (6e5dad145cecd296bff3bd8621226d7cc435b35f)
+    task: http://mturk.gershmanlab.webfactional.com/momchil/castle/usfa_v1_1d.html
+    data: exp/results/usfa_v1_1d_prelim
+    analyze: analyze_data.m
+    methods: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g551ad297ab_0_20 
+    results: https://docs.google.com/presentation/d/1Y5__aiNTXLf2V5XQq-yJQhWF09Fy0EyTq0GW2qD7vpk/edit#slide=id.g55c2eed3a3_0_0
+    sim: demo_v1_1d.m

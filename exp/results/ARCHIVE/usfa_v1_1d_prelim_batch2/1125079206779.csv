@@ -1,0 +1,4 @@
+group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails
+A,1125079206779,train,1,[-1 1 0],1 3 10,3,5916 12410 12692,51 50 32,0 1,31018,90,1553911858.541,Fri Mar 29 2019 22:10:58 GMT-0400 (Eastern Daylight Time),0
+A,1125079206779,train,1,[1 -2 0],1 2 5,3,1181 5402 6404 331 297 1336,50 49 49 50 51 32,0 1,14951,-60,1553911875.914,Fri Mar 29 2019 22:11:15 GMT-0400 (Eastern Daylight Time),0
+A,1125079206779,train,1,[1 -1 0],1 4 12,3,1699 3099 40600,49 49 32,0 1,45398,-100,1553911923.744,Fri Mar 29 2019 22:12:03 GMT-0400 (Eastern Daylight Time),0
