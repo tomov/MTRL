@@ -37,7 +37,7 @@ env.phi{9} = [0.8 0.8 1.6];
 env.phi{10} = [0 0.9 0.9 ];
 env.phi{11} = [0.2 0.2 0 ];
 env.phi{12} = [0 1 1.6];
-env.phi{13} = [0.1 0 0 ];
+env.phi{13} = [0.1 0 0.5 ];
 
 % terminal states
 env.terminal = zeros(1, env.N);

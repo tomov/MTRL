@@ -3,7 +3,7 @@ function [UVFA, V] = train_UVFA(env, w_train, gamma, niters)
     if ~exist('niters', 'var')
         niters = 10;
     end
-    beta = 10; % doesn't matter
+    beta = 50; % doesn't matter
 
     % value iteration -- V{t}(s) = value f'n for task t, state s
     %
