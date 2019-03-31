@@ -24,7 +24,7 @@ function Q = train_MF(env, w_train, gamma, alpha, eps)
                 break
             end
 
-            % eps-greedy
+            % eps-greedy ; note we use it here to ensure convergence, but for test, we use softmax
             [~, a] = max(Q(s,:));
             if rand < 1 - eps
                 a = randsample([1:a-1 a+1:length(env.A)], 1);

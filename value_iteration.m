@@ -1,7 +1,6 @@
-function [V, pi] = value_iteration(env, w, gamma)
+function [V, pi] = value_iteration(env, w, gamma, beta)
 
     V = zeros(1, env.N);
-    pi = zeros(1, env.N);
 
     % important to init at least terminal states
     for s = env.S
@@ -9,6 +8,7 @@ function [V, pi] = value_iteration(env, w, gamma)
     end
 
     threshold = 0.01;
+    % compute values
     while true
         delta = 0;
         for s = env.S
@@ -17,18 +17,18 @@ function [V, pi] = value_iteration(env, w, gamma)
 
             r = env.phi{s} * w';
 
-            best = -Inf;
+            Q = [];
             for a = env.A
                 tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * V));
-                %fprintf('           a = %d, tmp = %f\n', s, tmp);
-                if best < tmp || (best == tmp && rand < 0.5) % TODO break ties better 
-                    best = tmp;
-                    pi(s) = a;
-                end
+                Q = [Q, tmp];
             end
-            V(s) = best;
+            V(s) = max(Q);
 
-            delta = max(delta, abs(v - best));
+            P = exp(Q * beta);
+            P = P / sum(P);
+            pi{s} = P;
+
+            delta = max(delta, abs(v - V(s)));
         end
 
         if delta < threshold
@@ -36,3 +36,4 @@ function [V, pi] = value_iteration(env, w, gamma)
         end
     end
 end
+

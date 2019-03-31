@@ -1,4 +1,4 @@
-function [pi_test_SF] = test_SFGPI(env, w_test, gamma, psi)
+function [pi_test_SF] = test_SFGPI(env, w_test, gamma, beta, psi)
 
     % see what SF will do 
     for t = 1:length(w_test)
@@ -13,14 +13,16 @@ function [pi_test_SF] = test_SFGPI(env, w_test, gamma, psi)
         % compute policies
         for s = 1:env.N
             best = -Inf;
-            pi_test_SF{t}(s) = NaN;
+
+            Q = [];
             for a = env.A
                 tmp = sum(squeeze(env.T(s, a, :))' .* (gamma * Vmax{t}));
-                if best < tmp || (best == tmp && rand < 0.5) % TODO break ties better 
-                    best = tmp;
-                    pi_test_SF{t}(s) = a;
-                end
+                Q = [Q, tmp];
             end
+
+            P = exp(Q * beta);
+            P = P / sum(P);
+            pi_test_SF{t}{s} = P;
         end
     end
 

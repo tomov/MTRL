@@ -12,7 +12,7 @@ function [r, s] = test_perf(env, pi, w)
         if env.terminal(s)
             break
         end
-        a = pi(s);
+        a = find(mnrnd(1, pi{s}));
         s = find(mnrnd(1, squeeze(env.T(s, a, :))));
     end
     
