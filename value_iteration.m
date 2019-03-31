@@ -21,7 +21,7 @@ function [V, pi] = value_iteration(env, w, gamma)
             for a = env.A
                 tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * V));
                 %fprintf('           a = %d, tmp = %f\n', s, tmp);
-                if best < tmp
+                if best < tmp || (best == tmp && rand < 0.5) % TODO break ties better 
                     best = tmp;
                     pi(s) = a;
                 end
