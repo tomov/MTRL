@@ -2,7 +2,7 @@
 
 clear all;
 
-%[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1f', 100); %  usfa_v1_1d
+%[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1f', 100); 
 load data.mat
 
 %data = data(durs < 50, :);
@@ -41,15 +41,16 @@ title('learning');
 % show test choices
 %
 
-goals = {'[1 1 -1]', '[0 0 1]'};
+test_goals = {'[1 1 -1]', '[0 0 1]'};
+train_goals = {'[1 -2 0]', '[-2 1 0]', '[1 -1 0]', '[-1 1 0]'};
 
 figure;
 
 ms = [];
 sems = [];
 rs = {};
-for t = 1:length(goals)
-    which = strcmp(tbl.g, goals{t}); % ord is usually just 1
+for t = 1:length(test_goals)
+    which = strcmp(tbl.g, test_goals{t}); % ord is usually just 1
     rs{t} = tbl.r(which) / 100;
 
     ms = [ms mean(rs{t})];
@@ -63,7 +64,7 @@ errorbar(ms, sems, 'color', [0 0 0], 'linestyle', 'none');
 plot([0 3], [1 1], '--', 'color', [0.4 0.4 0.4]);
 xticks(1:length(ms));
 
-xticklabels(goals);
+xticklabels(test_goals);
 xtickangle(40);
 ylabel('test reward');
 title(sprintf('Humans (N = %d)', size(data, 1)));
@@ -109,22 +110,22 @@ interesting_test_states{2} = {[7], [10], [12], [5 6 8 9 11 13]};
 final_states = 5:13;
 test_optim = [11, 7];
 train_optim = [6, 12];
-for t = 1:length(goals)
+for t = 1:length(test_goals)
     cnt{t} = [];
     for i = final_states 
-        which = tbl.c2 == i & strcmp(tbl.g, goals{t});
+        which = tbl.c2 == i & strcmp(tbl.g, test_goals{t});
         cnt{t}(i) = sum(which); % # of visits to terminal state i during test task t
     end
 
-    subplot(1, length(goals), t);
+    subplot(1, length(test_goals), t);
     bar(cnt{t});
-    title(sprintf('w = %s', goals{t}));
+    title(sprintf('w = %s', test_goals{t}));
     xticks(final_states);
     xlim([4.5 13.5]);
     xlabel('final state');
     ylabel('# subjects');
 
-    fprintf('\nw = %s\n', goals{t});
+    fprintf('\nw = %s\n', test_goals{t});
 
     % generous test -- assume null = random walk
     for j = 1:length(interesting_test_states{t})
@@ -157,7 +158,7 @@ for t = 1:length(goals)
         nparams = 0;
         [h, p, stats] = chi2gof(1:length(states), 'freq', observed, 'expected', expected, 'ctrs', 1:length(states), 'nparams', nparams);
 
-        fprintf('Did the test choice counts for task %s states [%s] happen by chance? chi2(%d) = %.4f, p = %.4f\n', goals{t}, sprintf('%d ', states), stats.df, stats.chi2stat, p);
+        fprintf('Did the test choice counts for task %s states [%s] happen by chance? chi2(%d) = %.4f, p = %.4f\n', test_goals{t}, sprintf('%d ', states), stats.df, stats.chi2stat, p);
 
         % exclude interesting state
         states(ismember(states, interesting_test_states{t}{j})) = [];
@@ -178,27 +179,27 @@ figure;
 
 fprintf('\n\n  Do subjects that find the optimal test state also happened to have visited that state more often during training?  \n\n');
 
-for t = 1:length(goals)
+for t = 1:length(test_goals)
     f = [];
     test_c2 = [];
     for subj = 1:N
         which = tbl.s_id == subj & tbl.c2 == test_optim(t) & tbl.phase == 1;
         f = [f; sum(which)]; % # of visits to test_optimal terminal state for test task t during training
-        test_c2 = [test_c2; tbl.c2(tbl.s_id == subj & strcmp(goals{t}, tbl.g))]; % the subject's terminal state for test task t
+        test_c2 = [test_c2; tbl.c2(tbl.s_id == subj & strcmp(test_goals{t}, tbl.g))]; % the subject's terminal state for test task t
     end
     f1 = f(test_c2 == test_optim(t));
     f2 = f(test_c2 ~= test_optim(t));
     ms = [mean(f1) mean(f2)];
     sems = [sem(f1) sem(f2)];
 
-    subplot(1, length(goals), t);
+    subplot(1, length(test_goals), t);
     bar(ms);
     hold on;
     errorbar(ms, sems, 'color', [0 0 0], 'linestyle', 'none');
     xticklabels({'optimal', 'suboptimal'});
     xlabel('subjects split by final test state');
     ylabel('# visits to optimal test state during training');
-    title(sprintf('w = %s', goals{t}));
+    title(sprintf('w = %s', test_goals{t}));
 
     [h, p, ci, stats] = ttest2(f1, f2);
     fprintf('two-tailed two-sample t-test: t(%d) = %.4f, p = %.4f\n', stats.df, stats.tstat, p);
@@ -209,11 +210,35 @@ end
 % histogram of training states
 %
 
+
+for t = 1:length(train_goals)
+    cnt{t} = [];
+    for i = final_states 
+        which = tbl.c2 == i & strcmp(tbl.g, train_goals{t});
+        cnt{t}(i) = sum(which); % # of visits to terminal state i during train task t
+    end
+
+    subplot(1, length(train_goals), t);
+    bar(cnt{t});
+    title(sprintf('w = %s', train_goals{t}));
+    xticks(final_states);
+    xlim([4.5 13.5]);
+    xlabel('final state');
+    ylabel('# subjects');
+
+    fprintf('\nw = %s\n', train_goals{t});
+end
+
+
+%
+% histogram of training states, split by test choices
+%
+
 figure;
 
 fprintf('\n\n  For subjects that find the optimal test state, which states do they visit during training? What about the suboptimal subjects?  \n\n');
 
-for t = 1:length(goals)
+for t = 1:length(test_goals)
 
     ms = {};
     sems = {};
@@ -227,7 +252,7 @@ for t = 1:length(goals)
         for subj = 1:N
             which = tbl.s_id == subj & tbl.c2 == i & tbl.phase == 1;
             f = [f; sum(which)]; % # of visits to terminal state i for test task t during training
-            test_c2 = [test_c2; tbl.c2(tbl.s_id == subj & strcmp(goals{t}, tbl.g))]; % the subject's terminal state for test task t
+            test_c2 = [test_c2; tbl.c2(tbl.s_id == subj & strcmp(test_goals{t}, tbl.g))]; % the subject's terminal state for test task t
         end
 
         for j = 1:length(interesting_test_states{t})
@@ -238,12 +263,12 @@ for t = 1:length(goals)
     end
 
     for i = 1:length(interesting_test_states{t})
-        subplot(length(interesting_test_states{t}), length(goals), (i-1)*length(goals) + t);
+        subplot(length(interesting_test_states{t}), length(test_goals), (i-1)*length(test_goals) + t);
         bar(final_states, ms{i});
         hold on;
         errorbar(final_states, ms{i}, sems{i}, 'color', [0 0 0], 'linestyle', 'none');
 
-        title(sprintf('went to one of [%s] on %s', sprintf('%d ', interesting_test_states{t}{i}), goals{t}));
+        title(sprintf('went to one of [%s] on %s', sprintf('%d ', interesting_test_states{t}{i}), test_goals{t}));
         xticks(final_states);
         xlim([4.5 13.5]);
         xlabel('final state');
@@ -268,8 +293,8 @@ for i = final_states
     for subj = 1:N
         which = tbl.s_id == subj & tbl.c2 == i & tbl.phase == 1;
         f = [f; sum(which)]; % # of visits to terminal state i for test task t during training
-        test_c2_1 = [test_c2_1; tbl.c2(tbl.s_id == subj & strcmp(goals{1}, tbl.g))]; % the subject's terminal state for test task 1
-        test_c2_2 = [test_c2_2; tbl.c2(tbl.s_id == subj & strcmp(goals{2}, tbl.g))]; % the subject's terminal state for test task 2
+        test_c2_1 = [test_c2_1; tbl.c2(tbl.s_id == subj & strcmp(test_goals{1}, tbl.g))]; % the subject's terminal state for test task 1
+        test_c2_2 = [test_c2_2; tbl.c2(tbl.s_id == subj & strcmp(test_goals{2}, tbl.g))]; % the subject's terminal state for test task 2
     end
     f11 = f(test_c2_1 == test_optim(1) & test_c2_2 == test_optim(2));
     f12 = f(test_c2_1 ~= test_optim(1) & test_c2_2 == test_optim(2));
@@ -294,7 +319,7 @@ n(2,2) = numel(f22);
 
 figure;
 
-labels = {sprintf('optimal on %s, optimal on %s', goals{1}, goals{2}), sprintf('suboptimal on %s, optimal on %s', goals{1}, goals{2}); sprintf('optimal on %s, suboptimal on %s', goals{1}, goals{2}), sprintf('suboptimal on %s, suboptimal on %s', goals{1}, goals{2})};
+labels = {sprintf('optimal on %s, optimal on %s', test_goals{1}, test_goals{2}), sprintf('suboptimal on %s, optimal on %s', test_goals{1}, test_goals{2}); sprintf('optimal on %s, suboptimal on %s', test_goals{1}, test_goals{2}), sprintf('suboptimal on %s, suboptimal on %s', test_goals{1}, test_goals{2})};
 
 for r = 1:2
     for c = 1:2
