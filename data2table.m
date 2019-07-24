@@ -13,6 +13,7 @@ s_id = [];
 trial = [];
 c1 = [];
 c2 = [];
+RT = [];
 phase = [];
 for subj = 1:size(data,1) % for each subject
     for ph = 1:2
@@ -30,6 +31,7 @@ for subj = 1:size(data,1) % for each subject
             group = [group; data(subj, ph).group(i)];
             s_id = [s_id; subj];
             trial = [trial; i];
+            RT = [RT; data(subj, ph).RT_tot(i)];
             phase = [phase; ph];
         end
     end
@@ -37,4 +39,4 @@ for subj = 1:size(data,1) % for each subject
     subj_len = [subj_len; mean(data(subj, 1).len)];
 end
 
-tbl = table(trial, s_id, group, phase, r, s, g, c1, c2, ord);
+tbl = table(trial, s_id, group, phase, r, s, g, c1, c2, ord, RT);

@@ -68,12 +68,12 @@ function plot_perf(env, w_test, tot_r, model_names)
     subplot(3, 1, 3);
     h = plot(G);
     for s = 1:env.N
-        labelnode(h, s, sprintf('phi(%d) = [%s]', s, sprintf('%.0f ', env.phi{s} * 10)));
+        labelnode(h, s, sprintf('phi(%d) = [%s]', s, sprintf('%.0f  ', env.phi{s} * 10)));
     end
     ylim([-0.5 4]);
     xlim([0.5 11]);
     set(gca, 'xtick', []);
     set(gca, 'ytick', []);
     title('MDP');
-    xlabel('note: all features x 10 (for vizualization)');
+    %xlabel('note: all features x 10 (for vizualization)');
 

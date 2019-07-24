@@ -4,6 +4,7 @@ clear all;
 
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1d_prelim', 100); %  usfa_v1_1d
 load data.mat
+%save data.mat
 
 %data = data(durs < 50, :);
 
@@ -251,6 +252,24 @@ for t = 1:length(goals)
     end
 
 end
+
+
+mb_subj = tbl.s_id(tbl.phase == 2 & strcmp(goals{2}, tbl.g) & tbl.c2 == 7);
+sf_subj = tbl.s_id(tbl.phase == 2 & strcmp(goals{2}, tbl.g) & tbl.c2 == 12);
+RT = [tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
+s = [tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
+type = categorical([ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)))); 2*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))))]);
+logRT = log(RT);
+
+T = table(RT, s, type, logRT);
+
+formula = 'RT ~ -1 + type + (-1 + type | s)';
+result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
+[beta, names, stats] = fixedEffects(result);
+
+H = [ 1 -1 ]; % MB - SFGPI
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme MB - SFGPI contrast: = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
 
 %{
 
