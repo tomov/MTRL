@@ -1,11 +1,11 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title> Medieval Trading </title>
+    <title> Medieval Courting </title>
     <!--Load in ajax and jquery related API's-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="jquery-1.10.2.min.js"></script>
-    <script type ="text/javascript" src ="usfa_v1_1d.js"></script>
+    <script type ="text/javascript" src ="usfa_v1_1g.js"></script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 
@@ -40,7 +40,7 @@
 
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
       <h2>Medieval Courting</h2>
-      <p><img src="images/castles.jpeg" height="300px" ></p>
+      <p><img src="images/castles.jpg" height="300px" ></p>
       <p>Once upon a time in the Kingdom of Approximalia there were nine princesses. They all lived in the Castle of Approximalia, each in her own room.<p>
       <p>Right next to the Kingdom of Approximalia was the County of Successorland. The Prince of Successorland was very fond of the princesses. Every day he sent his lackey to the Castle of Approximalia to deliver a package of gifts -- diamonds, chocolate, and flowers -- to one of the princesses.<p>
       <p>The trouble was, the princesses were very picky -- some preferred diamonds, some preferred chocolate, some preferred flowers, and yet others preferred all three types of gifts to varying degrees. To make matters worse, some princesses actively disliked some types of gifts.<p>
@@ -55,18 +55,77 @@
       <p>The rest of the rooms are where the princesses live, one per room. Once you reach a room with a princess, you have to give her the package.<p>
       <p>Each princess will also tell you how much she likes or dislikes diamonds, chocolate, and flowers. This will be shown as a positive (likes) or negative (dislikes) number next to each gift type:<p>
       <p><img src="images/resources_v1_1g.png" height="300px" ></p>
-      <p>This princess likes diamonds a lot (10), doesn’t like chocolate (-1), and really, really hates flowers (-15). The overall happiness of the princess for that day is the sum of the gifts weighted by how much she likes or dislikes each gift. We call this number the happiness score. In this example, the happiness score is equal to 2 diamonds x 10 + 3 chocolate bars x -1 + 1 flower x -15 = 20 - 3 - 15 = 2. <p>
+      <p>This princess likes diamonds a lot (10), doesn’t like chocolate (-1), and really, really hates flowers (-15). The overall happiness of the princess for that day is the sum of the gifts weighted by how much she likes or dislikes each gift. We call this number the <b>happiness score</b>. In this example, the happiness score is equal to 2 diamonds x 10 + 3 chocolate bars x -1 + 1 flower x -15 = 20 - 3 - 15 = 2. <p>
       <p>Note that if the prince had put only diamonds in the package, the princess would have been much happier. Alas, the prince had his own reasons that are beyond the comprehension of the simple lackey, who dares not question his master.<p>
       <p>You can press the <b>space key</b> to deliver the package and begin the next day. The happiness score of the princess will be displayed below.<p>
       <p>Since the prince may randomly decide to visit any princess on any given day, <b>your goal is to keep the princesses as happy as possible by delivering each package to the princess that will have the highest happiness score</b>.<p>
       <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The princesses will always occupy the same rooms.</p>
-      <p>There will be 100 days (trials) in the experiment.</p>
-      <p>To encourage you to perform well, we will pay you a bonus equal to the happiness score from a randomly chosen day, converted to cents. So in the above example, you would be paid a $0.10 TODO bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>There will be 59 days (trials) in the experiment.</p>
+      <p>To encourage you to perform well, we will pay you a bonus equal to the happiness score from a randomly chosen day, times $0.10. So in the above example, you would be paid a $0.20 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
 
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
 
       <br/><br/>
+      <textarea id="experiment_instr" rows=30 cols=20 hidden>
+            13
+            2 3 4 0
+            5 6 7 0
+            8 9 10 0
+            11 12 13 0
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            images/door1.png
+            images/door2.png
+            images/door3.png
+            images/door4.png
+            images/door5.png
+            images/door6.png
+            images/door7.png
+            images/door8.png
+            images/door9.png
+            images/door10.png
+            images/door11.png
+            images/door12.png
+            images/door13.png
+            images/princess_tiana.png
+            images/princess_snowwhite.png
+            images/princess_rapunzel.png
+            images/princess_moana.png
+            images/princess_jasmine.png
+            images/princess_cinderella.png
+            images/princess_belle.png
+            images/princess_aurora.png
+            images/princess_ariel.png
+            3
+            images/diamond.png
+            images/chocolate.png
+            images/flowers.png
+            0 0 0
+            0 0 0
+            0 0 0
+            0 0 0
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            10 -1 -15
+            1
+            1 -> 2 3 1 x 29
+            1
+            1 -> 1 1 1 x 1
+      </textarea>
       <textarea id="experiment" rows=30 cols=20 hidden>
             13
             2 3 4 0
@@ -105,59 +164,56 @@
             images/princess_aurora.png
             images/princess_ariel.png
             3
-            images/wood.png
-            images/stone.png
-            images/iron.png
+            images/diamond.png
+            images/chocolate.png
+            images/flowers.png
             0 0 0
             0 0 0
             0 0 0
             0 0 0
-            0 30 0
-            100 0 0
-            10 10 200 
-            90 0 0
-            80 80 160 
-            0 90 0
             0 0 0
-            0 100 160
+            10 -10 0
+            -1 -1 19
+            9 -10 -10 
+            8 8 -1
+            -10 9 -10
             0 0 0
-            4
-            1 -> 1 -2 0 x 25
-            1 -> -2 1 0 x 25
-            1 -> 1 -1 0 x 24
-            1 -> -1 1 0 x 24
+            -10 10 15
+            0 0 0
             2
-            1 -> 1 1 0 x 1
-            1 -> 0 0 1 x 1
+            1 -> 1 0 0 x 29
+            1 -> 0 1 0 x 29
+            1
+            1 -> 1 1 1 x 1
       </textarea>
   </div>
 
 
 
   <div id = "check_page" style="font-size: 22px; display:block;">
-      <h2>Medieval Trading</h2>
+      <h2>Medieval Courting</h2>
       <fieldset>
         <legend>Please answer a few questions before we begin.</legend>
         <fieldset style="width:500px;margin:5px">
             What is your task?<br><br />
             <input type="radio" name="q1"  >Fight dungeon dragons in a medieval castle.<br>
-            <input type="radio" name="q1" id="icheck1" >Maximize earnings by selling resources.<br>
+            <input type="radio" name="q1" id="icheck1" >Make princesses happy by giving them gifts they like.<br>
             <input type="radio" name="q1" >Build a medieval castle.<br>
             <input type="radio" name="q1" >I do not know.<br>
         </fieldset>
         <fieldset style="width:500px;margin:5px">
             How many days (trials) are there?<br><br />
             <input type="radio" name="q2">1<br>
-            <input type="radio" name="q2">10<br>
-            <input type="radio" name="q2"  id="icheck2">100<br>
-            <input type="radio" name="q2">1000<br>
+            <input type="radio" name="q2">9<br>
+            <input type="radio" name="q2"  id="icheck2">59<br>
+            <input type="radio" name="q2">599<br>
         </fieldset>
         <fieldset style="width:500px;margin:5px">
-            Today, wood sells for $1, stone sells for $0, and iron sells for $-2 (that is, you lose $2 for each unit of iron). You found 100 units of wood, 50 units of stone, and 10 units of iron. How much will you earn?<br> <br />
-            <input type="radio" name="q3">$100<br>
-            <input type="radio" name="q3">$-100<br>
-            <input type="radio" name="q3">$50<br>
-            <input type="radio" name="q3" id="icheck3">$80<br>
+            Today, there is 1 diamond, 2 chocolate bars, and 0 flowers in the package. The preferences of the princess are: -10 for diamonds, 10 for chocolate, and 5 for flowers. What is her happiness score?<br> <br />
+            <input type="radio" name="q3">100<br>
+            <input type="radio" name="q3">-100<br>
+            <input type="radio" name="q3">25<br>
+            <input type="radio" name="q3" id="icheck3">10<br>
         </fieldset>
       </fieldset>
       <br><br><br>
@@ -169,7 +225,7 @@
 
   <div id = "new_trial_page" class="trial_page" >
       <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
-          <h3 style="font-size: 20px;">Today's market prices:</h3>
+          <h3 style="font-size: 20px;">Today's gifts:</h3>
           <h1 id="prices" style="font-size: 50px;">PRICES</h1>
       </div>
 
@@ -191,15 +247,16 @@
           <img id="door3" src="" height="100%">
       </div>
 
-      <div id="phis" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
-          <img id="princess" src="" height="50%" style="position: absolute; left: 5%; top: 20%; text-align: left;">
+      <div id="phis" style="position: absolute; left: 0; top: 25%; width: 100%; text-align: center;">
+          <img id="princess" src="" height="90%" style="position: absolute; left: 20%; top: 5%; text-align: left;">
+          <h2 style="font-size: 30px;">How much I like:</h2>
           <h1 id="phi1" style="font-size: 50px;">phi 1</h1>
           <h1 id="phi2" style="font-size: 50px;">phi 2</h1>
           <h1 id="phi3" style="font-size: 50px;">phi 3</h1>
       </div>
 
       <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
-      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>number keys 1, 2, 3</b>. Press <b>space</b> to sell the resouces and begin the next day.<br/> You have <span id='trials_left'></span> days left.</p>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>number keys 1, 2, 3</b>. Press <b>space</b> to deliver the package and begin the next day.<br/> You have <span id='trials_left'></span> days left.</p>
   </div>
 
   <div id="test_page" style="font-size: 22px; display:block;" align = "center" >
@@ -212,15 +269,15 @@
   </div>
 
   <div id = "final_page">
-      <p>Congratulations! You have completed the experiment. Your completion code is <strong>USFAFTW2</strong></p>
+      <p>Congratulations! You have completed the experiment. Your completion code is <strong>USFAFTW3</strong></p>
       <p>Your bonus is <b>$<span id='bonus'>NaN</span></b>! You will be paid within 24 hours.</p>
   </div>
 
 
   <script type="text/javascript">
-      $("#consent_page").show();
+      $("#consent_page").hide();
       $("#captcha").hide();
-      $("#instruction_page").hide();
+      $("#instruction_page").show();
       $("#check_page").hide();
       $("#new_trial_page").hide();
       $("#trial_page").hide();

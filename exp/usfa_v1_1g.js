@@ -201,13 +201,14 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    exp.feature_names = shuffle(exp.feature_names);
+    //exp.feature_names = shuffle(exp.feature_names);
 
     // shuffle state features
     var fid = [];
     for (var j = 0; j < exp.D; j++) {
         fid.push(j);
     }
+    //fid = shuffle(fid);
     exp.fid = fid;
     shuffleStateFeatures(exp.phi, fid);
     shuffleTrialFeatures(exp.train_trials, fid);
@@ -321,7 +322,7 @@ function nextTrial() {
             if (bonus < 0) {
                 bonus = 0;
             }
-            $('#bonus').text((bonus/100).toFixed(2));
+            $('#bonus').text((bonus*0.10).toFixed(2));
             $("#final_page").show();
             logBonus();
         }
@@ -535,11 +536,11 @@ function redraw() {
         {
             color = "green";
         }
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + reward.toString() + "</span>");
+        $("#message").html("Happiness score: " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> " + reward.toString() + "</span>");
         // TODO dynamic DOM
-        $("#phi1").html(exp.phi[cur - 1][0].toString() + " &emsp; <img src='" + exp.feature_names[0] + "' height='50px'>");
-        $("#phi2").html(exp.phi[cur - 1][1].toString() + " &emsp; <img src='" + exp.feature_names[1] + "' height='50px'>");
-        $("#phi3").html(exp.phi[cur - 1][2].toString() + " &emsp; <img src='" + exp.feature_names[2] + "' height='50px'>");
+        $("#phi1").html(" <img src='" + exp.feature_names[0] + "' height='50px'> &emsp;" + exp.phi[cur - 1][0].toString());
+        $("#phi2").html(" <img src='" + exp.feature_names[1] + "' height='50px'> &emsp;" + exp.phi[cur - 1][1].toString());
+        $("#phi3").html(" <img src='" + exp.feature_names[2] + "' height='50px'> &emsp;" + exp.phi[cur - 1][2].toString());
         $("#princess").attr("src", exp.names_alt[cur - 1]);
         $("#doors").hide();
         $("#phis").show();
