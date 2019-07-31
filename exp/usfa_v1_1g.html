@@ -18,14 +18,14 @@
   <div  id = "captcha" data-type="image" class="g-recaptcha" data-sitekey="6Lcv-WkUAAAAAEdcoHLA76IUW4_6tUkw1e-L5nUy" data-callback="correctCaptcha" style="position:absolute; top:650px;left:600px;"></div>
 
 
-  <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
+  <div id="consent_page" style = "font-size: 20px; display: block;" align = "left">
       <h3>Consent form for participation in this online experiment</h3>
       <p>
           Designed by: Momchil Tomov and Eric Schulz<br>
       </p>
       <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
       <p>The study provides information about the nature of learning and decision making</p>
-      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $1.5</b> for your participation and up to <b>$1.50 additional bonus</b>.</p>
+      <p>The study will take about <b>10 minutes on average</b>. You will <b>receive $1.0</b> for your participation and up to <b>$2.00 additional bonus</b>.</p>
       <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
       <br>
       <p>By clicking on the button below, you agree to the following:</p>
@@ -38,7 +38,7 @@
   </div>
 
 
-  <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
+  <div id="instruction_page" style="font-size: 22px; display:block;" align = "left" >
       <h2>Medieval Courting</h2>
       <p><img src="images/castles.jpg" height="300px" ></p>
       <p>Once upon a time in the Kingdom of Approximalia there were nine princesses. They all lived in the Castle of Approximalia, each in her own room.<p>
@@ -56,7 +56,7 @@
       <p>Each princess will also tell you how much she likes or dislikes diamonds, chocolate, and flowers. This will be shown as a positive (likes) or negative (dislikes) number next to each gift type:<p>
       <p><img src="images/resources_v1_1g.png" height="300px" ></p>
       <p>This princess likes diamonds a lot (10), doesn’t like chocolate (-1), and really, really hates flowers (-15). The overall happiness of the princess for that day is the sum of the gifts weighted by how much she likes or dislikes each gift. We call this number the <b>happiness score</b>. In this example, the happiness score is equal to 2 diamonds x 10 + 3 chocolate bars x -1 + 1 flower x -15 = 20 - 3 - 15 = 2. <p>
-      <p>Note that if the prince had put only diamonds in the package, the princess would have been much happier. Alas, the prince had his own reasons that are beyond the comprehension of the simple lackey, who dares not question his master.<p>
+      <p>Note that if the prince had put only diamonds in the package, the princess would have been much happier. Alas, the prince has his own reasons that are beyond the comprehension of the simple lackey, who dares not question his master.<p>
       <p>You can press the <b>space key</b> to deliver the package and begin the next day. The happiness score of the princess will be displayed below.<p>
       <p>Since the prince may randomly decide to visit any princess on any given day, <b>your goal is to keep the princesses as happy as possible by delivering each package to the princess that will have the highest happiness score</b>.<p>
       <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The princesses will always occupy the same rooms.</p>
@@ -275,9 +275,9 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").hide();
+      $("#consent_page").show();
       $("#captcha").hide();
-      $("#instruction_page").show();
+      $("#instruction_page").hide();
       $("#check_page").hide();
       $("#new_trial_page").hide();
       $("#trial_page").hide();

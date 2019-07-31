@@ -1,5 +1,6 @@
 check_fails = 0;
 in_trial = 0; // 0 = not in trial; 1 = new trial page; 2 = in trial
+bonus_scale = 0.10; // USD per point
 
 function initExp() {
     console.log("initExp");
@@ -201,14 +202,14 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    //exp.feature_names = shuffle(exp.feature_names);
+    exp.feature_names = shuffle(exp.feature_names);
 
     // shuffle state features
     var fid = [];
     for (var j = 0; j < exp.D; j++) {
         fid.push(j);
     }
-    //fid = shuffle(fid);
+    fid = shuffle(fid);
     exp.fid = fid;
     shuffleStateFeatures(exp.phi, fid);
     shuffleTrialFeatures(exp.train_trials, fid);
@@ -322,7 +323,7 @@ function nextTrial() {
             if (bonus < 0) {
                 bonus = 0;
             }
-            $('#bonus').text((bonus*0.10).toFixed(2));
+            $('#bonus').text((bonus * bonus_scale).toFixed(2));
             $("#final_page").show();
             logBonus();
         }
@@ -480,7 +481,7 @@ function logTrial() {
 function logBonus() {
     assignmentID = turkGetParam('assignmentId');
     workerID = turkGetParam('workerId');
-    var row = workerID.toString() + "," + (bonus/100).toFixed(2) + "\n";
+    var row = workerID.toString() + "," + (bonus * bonus_scale).toFixed(2) + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: bonus_filename});
 }
