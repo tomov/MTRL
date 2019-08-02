@@ -1,0 +1,3 @@
+group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails
+A,1115179851493,train,1,[-1 1 0],1 2 6,3,11948 5582 4219 2690 2647,32 50 50 50 32,1 2,27086,-100,1555330344.84,Mon Apr 15 2019 15:12:24 GMT+0300 (East Africa Time),0
+A,1115179851493,train,1,[-1 1 0],1 2 6,3,2039 1432 2226,50 50 32,0 1,5697,-100,1555330352.449,Mon Apr 15 2019 15:12:32 GMT+0300 (East Africa Time),0

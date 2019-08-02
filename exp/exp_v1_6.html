@@ -1,0 +1,170 @@
+<html>
+<head>
+    <title> Subway Navigation </title>
+    <!--Load in ajax and jquery related API's-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="jquery-1.10.2.min.js"></script>
+    <script type ="text/javascript" src ="exp_v1_6.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+</head>
+
+<!-- subway 10 but no associative chunks -->
+
+<body>
+
+  <script type="text/javascript"> document.body.addEventListener('keydown', checkKeyPressed); </script>
+
+  <div  id = "captcha" data-type="image" class="g-recaptcha" data-sitekey="6Lcv-WkUAAAAAEdcoHLA76IUW4_6tUkw1e-L5nUy" data-callback="correctCaptcha" style="position:absolute; top:650px;left:600px;"></div>
+
+
+  <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
+      <h3>Consent form for participation in this online experiment</h3>
+      <p>
+          Designed by: Momchil Tomov<br>
+      </p>
+      <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
+      <p>The study provides information about the nature of learning and decision making</p>
+      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $2.5</b> for your participation.</p>
+      <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
+      <br>
+      <p>By clicking on the button below, you agree to the following:</p>
+      <p>I have read the above information.</p>
+      <p>I understand that I am free to withdraw from the study without penalty if I so wish.</p>
+      <p>I understand that my information will be treated as strictly confidential and handled in <br>accordance with the Data Protection Act 1998. </p>
+      <p>I understand that the information I have submitted will be published as a report; <br>confidentiality and anonymity will be maintained.</p>
+      <br>
+      <button type="button" name="button" style="font-size: 22px;" id="agree" ;>Agree</button>
+  </div>
+
+
+  <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
+      <h2>Subway Navigation</h2>
+      <p>Imagine you are a tourist and you have to navigate the subway network in an unfamiliar town.</p>
+      <p>On each trial, you will have to navigate from a starting station to a goal station, which will appear on the screen for 2 seconds:</p>
+      <p><img src="images/new_trial.png" height="300px" ></p>
+      <p>The trial will begin with a 3..2..1.. countdown, during which you can plan your trip:
+      <p><img src="images/countdown.png" height="300px" ></p>
+      <p>Please try to plan your trip as quickly as possible.</p>
+      <p>During your trip, you will see the name of the current station in the middle of the screen, surrounded by its neighboring stations in all four directions:</p>
+      <p><img src="images/trial.png" height="300px"></p>
+      <p>You can navigate between stations using the <b>arrow keys</b> (up, down, left, right). A circle means that there is no station in that direction.</p>
+      <p>Once you reach the goal station, press the <b>space key</b> to end the trial and start the next trial:</p>
+      <p><img src="images/success.png" height="300px"></p>
+      <p>There will be 100 trials in the experiment. All stations are named after cities.</p>
+      <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
+      <button type="button" id="continue" style="font-size: 22px;">Continue</button>
+
+      <br/><br/>
+      <textarea id="experiment" rows=30 cols=20 hidden>
+            10
+            2 -1 10 -1
+            -1 3 1 -1
+            -1 4 -1 2
+            -1 5 -1 3
+            -1 -1 6 4
+            5 -1 7 -1
+            6 -1 -1 8
+            -1 7 -1 9
+            -1 8 -1 10
+            1 9 -1 -1
+            PARIS
+            MOSCOW
+            BERLIN
+            LONDON
+            DUBLIN
+            SOFIA
+            ROME
+            HELSINKI
+            WARSAW
+            OSLO
+            5
+            -1 -> -1 x 20
+            2 -> 3 x 20
+            4 -> 5 x 20
+            10 -> 7 x 20
+            6 -> 1 @ 81
+            0
+      </textarea>
+  </div>
+
+
+  <div id = "new_trial_page" class="trial_page" >
+      <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <p>From</p>
+          <h1 id="from_state">FROM</h1>
+          <h3>go to</h3>
+          <h1 id="to_state">TO</h1>
+      </div>
+  </div>
+
+  <div id = "trial_page" class="trial_page" >
+      <h1 id="cur_state" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">CUR STATE</h1>
+
+      <h3 id="right_state" style="position: absolute; left: 50%; top: 30%; width: 40%; text-align: center;">RIGHT STATE</h3>
+      <h3 id="up_state" style="position: absolute; left: 0; top: 15%; width: 100%; text-align: center;">UP STATE</h3>
+      <h3 id="left_state" style="position: absolute; left: 10%; top: 30%; width: 40%; text-align: center;">LEFT STATE</h3>
+      <h3 id="down_state" style="position: absolute; left: 0; top: 45%; width: 100%; text-align: center;">DOWN STATE</h3>
+
+      <p id="goal_state" style="position: absolute; left: 10%; top: 10%; text-align: left;">Goal</p>
+
+      <h1 id="message" style="position: absolute; left: 0; top: 60%; width: 100%; text-align: center;">message</h1>
+      <h1 id="countdown" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">countdown</h1>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Move using the <b>arrow keys</b> (up, down, left, right). Press <b>space</b> when you reach the goal.</p>
+  </div>
+
+  <div id="test_page" style="font-size: 22px; display:block;" align = "center" >
+      <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h2>Unreliable trips</h2>
+          <p>An accident has occurred and the subway system is now unreliable.</p>
+          <p>For the remaining trials, your trip may be interrupted and a new trial may begin automatically.</p>
+          <button type ="button" name ="button" id ="advance"; style="font-size: 22px;">Advance</button>
+      </div>
+  </div>
+
+  <div id = "final_page">
+      <p>Congratulations! You have completed the experiment. Your completion code is <img src="images/code3.png" ></p>
+  </div>
+
+
+  <script type="text/javascript">
+      $("#consent_page").show();
+      $("#captcha").hide();
+      $("#instruction_page").hide();
+      $("#new_trial_page").hide();
+      $("#trial_page").hide();
+      $("#test_page").hide();
+      $("#final_page").hide();
+
+      //initExp();
+
+      $("#agree").click(function () {
+        $("#captcha").show();
+
+        var response = grecaptcha.getResponse();
+        var correctCaptcha = function(response) {
+            console.log(response);
+            if (response.length == 0) console.log("You can't proceed!");
+            else {
+              $("#captcha").hide();
+              $("#consent_page").hide();
+              $("#instruction_page").show();
+            }
+        };
+
+        window.correctCaptcha = correctCaptcha;
+      })
+
+      $("#continue").click(function () {
+          $("#instruction_page").hide();
+          initExp();
+      })
+
+      $("#advance").click(function () {
+          $("#test_page").hide();
+          nextTrial();
+      })
+  </script>
+
+
+</body>
+</html>
