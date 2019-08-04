@@ -3,7 +3,8 @@
 clear all;
 
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g', 59);
-load data.mat
+[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g_long', 119);
+%load data.mat
 
 %data = data(durs < 50, :);
 

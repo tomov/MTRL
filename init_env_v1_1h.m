@@ -36,7 +36,7 @@ env.phi{8} = [9 0 0];
 env.phi{9} = [10 10 0];
 env.phi{10} = [0 9 0 ];
 env.phi{11} = [0 0 1 ];
-env.phi{12} = [0 10 5];
+env.phi{12} = [0 10 6];
 env.phi{13} = [1 0 0 ];
 
 % terminal states
