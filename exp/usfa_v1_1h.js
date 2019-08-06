@@ -209,6 +209,7 @@ function shuffleTrialFeatures(trials, fid) {
         for (var j = 0; j < trials[i].w.length; j++) {
             w_new.push(trials[i].w[fid[j]]);
         }
+        trials[i].w_orig = trials[i].w;
         trials[i].w = w_new;
     }
 }
@@ -308,6 +309,7 @@ function nextTrial() {
     start = trials[trial_idx].s;
     cur = start;
     goal = trials[trial_idx].w;
+    goal_orig = trials[trial_idx].w_orig;
 
     if (stage == "train") {
         trials_left = exp.train_trials.length + exp.test_trials.length - trial_idx;
@@ -445,7 +447,7 @@ function logTrial() {
     var path_str = (path.toString()).replace(/,/g, ' ');
     var key_str = (keys.toString()).replace(/,/g, ' ');
     var valid_key_str = (valid_keys.toString()).replace(/,/g, ' ');
-    var goal_str = ("[" + goal.toString() + "]").replace(/,/g, ' ');
+    var goal_str = ("[" + goal_orig.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
     var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";

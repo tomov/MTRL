@@ -183,4 +183,4 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_da
     durs = durs / 60;
     fprintf('avg duration = %.2f +- %.2f mins\n', mean(durs), std(durs)/sqrt(length(durs)));
 
-    save('data.mat', 'data', 'Ts', 'durs', 'avg_rew');
+    save('data.mat', 'data', 'Ts', 'durs', 'avg_rew', 'filenames');
