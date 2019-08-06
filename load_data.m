@@ -1,4 +1,4 @@
-function [data, Ts, f_chunk, durs, RT_all, RT_new] = load_data(dirname, expected_number_of_rows)
+function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_data(dirname, expected_number_of_rows)
 
     if ~exist('dirname', 'var')
         dirname = 'exp/results/'; 
@@ -168,6 +168,8 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new] = load_data(dirname, expected
             durs = [durs, dur];
             fprintf('             duration = %.2f mins\n', dur / 60);
         end
+        avg_rew(subj) = mean(data(subj, 1).r);
+        filenames{subj} = filepath;
 
         if ~skip_subj
             subj = subj + 1;
@@ -181,4 +183,4 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new] = load_data(dirname, expected
     durs = durs / 60;
     fprintf('avg duration = %.2f +- %.2f mins\n', mean(durs), std(durs)/sqrt(length(durs)));
 
-    save('data.mat', 'data', 'Ts', 'durs');
+    save('data.mat', 'data', 'Ts', 'durs', 'avg_rew');

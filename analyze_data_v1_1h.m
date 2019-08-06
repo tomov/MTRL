@@ -2,11 +2,16 @@
 
 clear all;
 
-[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1h', 101);
+[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
+%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g_long', 119);
-%load data.mat
+load data.mat
 
 %data = data(durs < 50, :);
+
+which = avg_rew <= 50;
+data = data(which, :);
+filenames = filenames(which);
 
 sem = @(x) std(x) / sqrt(length(x));
 
@@ -43,7 +48,7 @@ title('learning');
 %
 
 test_goals = {'[1 1 1]'};
-train_goals = {'[1 0 0]', '[0 1 0]'};
+train_goals = {'[1 -1 0]', '[-1 1 0]', '[1 -2 0]', '[-2 1 0]'};
 
 figure;
 
