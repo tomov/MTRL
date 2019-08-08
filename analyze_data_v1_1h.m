@@ -3,14 +3,15 @@
 clear all;
 
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
-%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
+[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_batch2', 101);
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g_long', 119);
 load data.mat
 
 %data = data(durs < 50, :);
 
-which = avg_rew < 50;
+
+which = avg_rew >= median(avg_rew);
 data = data(which, :);
 filenames = filenames(which);
 
@@ -141,7 +142,37 @@ for t = 1:length(test_goals)
     xlabel('final state');
     ylabel('# subjects');
 
-    fprintf('\nw = %s\n', test_goals{t});
+    fprintf('\nw = %s\n\n', test_goals{t});
+
+    % MB
+    n = N;
+    c = cnt{t}(7);
+    p = 1/9;
+    pval = myBinomTest(c, n, p);
+    fprintf('MB vs rest: two-tailed binomial test (%d out of %d subjects went to state 7; chance is ~%d): p = %.6f\n', c, n, round(n*p), pval);
+
+    % SF+GPI
+    n = N - cnt{t}(7);
+    c = cnt{t}(6) + cnt{t}(12);
+    p = 2/8;
+    pval = myBinomTest(c, n, p);
+    fprintf('SF+GPI vs rest (excluding MB): two-tailed binomial test (%d out of %d subjects went to state 6 or 12; chance is ~%d, not counting MB): p = %.6f\n', c, n, round(n*p), pval);
+
+    % SF+GPI
+    n = cnt{t}(6) + cnt{t}(12);
+    c = cnt{t}(12);
+    p = 1/2;
+    pval = myBinomTest(c, n, p);
+    fprintf('SF+GPI pattern: two-tailed binomial test (%d out of %d subjects went to state 12; chance is ~%d, for 6 and 12 only): p = %.6f\n', c, n, round(n*p), pval);
+
+    % UVFA
+    n = N - cnt{t}(7) - cnt{t}(6) - cnt{t}(12);
+    c = cnt{t}(9);
+    p = 1/6;
+    pval = myBinomTest(c, n, p);
+    fprintf('UVFA vs rest (excluding MB & SF+GPI): two-tailed binomial test (%d out of %d subjects went to state 9; chance is ~%d, not counting MB & SF+GPI): p = %.6f\n', c, n, round(n*p), pval);
+
+    fprintf('\n');
 
     % generous test -- assume null = random walk
     for j = 1:length(interesting_test_states{t})

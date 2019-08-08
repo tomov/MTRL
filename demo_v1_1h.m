@@ -5,10 +5,11 @@ env = init_env_v1_1h;
 filename = 'demo_v1_1h.mat';
 
 w_train = {[1 -2 0], [-2 1 0], [1 -1 0], [-1 1 0]};
-%w_test = {[1 1 0], [0 0 1]};  
 w_test = {[1 1 1]};  
+%w_test = {[1 1 0], [0 0 1]};  
 %w_test = {[1 1 1], [0 0 1]};  
 params = init_params();
+%params.beta = 1;
 N = 60;
 
 %

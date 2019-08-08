@@ -2,16 +2,28 @@
 
 clear all;
 
-%[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1d_prelim', 100); %  usfa_v1_1d
+[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1d_prelim', 100); %  usfa_v1_1d
 load data.mat
 %save data.mat
 
 %data = data(durs < 50, :);
 
+%which = avg_rew >= median(avg_rew);
+%data = data(which, :);
+%filenames = filenames(which);
+
 sem = @(x) std(x) / sqrt(length(x));
 
 tbl = data2table(data);
 N = size(data, 1);
+
+% avg training rew histogram
+%
+figure;
+hist(avg_rew);
+title('avg training reward');
+ylabel('# subjects');
+
 
 
 % show learning
