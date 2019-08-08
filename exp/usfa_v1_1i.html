@@ -1,0 +1,284 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title> Medieval Trading </title>
+    <!--Load in ajax and jquery related API's-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="jquery-1.10.2.min.js"></script>
+    <script type ="text/javascript" src ="usfa_v1_1i.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+</head>
+
+<!-- subway 10 but no associative chunks -->
+
+<body>
+
+  <script type="text/javascript"> document.body.addEventListener('keydown', checkKeyPressed); </script>
+
+  <div  id = "captcha" data-type="image" class="g-recaptcha" data-sitekey="6Lcv-WkUAAAAAEdcoHLA76IUW4_6tUkw1e-L5nUy" data-callback="correctCaptcha" style="position:absolute; top:650px;left:600px;"></div>
+
+
+  <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
+      <h3>Consent form for participation in this online experiment</h3>
+      <p>
+          Designed by: Momchil Tomov and Eric Schulz<br>
+      </p>
+      <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
+      <p>The study provides information about the nature of learning and decision making</p>
+      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $1.5</b> for your participation and up to <b>$2.00 additional bonus</b>.</p>
+      <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
+      <br>
+      <p>By clicking on the button below, you agree to the following:</p>
+      <p>I have read the above information.</p>
+      <p>I understand that I am free to withdraw from the study without penalty if I so wish.</p>
+      <p>I understand that my information will be treated as strictly confidential and handled in <br>accordance with the Data Protection Act 1998. </p>
+      <p>I understand that the information I have submitted will be published as a report; <br>confidentiality and anonymity will be maintained.</p>
+      <br>
+      <button type="button" name="button" style="font-size: 22px;" id="agree" ;>Agree</button>
+  </div>
+
+
+  <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
+      <h2>Medieval Trading</h2>
+      <p>Imagine you are a tradesperson scavenging a medieval castle for resources to trade.</p>
+      <p>There are three types of resources -- wood, stone, and iron -- that you can sell for different prices.</p>
+      <p>Some resources cannot be sold but instead need to be disposed of at a cost. The prices for those resources will be shown as negative.</p>
+      <p>Every day, you will see today's market price for each resource:</p>
+      <p><img src="images/new_trial_v1_1d.png" height="300px" ></p>
+      <p>In this example, you earn $1 for each unit of wood, you lose $1 for each unit of stone, and you earn nothing for iron.</p>
+      <p>Press the <b>space key</b> to enter the castle.</p>
+      <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
+      <p><img src="images/doors_v1_1d.png" height="300px" ></p>
+      <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>. As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>Other rooms have resources which you can sell (or dispose of) at today's market prices:</p>
+      <p><img src="images/resources_v1_1d.png" height="300px" ></p>
+      <p>In this room, there are 100 units of wood, 90 units of stone, and 0 units of iron.</p>
+      <p>In this example, you earned $1 x 100 = $100 for the wood, $-1 x 90 = $-90 for the stone, and $0 x 0 = $0 for the iron, adding up to a total of $10 for the day.</p>
+      <p>You can press the <b>space key</b> to sell (or dispose of) the resources and begin the next day. Your earnings for the day will be displayed below.</p>
+      <p><b>Your goal is to earn as much as you can by finding the room with resources that will sell for the most on the given day.</b></p>
+      <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The rooms with resources will always have the same amount of resources.</p>
+      <p>There will be 101 days (trials) in the experiment.</p>
+      <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $0.10 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
+      <button type="button" id="continue" style="font-size: 22px;">Continue</button>
+
+      <br/><br/>
+      <textarea id="experiment" rows=30 cols=20 hidden>
+            13
+            2 3 4 0
+            5 6 7 0
+            8 9 10 0
+            11 12 13 0
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            -1 -1 -1 1
+            images/door1.png
+            images/door2.png
+            images/door3.png
+            images/door4.png
+            images/door5.png
+            images/door6.png
+            images/door7.png
+            images/door8.png
+            images/door9.png
+            images/door10.png
+            images/door11.png
+            images/door12.png
+            images/door13.png
+            3
+            images/wood.png
+            images/stone.png
+            images/iron.png
+            0 0 0
+            0 0 0
+            0 0 0
+            0 0 0
+            0 10 0
+            100 0 0
+            70 70 70 
+            10 0 0
+            100 100 0 
+            0 10 0
+            0 0 10
+            0 100 60
+            10 0 0
+            4
+            1 -> 1 -2 0 x 25
+            1 -> -2 1 0 x 25
+            1 -> 1 -1 0 x 25
+            1 -> -1 1 0 x 25
+            1
+            1 -> 1 1 1 x 1
+      </textarea>
+  </div>
+
+
+
+  <div id = "check_page" style="font-size: 22px; display:block;">
+      <h2>Medieval Trading</h2>
+      <fieldset>
+        <legend>Please answer a few questions before we begin.</legend>
+        <fieldset style="width:500px;margin:5px">
+            What is your task?<br><br />
+            <input type="radio" name="q1"  >Fight dungeon dragons in a medieval castle.<br>
+            <input type="radio" name="q1" id="icheck1" >Maximize earnings by selling resources.<br>
+            <input type="radio" name="q1" >Build a medieval castle.<br>
+            <input type="radio" name="q1" >I do not know.<br>
+        </fieldset>
+        <fieldset style="width:500px;margin:5px">
+            How many days (trials) are there?<br><br />
+            <input type="radio" name="q2">1<br>
+            <input type="radio" name="q2">10<br>
+            <input type="radio" name="q2"  id="icheck2">101<br>
+            <input type="radio" name="q2">1001<br>
+        </fieldset>
+        <fieldset style="width:500px;margin:5px">
+            Today, wood sells for $1, stone sells for $0, and iron sells for $-2 (that is, you lose $2 for each unit of iron). You found 100 units of wood, 50 units of stone, and 10 units of iron. How much will you earn?<br> <br />
+            <input type="radio" name="q3">$100<br>
+            <input type="radio" name="q3">$-100<br>
+            <input type="radio" name="q3">$50<br>
+            <input type="radio" name="q3" id="icheck3">$80<br>
+        </fieldset>
+      </fieldset>
+      <br><br><br>
+      <p>You will only be directed to the next page if you manage to answer all of the questions correctly.</p>
+      <button type="button" name="button"; id="check_answers"; style="font-size: 22px;">Check answers</button>  
+  </div>
+
+
+
+  <div id = "new_trial_page" class="trial_page" >
+      <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h3 style="font-size: 20px;">Today's market prices:</h3>
+          <h1 id="prices" style="font-size: 50px;">PRICES</h1>
+      </div>
+
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Press <b>space</b> to enter the castle.</p>
+  </div>
+
+
+
+  <div id = "trial_page" class="trial_page" >
+      <img id="cur_door" src="" height="15%" style="position: absolute; right: 5%; top: 5%; text-align: right;">
+      <h2 id="goal_state" style="position: absolute; left: 5%; top: 5%; text-align: left;">Goal</h2>
+
+      <div id="doors" style="position: absolute; left: 0; top: 30%; height: 40%; width: 100%; text-align: center;">
+          <h1 style="position: absolute; left: 25%; top: -25%; text-align: center; font-size: 300%;">1</h1>
+          <h1 style="position: absolute; left: 50%; top: -25%; text-align: center; font-size: 300%;">2</h1>
+          <h1 style="position: absolute; left: 75%; top: -25%; text-align: center; font-size: 300%;">3</h1>
+          <img id="door1" src="" height="100%"> &emsp;
+          <img id="door2" src="" height="100%"> &emsp;
+          <img id="door3" src="" height="100%">
+      </div>
+
+      <div id="phis" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h1 id="phi1" style="font-size: 50px;">phi 1</h1>
+          <h1 id="phi2" style="font-size: 50px;">phi 2</h1>
+          <h1 id="phi3" style="font-size: 50px;">phi 3</h1>
+      </div>
+
+      <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>number keys 1, 2, 3</b>. Press <b>space</b> to sell the resouces and begin the next day.<br/> You have <span id='trials_left'></span> days left.</p>
+  </div>
+
+  <div id = "cheat_page" style="font-size: 22px; display:block;">
+      <h2>Medieval Trading</h2>
+      <fieldset>
+          <legend>One last thing</legend>
+        <fieldset style="width:500px;margin:5px">
+             Did you take notes or use any memory aids, such as pen and paper, during the experiment? Your answer will <strong>not</strong> affect your payment or performance bonus, or your ability to partake in future studies.<br><br />
+            <input type="radio" name="qcheat" id="icheatyes" >Yes.<br>
+            <input type="radio" name="qcheat" id="icheatno" >No.<br>
+            <input type="radio" name="qcheat" id="icheatmaybe">Prefer not to say.<br>
+        </fieldset>
+      </fieldset>
+      <button type="button" name="button"; id="check_cheat"; style="font-size: 22px;">Submit answer</button>  
+  </div>
+
+  <div id = "final_page">
+      <p>Congratulations! You have completed the experiment. Your completion code is <strong>USFATRADE2</strong></p>
+      <p>Your bonus is <b>$<span id='bonus'>NaN</span></b>! You will be paid within 1 business day.</p>
+  </div>
+
+
+  <script type="text/javascript">
+      $("#consent_page").show();
+      $("#captcha").hide();
+      $("#instruction_page").hide();
+      $("#check_page").hide();
+      $("#new_trial_page").hide();
+      $("#trial_page").hide();
+      $("#test_page").hide();
+      $("#cheat_page").hide();
+      $("#final_page").hide();
+
+      //initExp();
+
+      $("#agree").click(function () {
+          // skip captcha b/c we have the instruction check 
+          /*
+          $("#captcha").show();
+
+          var response = grecaptcha.getResponse(); var correctCaptcha = function(response) {
+              console.log(response);
+              if (response.length == 0) console.log("You can't proceed!");
+              else {
+                $("#captcha").hide();
+                $("#consent_page").hide();
+                $("#instruction_page").show();
+              }
+          };
+
+          window.correctCaptcha = correctCaptcha;
+          */
+
+          $("#consent_page").hide();
+          $("#instruction_page").show()
+      })
+
+      $("#continue").click(function () {
+          $("#instruction_page").hide();
+          $("#check_page").show()
+      })
+
+      $("#check_answers").click(function () {
+          if (instructionsCheck()) {
+              $("#check_page").hide();
+              initExp();
+          } else {
+              check_fails++;
+              alert('You have answered some of the questions incorrectly. Please read the instructions again.');
+              $("#check_page").hide();
+              $("#instruction_page").show();
+          }
+      })
+
+      $("#check_cheat").click(function () {
+            if (document.getElementById('icheatyes').checked) {
+                logExtra("yes"); 
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else if (document.getElementById('icheatno').checked) { 
+                logExtra("no"); 
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else if (document.getElementById('icheatmaybe').checked) { 
+                logExtra("maybe");
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else {
+              alert('Please select an answer.');
+            }
+      })
+
+  </script>
+
+
+</body>
+</html>
