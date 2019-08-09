@@ -46,6 +46,7 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_da
             end
             continue;
         end
+
         if size(T, 1) ~= expected_number_of_rows
             fprintf('Skipping %s: it has only %d rows\n', files(idx).name, size(T,1));
             if exist('bad_dirname', 'var')
@@ -53,6 +54,22 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_da
             end
             continue;
         end
+
+        % see if cheated
+        [fpath,fname,fext] = fileparts(filepath);
+        extra_filepath = fullfile(fpath, [fname, '_extra.csv']);
+        try
+            Textra = readtable(extra_filepath, 'Delimiter', ',', 'ReadVariableNames',false);
+            cheated = Textra{1,3};
+            if ~strcmp(cheated, 'no')
+                continue
+                fprintf('Skipping %s: cheated (%s)\n', files(idx).name, cheated);
+            end
+        catch e
+            fprintf('Error reading file %s\n', extra_filepath);
+            disp(e);
+        end
+
         Ts{subj} = T;
 
         disp(files(idx).name);
