@@ -32,7 +32,7 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_da
     RT_all = [];
     RT_new = [];
     for idx = 1:length(files)
-        if ~endsWith(files(idx).name, 'csv')
+        if ~endsWith(files(idx).name, 'csv') || startsWith(files(idx).name, 'bonus')
             continue;
         end
 

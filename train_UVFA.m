@@ -1,4 +1,4 @@
-function [UVFA, V] = train_UVFA(env, w_train, gamma, niters)
+    function [UVFA, V] = train_UVFA(env, w_train, gamma, niters)
 
     if ~exist('niters', 'var')
         niters = 10;

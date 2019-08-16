@@ -1,6 +1,6 @@
 % init experimental environment
 %
-function env = init_env_v1_1h
+function env = init_env_v1_1i
 
 
 env.N = 13;
@@ -29,15 +29,15 @@ env.phi{1} = [0 0 0];
 env.phi{2} = [0 0 0];
 env.phi{3} = [0 0 0];
 env.phi{4} = [0 0 0];
-env.phi{5} = [0 1 0];
-env.phi{6} = [10 0 0 ];
-env.phi{7} = [7 7 7 ];
-env.phi{8} = [9 0 0];
-env.phi{9} = [10 10 0];
-env.phi{10} = [0 9 0 ];
-env.phi{11} = [0 0 1 ];
-env.phi{12} = [0 10 6];
-env.phi{13} = [1 0 0 ];
+env.phi{5} = [1 2 4];
+env.phi{6} = [10 0 2 ];
+env.phi{7} = [7 7 17 ];
+env.phi{8} = [0 1 4];
+env.phi{9} = [15 15 0];
+env.phi{10} = [1 0 3 ];
+env.phi{11} = [3 1 5 ];
+env.phi{12} = [0 10 16];
+env.phi{13} = [2 1 6 ];
 
 % terminal states
 env.terminal = zeros(1, env.N);
