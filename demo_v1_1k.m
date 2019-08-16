@@ -5,7 +5,7 @@ env = init_env_v1_1k;
 filename = 'demo_v1_1k.mat';
 
 w_train = {[1 -2 0], [-2 1 0], [1 -1 0], [-1 1 0]};
-w_test = {[1 1 1], [0 0 1]};  
+w_test = {[1 1 1]};  
 %w_test = {[1 1 0], [0 0 1]};  
 %w_test = {[1 1 1], [0 0 1]};  
 params = init_params();
@@ -24,6 +24,7 @@ for subj = 1:N
 
     Q{subj} = train_MF(env, w_train, params.gamma, params.alpha, params.eps);
 
+    Q2{subj} = train_MF2(env, w_train, params.gamma, params.alpha, params.eps);
 end
 
 
@@ -44,6 +45,7 @@ for subj = 1:N
     pi_train_SF = test_SFGPI(env, w_train, params.gamma, params.beta, psi{subj});
     pi_train_MB = test_MB(env, w_train, params.gamma, params.beta);
     pi_train_MF = test_MF(env, w_train, params.beta, Q{subj});
+    pi_train_MF2 = test_MF2(env, w_train, params.beta, Q2{subj}, w_train);
 
     for t = 1:length(w_train)
 
@@ -66,6 +68,11 @@ for subj = 1:N
         [r, s] = test_perf(env, pi_train_MF, w_train{t});
         term_s_train(t, 4, subj) = s;
         tot_r_train(t, 4, subj) = r;
+
+        % test MF2
+        [r, s] = test_perf(env, pi_train_MF2{t}, w_train{t});
+        term_s_train(t, 5, subj) = s;
+        tot_r_train(t, 5, subj) = r;
     end
 
 end
@@ -82,6 +89,7 @@ for subj = 1:N
     pi_test_SF = test_SFGPI(env, w_test, params.gamma, params.beta, psi{subj});
     pi_test_MB = test_MB(env, w_test, params.gamma, params.beta);
     pi_test_MF = test_MF(env, w_test, params.beta, Q{subj});
+    pi_test_MF2 = test_MF2(env, w_test, params.beta, Q2{subj}, w_train);
 
     for t = 1:length(w_test)
 
@@ -104,6 +112,11 @@ for subj = 1:N
         [r, s] = test_perf(env, pi_test_MF, w_test{t});
         term_s_test(t, 4, subj) = s;
         tot_r_test(t, 4, subj) = r;
+
+        % test MF2
+        [r, s] = test_perf(env, pi_test_MF2{t}, w_test{t});
+        term_s_test(t, 5, subj) = s;
+        tot_r_test(t, 5, subj) = r;
     end
 end
 
@@ -112,7 +125,7 @@ save(filename);
 
 %load(filename);
 
-model_names = {'UVFA', 'SF&GPI', 'MB', 'MF'};
+model_names = {'UVFA', 'SF&GPI', 'MB', 'MF', 'MF2'};
 
 %plot_perf(env, w_train, tot_r_train, model_names); % <-- boring
 

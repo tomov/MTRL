@@ -22,7 +22,7 @@ function plot_final_states(env, w_test, term_s, model_names)
             end
 
             plot_idx = plot_idx + 1;
-            subplot(4, length(w_test), plot_idx);
+            subplot(length(model_names), length(w_test), plot_idx);
 
             bar(cnt);
 
