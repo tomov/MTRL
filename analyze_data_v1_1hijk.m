@@ -5,7 +5,7 @@ clear all;
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1i', 101);
-[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1j', 101);
+%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1j', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_batch2', 101);
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g_long', 119);
 load data.mat
@@ -336,6 +336,83 @@ for t = 1:length(test_goals)
     end
 
 end
+
+
+%
+%   RT analysis
+%
+
+
+
+mb_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & tbl.c2 == 7);
+sf_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & tbl.c2 == 12);
+uvfa_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & tbl.c2 == 9);
+other_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & ~ismember(tbl.c2, [7 9 12]));
+
+
+% MB vs SF RT analysis, training
+
+RT = [tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
+s = [tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
+type = categorical([ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)))); 2*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))))]);
+logRT = log(RT);
+
+T = table(RT, s, type, logRT);
+
+formula = 'RT ~ -1 + type + (-1 + type | s)';
+result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
+[beta, names, stats] = fixedEffects(result);
+
+H = [ 1 -1 ]; % MB - SFGPI
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme MB - SFGPI contrast (training): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+
+
+
+% MB vs others, test
+
+RT = [tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); ...
+      tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, sf_subj)); ...
+      tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, uvfa_subj)); ...
+      tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, other_subj)); ...
+      ];
+s = [tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); ...
+     tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj)); ...
+     tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, uvfa_subj)); ...
+     tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, other_subj)); ...
+     ];
+type = categorical([ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)))); ...
+                  2*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj)))); ...
+                  3*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, uvfa_subj)))); ...
+                  4*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, other_subj)))); ...
+                  ]);
+logRT = log(RT);
+
+T = table(RT, s, type, logRT);
+
+formula = 'RT ~ -1 + type';
+result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
+[beta, names, stats] = fixedEffects(result);
+
+H = [1 -1 0 0];
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme MB - SFGPI contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+
+H = [1 0 -1 0];
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme MB - UVFA contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+
+H = [1 0 0 -1 ];
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme MB - other contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+
+H = [0 1 -1 0];
+[p, F, DF1, DF2] = coefTest(result, H);
+fprintf('RT fitglme SFGPI - UVFA contrat (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+
+
+
+
 
 %{
 

@@ -265,6 +265,7 @@ for t = 1:length(goals)
 
 end
 
+% MB vs SF RT analysis
 
 mb_subj = tbl.s_id(tbl.phase == 2 & strcmp(goals{2}, tbl.g) & tbl.c2 == 7);
 sf_subj = tbl.s_id(tbl.phase == 2 & strcmp(goals{2}, tbl.g) & tbl.c2 == 12);
