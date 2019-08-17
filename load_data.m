@@ -60,10 +60,10 @@ function [data, Ts, f_chunk, durs, RT_all, RT_new, avg_rew, filenames] = load_da
         extra_filepath = fullfile(fpath, [fname, '_extra.csv']);
         try
             Textra = readtable(extra_filepath, 'Delimiter', ',', 'ReadVariableNames',false);
-            cheated = Textra{1,3};
+            cheated = Textra{1,3}{1};
             if ~strcmp(cheated, 'no')
-                continue
                 fprintf('Skipping %s: cheated (%s)\n', files(idx).name, cheated);
+                continue
             end
         catch e
             fprintf('Error reading file %s\n', extra_filepath);
