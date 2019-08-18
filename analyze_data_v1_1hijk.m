@@ -3,19 +3,19 @@
 clear all;
 
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
-%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
+[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1i', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1j', 101);
-[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1k', 101);
+%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1k', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_batch2', 101);
 %[data, Ts, ~, durs] = load_data('exp/results/usfa_v1_1g_long', 119);
 load data.mat
 
 %data = data(durs < 50, :);
 
-
 %{
-which = avg_rew < 0; %median(avg_rew);
+which = avg_rew > median(avg_rew);
+%which = avg_rew > 0; %median(avg_rew);
 data = data(which, :);
 filenames = filenames(which);
 %}

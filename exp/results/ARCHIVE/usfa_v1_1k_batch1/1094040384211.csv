@@ -1,0 +1,2 @@
+group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails
+A,1094040384211,train,1,[-2 1 0],1 2 6,3,15360 34133 24750 1755 292 1148 15120 787 226 178 924 247 157 180 157 158 314 159 225 1619,50 50 51 51 51 50 50 50 50 50 49 49 49 49 49 49 50 50 50 32,0 1,97889,-200,1565951535.147,Fri Aug 16 2019 06:32:15 GMT-0400 (EDT),0
