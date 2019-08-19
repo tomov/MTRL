@@ -1,0 +1,7 @@
+group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails
+A,1899701084305,train,1,[1 -1 0],1 3 8,3,3097 2471 7210,51 51 32,0 1,12778,90,1566152259.45,Sun Aug 18 2019 14:17:39 GMT-0400 (Eastern Daylight Time),0
+A,1899701084305,train,1,[-1 1 0],1 2 5,3,492 3384 3047,50 50 32,0 1,6923,10,1566152269.692,Sun Aug 18 2019 14:17:49 GMT-0400 (Eastern Daylight Time),0
+A,1899701084305,train,1,[-2 1 0],1 4 12,3,511 2284 4736,49 50 32,0 1,7531,100,1566152280.192,Sun Aug 18 2019 14:18:00 GMT-0400 (Eastern Daylight Time),0
+A,1899701084305,train,1,[1 -1 0],1 3 8,3,448 1794 2133,51 51 32,0 1,4375,90,1566152289.154,Sun Aug 18 2019 14:18:09 GMT-0400 (Eastern Daylight Time),0
+A,1899701084305,train,1,[-2 1 0],1 3 10,3,1109 1307 2148,51 50 32,0 1,4564,90,1566152295.02,Sun Aug 18 2019 14:18:15 GMT-0400 (Eastern Daylight Time),0
+A,1899701084305,train,1,[-1 1 0],1 4 11,3,1540 1518 1903,49 49 32,0 1,4961,0,1566152300.697,Sun Aug 18 2019 14:18:20 GMT-0400 (Eastern Daylight Time),0

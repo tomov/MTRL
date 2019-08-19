@@ -3,7 +3,8 @@
 clear all;
 
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
-[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
+%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
+[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1l', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1i', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1j', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1k', 101);
