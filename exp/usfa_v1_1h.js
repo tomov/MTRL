@@ -9,8 +9,9 @@ function initExp() {
     exp = genExp(exp);
 
     subj_id = "1" + Math.random().toString().substring(3,15);
-    file_name = 'results/' + subj_id + ".csv";
-    bonus_filename = 'results/bonus.csv';
+    dirname = 'results/usfa_v1_1h_batch3';
+    file_name = dirname + '/' + subj_id + ".csv";
+    bonus_filename = dirname + '/bonus.csv';
 
     stage = "train";
     trial_idx = -1;
