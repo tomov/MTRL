@@ -4,7 +4,7 @@ clear all;
 
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h_long', 201);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1h', 101);
-[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1l', 101);
+%[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1l', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1i', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1j', 101);
 %[data, Ts, ~, durs, ~, ~, avg_rew, filenames] = load_data('exp/results/usfa_v1_1k', 101);
@@ -14,12 +14,12 @@ load data.mat
 
 %data = data(durs < 50, :);
 
-%{
+% top vs. bottom half
+%
 which = avg_rew > median(avg_rew);
 %which = avg_rew > 0; %median(avg_rew);
 data = data(which, :);
 filenames = filenames(which);
-%}
 
 sem = @(x) std(x) / sqrt(length(x));
 
@@ -135,13 +135,29 @@ test_optim = [7];
 train_optim = [6, 12];
 for t = 1:length(test_goals)
     cnt{t} = [];
+    sample = []; % for bootstrap
     for i = final_states 
         which = tbl.c2 == i & strcmp(tbl.g, test_goals{t});
         cnt{t}(i) = sum(which); % # of visits to terminal state i during test task t
+        % bootstrap
+        for s = 1:cnt{t}(i)
+            vec = zeros(1, max(final_states));
+            vec(i) = 1;
+            sample = [sample; vec];
+        end
     end
 
+    % bootstrap CI
+
+    N = sum(cnt{t});
+    fn = @(r) mean(r, 1);
+    [ci{t}, bootstat] = bootci(10000, fn, sample);
+    ci{t} = ci{t} * N;
+
     subplot(1, length(test_goals), t);
-    bar(cnt{t});
+    bar(1:max(final_states), cnt{t});
+    hold on;
+    errorbar(1:max(final_states), cnt{t}, cnt{t} - ci{t}(1,:), ci{t}(2,:) - cnt{t}, 'color', [0 0 0], 'linestyle', 'none');
     title(sprintf('w = %s', test_goals{t}));
     xticks(final_states);
     xlim([4.5 13.5]);
@@ -149,6 +165,8 @@ for t = 1:length(test_goals)
     ylabel('# subjects');
 
     fprintf('\nw = %s\n\n', test_goals{t});
+
+    nosheunshoeu
 
     % MB
     n = N;
@@ -163,6 +181,13 @@ for t = 1:length(test_goals)
     p = 2/8;
     pval = myBinomTest(c, n, p);
     fprintf('SF+GPI vs rest (excluding MB): two-tailed binomial test (%d out of %d subjects went to state 6 or 12; chance is ~%d, not counting MB): p = %.6f\n', c, n, round(n*p), pval);
+
+    % SF+GPI
+    n = N;
+    c = cnt{t}(12);
+    p = 1/9;
+    pval = myBinomTest(c, n, p);
+    fprintf('SF+GPI vs rest: two-tailed binomial test (%d out of %d subjects went to state; chance is ~%d, not counting MB): p = %.6f\n', c, n, round(n*p), pval);
 
     % SF+GPI
     n = cnt{t}(6) + cnt{t}(12);
@@ -221,6 +246,7 @@ for t = 1:length(test_goals)
 end
 
 
+test_cnt = cnt;
 
 
 
@@ -352,78 +378,68 @@ uvfa_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & tbl.c2 == 9
 other_subj = tbl.s_id(tbl.phase == 2 & strcmp(test_goals{1}, tbl.g) & ~ismember(tbl.c2, [7 9 12]));
 
 
-% MB vs SF RT analysis, training
 
-RT = [tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.RT(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
-s = [tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)); tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))];
-type = categorical([ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, mb_subj)))); 2*ones(size(tbl.s_id(tbl.phase == 1 & ismember(tbl.s_id, sf_subj))))]);
-logRT = log(RT);
-
-T = table(RT, s, type, logRT);
-
-formula = 'RT ~ -1 + type + (-1 + type | s)';
-result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
-[beta, names, stats] = fixedEffects(result);
-
-H = [ 1 -1 ]; % MB - SFGPI
-[p, F, DF1, DF2] = coefTest(result, H);
-fprintf('RT fitglme MB - SFGPI contrast (training): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+% RT analysis
 
 
+phase_title = {'training', 'test'};
 
-% MB vs others, test
-
-RT = [tbl.RT(tbl.phase == 2 & ismember(tbl.s_id, mb_subj)); ...
-      tbl.RT(tbl.phase == 2 & ismember(tbl.s_id, sf_subj)); ...
-      tbl.RT(tbl.phase == 2 & ismember(tbl.s_id, uvfa_subj)); ...
-      tbl.RT(tbl.phase == 2 & ismember(tbl.s_id, other_subj)); ...
-      ];
-s = [tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, mb_subj)); ...
-     tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, sf_subj)); ...
-     tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, uvfa_subj)); ...
-     tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, other_subj)); ...
-     ];
-type = categorical([ones(size(tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, mb_subj)))); ...
-                  2*ones(size(tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, sf_subj)))); ...
-                  3*ones(size(tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, uvfa_subj)))); ...
-                  4*ones(size(tbl.s_id(tbl.phase == 2 & ismember(tbl.s_id, other_subj)))); ...
-                  ]);
-logRT = log(RT);
-
-T = table(RT, s, type, logRT);
-
-formula = 'RT ~ -1 + type';
-result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
-[beta, names, stats] = fixedEffects(result);
-
-H = [1 -1 0 0];
-[p, F, DF1, DF2] = coefTest(result, H);
-fprintf('RT fitglme MB - SFGPI contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
-
-H = [1 0 -1 0];
-[p, F, DF1, DF2] = coefTest(result, H);
-fprintf('RT fitglme MB - UVFA contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
-
-H = [1 0 0 -1 ];
-[p, F, DF1, DF2] = coefTest(result, H);
-fprintf('RT fitglme MB - other contrast (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
-
-H = [0 1 -1 0];
-[p, F, DF1, DF2] = coefTest(result, H);
-fprintf('RT fitglme SFGPI - UVFA contrat (test): = %f (expect positive), p = %f, F(%d,%d) = %f\n', H * beta, p, DF1, DF2, F);
+for phase = 1:2
 
 
-ms = [mean(RT(grp2idx(type) == 3)) mean(RT(grp2idx(type) == 2)) mean(RT(grp2idx(type) == 1)) mean(RT(grp2idx(type) == 4))];
-sems = [sem(RT(grp2idx(type) == 3)) sem(RT(grp2idx(type) == 2)) sem(RT(grp2idx(type) == 1)) sem(RT(grp2idx(type) == 4))];
+    RT = [tbl.RT(tbl.phase == phase & ismember(tbl.s_id, mb_subj)); ...
+          tbl.RT(tbl.phase == phase & ismember(tbl.s_id, sf_subj)); ...
+          tbl.RT(tbl.phase == phase & ismember(tbl.s_id, uvfa_subj)); ...
+          tbl.RT(tbl.phase == phase & ismember(tbl.s_id, other_subj)); ...
+          ];
+    s = [tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, mb_subj)); ...
+         tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, sf_subj)); ...
+         tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, uvfa_subj)); ...
+         tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, other_subj)); ...
+         ];
+    type = categorical([ones(size(tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, mb_subj)))); ...
+                      2*ones(size(tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, sf_subj)))); ...
+                      3*ones(size(tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, uvfa_subj)))); ...
+                      4*ones(size(tbl.s_id(tbl.phase == phase & ismember(tbl.s_id, other_subj)))); ...
+                      ]);
+    logRT = log(RT);
 
-figure;
-bar(ms);
-hold on;
-errorbar(ms, sems, 'color', [0 0 0], 'linestyle', 'none');
-xticklabels({'UVFA', 'SF&GPI', 'MB', 'other'});
-xlabel('subjects split by final state');
-ylabel('RT (msec)');
+    T = table(RT, s, type, logRT);
 
+    formula = 'RT ~ -1 + type';
+    result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
+    [beta, names, stats] = fixedEffects(result);
+
+    H = [1 -1 0 0];
+    [p, F, DF1, DF2] = coefTest(result, H);
+    fprintf('RT fitglme MB - SFGPI contrast (%s): = %f (expect positive), p = %f, F(%d,%d) = %f\n', phase_title{phase}, H * beta, p, DF1, DF2, F);
+
+    H = [1 0 -1 0];
+    [p, F, DF1, DF2] = coefTest(result, H);
+    fprintf('RT fitglme MB - UVFA contrast (%s): = %f (expect positive), p = %f, F(%d,%d) = %f\n', phase_title{phase}, H * beta, p, DF1, DF2, F);
+
+    H = [1 0 0 -1 ];
+    [p, F, DF1, DF2] = coefTest(result, H);
+    fprintf('RT fitglme MB - other contrast (%s): = %f (expect positive), p = %f, F(%d,%d) = %f\n', phase_title{phase}, H * beta, p, DF1, DF2, F);
+
+    H = [0 1 -1 0];
+    [p, F, DF1, DF2] = coefTest(result, H);
+    fprintf('RT fitglme SFGPI - UVFA contrast (%s): = %f (expect positive), p = %f, F(%d,%d) = %f\n', phase_title{phase}, H * beta, p, DF1, DF2, F);
+
+
+    ms = [mean(RT(grp2idx(type) == 3)) mean(RT(grp2idx(type) == 2)) mean(RT(grp2idx(type) == 1)) mean(RT(grp2idx(type) == 4))];
+    sems = [sem(RT(grp2idx(type) == 3)) sem(RT(grp2idx(type) == 2)) sem(RT(grp2idx(type) == 1)) sem(RT(grp2idx(type) == 4))];
+
+    figure;
+    bar(ms);
+    hold on;
+    errorbar(ms, sems, 'color', [0 0 0], 'linestyle', 'none');
+    xticklabels({'UVFA', 'SF&GPI', 'MB', 'other'});
+    xlabel('subjects split by final state');
+    ylabel('RT (msec)');
+    title(sprintf('RT, %s choices', phase_title{phase}));
+
+end
 
 
 

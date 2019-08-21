@@ -1,0 +1,3 @@
+group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails
+A,1612154155844,train,1,[-1 1 0],1 2 7,3,3119 3632 10249,98 97 32,0 1,17000,0,1566333603.374,Tue Aug 20 2019 13:40:03 GMT-0700 (Mountain Standard Time),2
+A,1612154155844,train,1,[1 -2 0],1 2 7,3,1259 4256 1429 1188 654,32 98 97 99 32,1 2,8786,-40,1566333613.655,Tue Aug 20 2019 13:40:13 GMT-0700 (Mountain Standard Time),2
