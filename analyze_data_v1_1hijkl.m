@@ -167,7 +167,6 @@ for t = 1:length(test_goals)
 
     fprintf('\nw = %s\n\n', test_goals{t});
 
-    nosheunshoeu
 
     % MB
     n = N;
@@ -407,7 +406,7 @@ for phase = 1:2
 
     T = table(RT, s, type, logRT);
 
-    formula = 'RT ~ -1 + type';
+    formula = 'RT ~ -1 + type + (-1 + type | s)';
     result = fitglme(T, formula, 'Distribution', 'Normal', 'Link', 'Identity', 'FitMethod', 'Laplace', 'DummyVarCoding', 'full');
     [beta, names, stats] = fixedEffects(result);
 
