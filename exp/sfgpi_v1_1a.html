@@ -64,34 +64,18 @@
 
       <br/><br/>
       <textarea id="experiment" rows=30 cols=20 hidden>
-            13
-            2 3 4 0
-            5 6 7 0
-            8 9 10 0
-            11 12 13 0
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
-            -1 -1 -1 1
+            3 5 2 
+            1 1 2 2 0 1
+            1 2 2 0 1 2
+            2 1 3 3 0 3
+            2 2 3 2 3 4
+            2 3 3 0 4 5
+            0 0 0 0 1
             images/door1.png
             images/door2.png
             images/door3.png
             images/door4.png
             images/door5.png
-            images/door6.png
-            images/door7.png
-            images/door8.png
-            images/door9.png
-            images/door10.png
-            images/door11.png
-            images/door12.png
-            images/door13.png
-            3
             images/wood.png
             images/stone.png
             images/iron.png
@@ -109,12 +93,10 @@
             0 100 60
             10 0 0
             4
-            1 -> 1 -2 0 x 25
-            1 -> -2 1 0 x 25
-            1 -> 1 -1 0 x 25
-            1 -> -1 1 0 x 25
+            1 -> 1 0 x 2
+            1 -> 0 1 x 2
             1
-            1 -> 1 1 1 x 1
+            1 -> 1 1 x 1
       </textarea>
   </div>
 
@@ -208,17 +190,17 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").show();
+      $("#consent_page").hide();
       $("#captcha").hide();
       $("#instruction_page").hide();
       $("#check_page").hide();
-      $("#new_trial_page").hide();
+      $("#new_trial_page").show();
       $("#trial_page").hide();
       $("#test_page").hide();
       $("#cheat_page").hide();
       $("#final_page").hide();
 
-      //initExp();
+      initExp();
 
       $("#agree").click(function () {
           // skip captcha b/c we have the instruction check 

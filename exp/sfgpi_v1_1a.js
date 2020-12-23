@@ -1,5 +1,5 @@
 check_fails = 0;
-in_trial = 0; // 0 = not in trial; 1 = new trial page; 2 = in trial
+in_trial = 0; // 0 = not in trial; 1 = new trial page; 2 = in trial; 3 = features, rewards
 bonus_scale = 0.01; // USD per point
 
 function initExp() {
@@ -9,7 +9,7 @@ function initExp() {
     exp = genExp(exp);
 
     subj_id = "1" + Math.random().toString().substring(3,15);
-    dirname = 'results/usfa_v1_1l_batch2';
+    dirname = 'results/sfgpi_v1_1a';
     file_name = dirname + '/' + subj_id + ".csv";
     extra_file_name = dirname + '/' + subj_id + "_extra.csv";
     bonus_filename = dirname + '/bonus.csv';
@@ -25,6 +25,10 @@ function initExp() {
     cur = -1;
     start = -1;
     goal = -1;
+    reward = 0;
+    delta_reward = -1;
+    last_a = -1;
+    next = -1;
 
     $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
@@ -54,50 +58,52 @@ function readExp() {
 
     var exp = {};
     var lines = $("#experiment").val().split("\n");
-    exp.N = parseInt(lines[0], 10);
 
-    // read adjacency 
+    var a = lines[0].trim().split(" ");
+    exp.N = parseInt(a[0], 10);
+    exp.M = parseInt(a[1], 10);
+    exp.D = parseInt(a[2], 10);
+
     exp.adj = [];
-    exp.is_term = [];
-    for (var i = 1; i <= exp.N; i++) {
-        var a = lines[i].trim().split(" ");
-        var b = [];
-        for (var j = 0; j < 3; j++) {
-            b.push(parseInt(a[j], 10));
-        }
-        exp.adj.push(b);
-        exp.is_term.push(parseInt(a[3], 10));
-    }
-    l = exp.N + 1; // current line
-
-    // read state names
-    exp.names = [];
     for (var i = 0; i < exp.N; i++) {
-        exp.names.push(lines[l].trim());
-        l++;
+        exp.adj.push([]);
     }
 
-    // # of features
-    exp.D = parseInt(lines[l], 10);
+    for (var i = 0; i < exp.M; i++) {
+        var a = lines[i + 1].trim().split(" ");
+        var adj = {};
+        adj.s = parseInt(a[0], 10);
+        adj.a = parseInt(a[1], 10);
+        adj.s_next = parseInt(a[2], 10);
+        phi = [];
+        for (var j = 0; j < exp.D; j++) {
+            phi.push(parseFloat(a[j + 3]));
+        }
+        adj.phi = phi;
+        adj.door_id = parseInt(a[exp.D + 3], 10);
+        exp.adj[adj.s - 1].push(adj);
+    }
+    l = exp.M + 1;
+
+    exp.is_term = [];
+    var a = lines[l].trim().split(" ");
+    for (var i = 0; i < exp.D; i++) {
+        exp.is_term.push(parseInt(a[i], 10));
+    }
     l++;
 
-    // read feature names
-    exp.feature_names = [];
-    for (var i = 0; i < exp.D; i++) {
-        exp.feature_names.push(lines[l].trim());
+    // read state doors
+    exp.doors = [];
+    for (var i = 0; i < exp.M; i++) {
+        exp.doors.push(lines[l].trim());
         l++;
     }
 
-    // read state features
-    exp.phi = [];
-    for (var i = 0; i < exp.N; i++) {
-        var a = lines[l].trim().split(" ");
+    // read feature names
+    exp.features = [];
+    for (var i = 0; i < exp.D; i++) {
+        exp.features.push(lines[l].trim());
         l++;
-        var b = [];
-        for (var j = 0; j < exp.D; j++) {
-            b.push(parseFloat(a[j]));
-        }
-        exp.phi.push(b);
     }
 
     // read training tasks
@@ -164,7 +170,7 @@ function genExp(exp) {
     console.log("genExp");
 
     // shuffle state names
-    exp.names = shuffle(exp.names);
+    exp.doors = shuffle(exp.doors);
 
     // generate training trials
     exp.train_trials = genTrials(exp.train);
@@ -178,7 +184,7 @@ function genExp(exp) {
     }
 
     // shuffle feature names
-    exp.feature_names = shuffle(exp.feature_names);
+    exp.features = shuffle(exp.features);
 
     // shuffle state features
     var fid = [];
@@ -326,8 +332,11 @@ function nextTrial() {
     keys = [];
     valid_keys = [];
     path = [cur];
+    reward = 0;
+    delta_reward = -1;
+    last_a = -1;
+    next = -1;
 
-    redraw();
     in_trial = 1;
     $("#new_trial_page").show();
 }
@@ -346,6 +355,7 @@ function checkKeyPressed(e) {
             $("#new_trial_page").hide();
             $("#trial_page").show();
             in_trial = 2;
+            redraw();
             last_keypress_time = (new Date()).getTime();
         }
 
@@ -357,41 +367,58 @@ function checkKeyPressed(e) {
         keys.push((e).keyCode);
         RT_tot += RT;
         var next = -1;
+        var adj = {};
 
         // get next state
         if ((e).key == "1") {
-            next = exp.adj[cur - 1][0];
+            last_a = 1;
         } else if ((e).key == "2") {
-            next = exp.adj[cur - 1][1];
+            last_a = 2;
         } else if ((e).key == "3") {
-            next = exp.adj[cur - 1][2];
-        } 
+            last_a = 3;
+        }
+
+        for (var i = 0; i < exp.adj[cur - 1].length; i++) {
+            if (exp.adj[cur - 1][i].a == last_a) {
+                adj = exp.adj[cur - 1][i];
+                next = adj.s_next;
+            }
+        }
 
         // move to next state 
         if (next >= 0) {
+            console.assert(adj.s = cur);
 
-            valid_keys.push(keys.length - 1);
-
-            if (next == exp.adj[cur - 1][0]) {
+            if (last_a == 1) {
                 $("#door1").css("border", "10px solid white");
-            } else if (next == exp.adj[cur - 1][1]) {
+            } else if (last_a == 2) {
                 $("#door2").css("border", "10px solid white");
-            } else if (next == exp.adj[cur - 1][2]) {
+            } else if (last_a == 3) {
                 $("#door3").css("border", "10px solid white");
             }
 
-            cur = next;
-            in_trial = 0;
+            delta_reward = calculate_reward(goal, adj.phi);
+            reward += delta_reward;
             path.push(next);
+            valid_keys.push(keys.length - 1);
+
+            in_trial = 0;
 
             sleep(1000).then(() => {
                 $("#door1").css("border", "");
                 $("#door2").css("border", "");
                 $("#door3").css("border", "");
-                in_trial = 2;
+
+                in_trial = 3;
                 redraw();
+
+                console.assert(next != 1);
+                cur = next;
+                last_a = -1;
+                next = -1;
             });
-        }
+
+        } else if (in_trial == 3) {
 
         // if goal is reached => start next trial
         if ((e).key === ' ' || (e).key === 'Spacebar') {
@@ -400,6 +427,9 @@ function checkKeyPressed(e) {
                 in_trial = 0;
                 logTrial();
                 nextTrial();
+            } else {
+                in_trial = 2;
+                redraw();
             }
         }
     }
@@ -474,29 +504,30 @@ function logBonus() {
     $.post("results_data.php", {postresult: row, postfile: bonus_filename});
 }
 
+function calculate_reward(goal, phi) {
+    reward = 0;
+    for (var i = 0; i < exp.D; i++) {
+        reward += goal[i] * phi[i];
+    }
+    return reward;
+}
 
 function redraw() {
-    // calculate reward
-    if (exp.is_term[cur - 1]) {
-        reward = 0;
-        for (var i = 0; i < exp.D; i++) {
-            reward += goal[i] * exp.phi[cur - 1][i];
-        }
-    }
 
     // generate goal and reward strings
-    goal_str = "";
-    goal_str_small = "";
-    sum_str = "";
+    var goal_str = "";
+    var goal_str_small = "";
+    var sum_str = "";
+    var phi = exp.adj[cur - 1][last_a];
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
             sum_str += " + ";
         }
         // TODO less hacky with img
-        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='50px'>";
-        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.feature_names[i] + "' height='20px'><br />";
-        sum_str += exp.phi[cur - 1][i].toString() + " <img src='" + exp.feature_names[i] + "' height='20px'> x $" + goal[i].toString();
+        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='50px'>";
+        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='20px'><br />";
+        sum_str += phi.toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
     }
     
     // show goal / prices
@@ -504,20 +535,30 @@ function redraw() {
     $("#prices").html(goal_str);
 
     // show doors or resources
-    $("#cur_door").attr("src", exp.names[cur - 1]);
-    if (!exp.is_term[cur - 1]) {
+    //$("#cur_door").attr("src", exp.doors[cur - 1]); TODO
+    if (in_trial == 1 || in_trial == 2) {
+        var adj = exp.adj[cur - 1];
         $("#message").html("");
         // TODO dynamic DOM
         $("#phi1").html("");
         $("#phi2").html("");
         $("#phi3").html("");
-        $("#door1").attr("src", exp.names[exp.adj[cur - 1][0] - 1]);
-        $("#door2").attr("src", exp.names[exp.adj[cur - 1][1] - 1]);
-        $("#door3").attr("src", exp.names[exp.adj[cur - 1][2] - 1]);
+        var door_objects = ["#door1", "#door2", "#door3"];
+        for (var i = 0; i < door_objects.length; i++) {
+            $(door_objects[i]).hide();
+        }
+        for (var i = 0; i < adj.length; i++) {
+            var a = adj[i].a;
+            $(door_objects[a - 1]).attr("src", exp.doors[adj[i].door_id - 1]);
+            $(door_objects[a - 1]).show();
+        }
+        $("#door1").attr("src", exp.doors[exp.adj[cur - 1][0] - 1]);
+        $("#door2").attr("src", exp.doors[exp.adj[cur - 1][1] - 1]);
+        $("#door3").attr("src", exp.doors[exp.adj[cur - 1][2] - 1]);
         $("#doors").show();
         $("#phis").hide();
     } else {
-        if (reward < 0)
+        if (delta_reward < 0)
         {
             color = "red";
         }
@@ -525,11 +566,11 @@ function redraw() {
         {
             color = "green";
         }
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + reward.toString() + "</span>");
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of " + reward.toString() + "");
         // TODO dynamic DOM
-        $("#phi1").html(exp.phi[cur - 1][0].toString() + " &emsp; <img src='" + exp.feature_names[0] + "' height='50px'>");
-        $("#phi2").html(exp.phi[cur - 1][1].toString() + " &emsp; <img src='" + exp.feature_names[1] + "' height='50px'>");
-        $("#phi3").html(exp.phi[cur - 1][2].toString() + " &emsp; <img src='" + exp.feature_names[2] + "' height='50px'>");
+        $("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.features[0] + "' height='50px'>");
+        $("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.features[1] + "' height='50px'>");
+        $("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
         $("#doors").hide();
         $("#phis").show();
     }
