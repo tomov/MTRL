@@ -75,7 +75,8 @@ function readExp() {
         adj.s = parseInt(a[0], 10);
         adj.a = parseInt(a[1], 10);
         adj.s_next = parseInt(a[2], 10);
-        phi = [];
+        var phi = [];
+        console.log(a);
         for (var j = 0; j < exp.D; j++) {
             phi.push(parseFloat(a[j + 3]));
         }
@@ -87,7 +88,7 @@ function readExp() {
 
     exp.is_term = [];
     var a = lines[l].trim().split(" ");
-    for (var i = 0; i < exp.D; i++) {
+    for (var i = 0; i < exp.N; i++) {
         exp.is_term.push(parseInt(a[i], 10));
     }
     l++;
@@ -193,7 +194,7 @@ function genExp(exp) {
     }
     fid = shuffle(fid);
     exp.fid = fid;
-    shuffleStateFeatures(exp.phi, fid);
+    shuffleStateFeatures(exp.adj, fid);
     shuffleTrialFeatures(exp.train_trials, fid);
     shuffleTrialFeatures(exp.test_trials, fid);
 
@@ -201,13 +202,16 @@ function genExp(exp) {
 }
 
 
-function shuffleStateFeatures(phi, fid) {
-    for (var i = 0; i < phi.length; i++) {
-        var b = [];
-        for (var j = 0; j < phi[i].length; j++) {
-            b.push(phi[i][fid[j]]);
+function shuffleStateFeatures(adj, fid) {
+    for (var i = 0; i < adj.length; i++) {
+        for (var j = 0; j < adj[i].length; j++) {
+            var phi = adj[i][j].phi;
+            var b = [];
+            for (var k = 0; k < phi.length; k++) {
+                b.push(phi[fid[k]]);
+            }
+            adj[i][j].phi = b;
         }
-        phi[i] = b;
     }
 }
 
@@ -338,9 +342,9 @@ function nextTrial() {
     next = -1;
 
     in_trial = 1;
+    redraw();
     $("#new_trial_page").show();
 }
-
 
 function checkKeyPressed(e) {
     var e = window.event || e;
@@ -355,12 +359,11 @@ function checkKeyPressed(e) {
             $("#new_trial_page").hide();
             $("#trial_page").show();
             in_trial = 2;
-            redraw();
+            //redraw();
             last_keypress_time = (new Date()).getTime();
         }
 
     } else if (in_trial == 2) { // in trial
-
         RT = (new Date()).getTime() - last_keypress_time;
         last_keypress_time = (new Date()).getTime();
         RTs.push(RT);
@@ -387,7 +390,7 @@ function checkKeyPressed(e) {
 
         // move to next state 
         if (next >= 0) {
-            console.assert(adj.s = cur);
+            console.assert(adj.s == cur);
 
             if (last_a == 1) {
                 $("#door1").css("border", "10px solid white");
@@ -418,7 +421,9 @@ function checkKeyPressed(e) {
                 next = -1;
             });
 
-        } else if (in_trial == 3) {
+        }
+
+    } else if (in_trial == 3) {
 
         // if goal is reached => start next trial
         if ((e).key === ' ' || (e).key === 'Spacebar') {
@@ -518,7 +523,7 @@ function redraw() {
     var goal_str = "";
     var goal_str_small = "";
     var sum_str = "";
-    var phi = exp.adj[cur - 1][last_a];
+    var phi = exp.adj[cur - 1][last_a].phi;
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
@@ -527,6 +532,8 @@ function redraw() {
         // TODO less hacky with img
         goal_str += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='50px'>";
         goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='20px'><br />";
+        
+        only do this if were in a trial TODO
         sum_str += phi.toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
     }
     
@@ -581,4 +588,3 @@ function redraw() {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
