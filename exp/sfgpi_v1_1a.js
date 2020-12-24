@@ -28,6 +28,7 @@ function initExp() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
+    last_a_index = -1;
     next = -1;
 
     $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
@@ -339,6 +340,7 @@ function nextTrial() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
+    last_a_index = -1;
     next = -1;
 
     in_trial = 1;
@@ -385,6 +387,7 @@ function checkKeyPressed(e) {
             if (exp.adj[cur - 1][i].a == last_a) {
                 adj = exp.adj[cur - 1][i];
                 next = adj.s_next;
+                last_a_index = i;
             }
         }
 
@@ -510,7 +513,7 @@ function logBonus() {
 }
 
 function calculate_reward(goal, phi) {
-    reward = 0;
+    var reward = 0;
     for (var i = 0; i < exp.D; i++) {
         reward += goal[i] * phi[i];
     }
@@ -523,7 +526,6 @@ function redraw() {
     var goal_str = "";
     var goal_str_small = "";
     var sum_str = "";
-    var phi = exp.adj[cur - 1][last_a].phi;
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
@@ -533,8 +535,12 @@ function redraw() {
         goal_str += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='50px'>";
         goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='20px'><br />";
         
-        only do this if were in a trial TODO
-        sum_str += phi.toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
+        if (last_a != -1) {
+            console.log(cur - 1);
+            console.log(last_a_index);
+            var phi = exp.adj[cur - 1][last_a_index].phi;
+            sum_str += phi[i].toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
+        }
     }
     
     // show goal / prices
@@ -573,11 +579,11 @@ function redraw() {
         {
             color = "green";
         }
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of " + reward.toString() + "");
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + "");
         // TODO dynamic DOM
         $("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.features[0] + "' height='50px'>");
         $("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.features[1] + "' height='50px'>");
-        $("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
+        //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
         $("#doors").hide();
         $("#phis").show();
     }
