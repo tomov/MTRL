@@ -77,7 +77,6 @@ function readExp() {
         adj.a = parseInt(a[1], 10);
         adj.s_next = parseInt(a[2], 10);
         var phi = [];
-        console.log(a);
         for (var j = 0; j < exp.D; j++) {
             phi.push(parseFloat(a[j + 3]));
         }
@@ -172,7 +171,7 @@ function genExp(exp) {
     console.log("genExp");
 
     // shuffle state names
-    exp.doors = shuffle(exp.doors);
+    //exp.doors = shuffle(exp.doors);
 
     // generate training trials
     exp.train_trials = genTrials(exp.train);
@@ -182,18 +181,18 @@ function genExp(exp) {
 
     // randomly shuffle next states
     for (var i = 0; i < exp.N; i++) {
-        exp.adj[i] = shuffle(exp.adj[i]);
+        //exp.adj[i] = shuffle(exp.adj[i]);
     }
 
     // shuffle feature names
-    exp.features = shuffle(exp.features);
+    //exp.features = shuffle(exp.features);
 
     // shuffle state features
     var fid = [];
     for (var j = 0; j < exp.D; j++) {
         fid.push(j);
     }
-    fid = shuffle(fid);
+    //fid = shuffle(fid);
     exp.fid = fid;
     shuffleStateFeatures(exp.adj, fid);
     shuffleTrialFeatures(exp.train_trials, fid);
@@ -526,20 +525,32 @@ function redraw() {
     var goal_str = "";
     var goal_str_small = "";
     var sum_str = "";
+    var phi_objects = [];
+    if (last_a != -1) {
+        phi = exp.adj[cur - 1][last_a_index].phi;
+    }
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
-            sum_str += " + ";
         }
         // TODO less hacky with img
         goal_str += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='50px'>";
         goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='20px'><br />";
         
         if (last_a != -1) {
-            console.log(cur - 1);
-            console.log(last_a_index);
-            var phi = exp.adj[cur - 1][last_a_index].phi;
-            sum_str += phi[i].toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
+            //sum_str += phi[i].toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
+            var phi_object = "";
+            if (phi[i] > 0) {
+                if (sum_str != "") {
+                    sum_str += " + ";
+                }
+                for (var j = 0; j < phi[i]; j++) {
+                    phi_object += "<img src='" + exp.features[i] + "' height='50px'>";
+                    sum_str += "<img src='" + exp.features[i] + "' height='20px'>";
+                }
+                sum_str += " x $" + goal[i].toString();
+            }
+            phi_objects.push(phi_object);
         }
     }
     
@@ -557,13 +568,16 @@ function redraw() {
         $("#phi2").html("");
         $("#phi3").html("");
         var door_objects = ["#door1", "#door2", "#door3"];
+        var number_objects = ["#number_one", "#number_two", "#number_three"];
         for (var i = 0; i < door_objects.length; i++) {
             $(door_objects[i]).hide();
+            $(number_objects[i]).hide();
         }
         for (var i = 0; i < adj.length; i++) {
             var a = adj[i].a;
             $(door_objects[a - 1]).attr("src", exp.doors[adj[i].door_id - 1]);
             $(door_objects[a - 1]).show();
+            $(number_objects[a - 1]).show();
         }
         $("#door1").attr("src", exp.doors[exp.adj[cur - 1][0] - 1]);
         $("#door2").attr("src", exp.doors[exp.adj[cur - 1][1] - 1]);
@@ -579,10 +593,12 @@ function redraw() {
         {
             color = "green";
         }
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + "");
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
         // TODO dynamic DOM
-        $("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.features[0] + "' height='50px'>");
-        $("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.features[1] + "' height='50px'>");
+        $("#phi1").html(phi_objects[0]);
+        $("#phi2").html(phi_objects[1]);
+        //$("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.features[0] + "' height='50px'>");
+        //$("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.features[1] + "' height='50px'>");
         //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
         $("#doors").hide();
         $("#phis").show();
