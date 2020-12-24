@@ -171,7 +171,7 @@ function genExp(exp) {
     console.log("genExp");
 
     // shuffle state names
-    //exp.doors = shuffle(exp.doors);
+    exp.doors = shuffle(exp.doors);
 
     // generate training trials
     exp.train_trials = genTrials(exp.train);
@@ -181,18 +181,18 @@ function genExp(exp) {
 
     // randomly shuffle next states
     for (var i = 0; i < exp.N; i++) {
-        //exp.adj[i] = shuffle(exp.adj[i]);
+        exp.adj[i] = shuffle(exp.adj[i]);
     }
 
     // shuffle feature names
-    //exp.features = shuffle(exp.features);
+    exp.features = shuffle(exp.features);
 
     // shuffle state features
     var fid = [];
     for (var j = 0; j < exp.D; j++) {
         fid.push(j);
     }
-    //fid = shuffle(fid);
+    fid = shuffle(fid);
     exp.fid = fid;
     shuffleStateFeatures(exp.adj, fid);
     shuffleTrialFeatures(exp.train_trials, fid);
@@ -527,7 +527,8 @@ function redraw() {
     var sum_str = "";
     var phi_objects = [];
     if (last_a != -1) {
-        phi = exp.adj[cur - 1][last_a_index].phi;
+        var phi = exp.adj[cur - 1][last_a_index].phi;
+        var door_id = exp.adj[cur - 1][last_a_index].door_id;
     }
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
@@ -559,7 +560,12 @@ function redraw() {
     $("#prices").html(goal_str);
 
     // show doors or resources
-    //$("#cur_door").attr("src", exp.doors[cur - 1]); TODO
+    if (last_a != -1) {
+        $("#cur_door").attr("src", exp.doors[door_id - 1]);
+        $("#cur_door").show();
+    } else {
+        $("#cur_door").hide();
+    }
     if (in_trial == 1 || in_trial == 2) {
         var adj = exp.adj[cur - 1];
         $("#message").html("");
