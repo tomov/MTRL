@@ -590,6 +590,7 @@ function redraw() {
         $("#door3").attr("src", exp.doors[exp.adj[cur - 1][2] - 1]);
         $("#doors").show();
         $("#phis").hide();
+        $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
     } else {
         if (delta_reward < 0)
         {
@@ -608,6 +609,7 @@ function redraw() {
         //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
         $("#doors").hide();
         $("#phis").show();
+        $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
     }
 }
 
