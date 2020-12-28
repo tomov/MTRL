@@ -173,6 +173,11 @@ function genExp(exp) {
     // shuffle state names
     exp.doors = shuffle(exp.doors);
 
+    // preload doors
+    for (var i = 0; i < exp.doors.length; i++) {
+        preloadImage(exp.doors[i]);
+    }
+
     // generate training trials
     exp.train_trials = genTrials(exp.train);
 
@@ -186,6 +191,11 @@ function genExp(exp) {
 
     // shuffle feature names
     exp.features = shuffle(exp.features);
+
+    // preload features
+    for (var i = 0; i < exp.features.length; i++) {
+        preloadImage(exp.features[i]);
+    }
 
     // shuffle state features
     var fid = [];
@@ -480,6 +490,11 @@ function turkGetParam(name) {
   } else {
     return results[1];
   }
+}
+
+function preloadImage(src) {
+    var image = new Image();
+    image.src = src;
 }
 
 function logTrial() {
