@@ -80,10 +80,10 @@ function readExp() {
     }
     l++;
 
-    exp.nblocks = parseInt(lines[l++], 10));
+    exp.nblocks = parseInt(lines[l++], 10);
 
     exp.blocks = [];
-    for (int b = 0; b < exp.nblocks; b++) {
+    for (var b = 0; b < exp.nblocks; b++) {
         var block = {};
 
         block.castle_name = lines[l++].trim();
@@ -322,7 +322,7 @@ function nextBlock() {
     last_a_index = -1;
     next = -1;
 
-    redraw();
+    $("#welcome").html("Welcome to " + exp.blocks[block_idx].castle_name + "!");
     $("#new_block_page").show();
 }
 
@@ -623,12 +623,10 @@ function redraw() {
         }
     }
     
-    $("#welcome").html("Welcome to " + exp.blocks[block_idx].castle_name + "!");
-
     // show goal / prices
     $("#goal_state").html("Prices:<br />" + goal_str_small);
     $("#prices").html(goal_str);
-    $("#castle_day").html("Day " + (trial_idx + 1).toString() + " in " + exp.block[blog_idx].castle_name);
+    $("#castle_day").html("Day " + (trial_idx + 1).toString() + " in " + exp.blocks[block_idx].castle_name);
 
     // show doors or resources
     if (last_a != -1) {
