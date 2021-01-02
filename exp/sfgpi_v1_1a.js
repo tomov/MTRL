@@ -1,5 +1,5 @@
 check_fails = 0;
-in_trial = 0; // 0 = not in trial; 1 = new trial page; 2 = in trial; 3 = features, rewards
+in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = new trial page; 2 = in trial; 3 = features, rewards
 bonus_scale = 0.01; // USD per point
 
 function initExp() {
@@ -16,7 +16,7 @@ function initExp() {
 
     stage = "train";
     trial_idx = -1;
-    in_trial = 0;
+    in_trial = -1;
 
     RTs = [];
     keys = [];
@@ -30,8 +30,9 @@ function initExp() {
     last_a = -1;
     last_a_index = -1;
     next = -1;
+    block_idx = -1;
 
-    $.post("results_data.php", {postresult: "group, subj_id, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
+    $.post("results_data.php", {postresult: "group, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
     nextTrial();
 }
@@ -93,18 +94,29 @@ function readExp() {
     }
     l++;
 
-    // read state doors
-    exp.doors = [];
-    for (var i = 0; i < exp.M; i++) {
-        exp.doors.push(lines[l].trim());
-        l++;
-    }
+    exp.nblocks = parseInt(lines[l++], 10));
 
-    // read feature names
-    exp.features = [];
-    for (var i = 0; i < exp.D; i++) {
-        exp.features.push(lines[l].trim());
-        l++;
+    exp.blocks = [];
+    for (int b = 0; b < exp.nblocks; b++) {
+        var block = {};
+
+        block.castle_name = lines[l++].trim();
+
+        // read state doors
+        block.doors = [];
+        for (var i = 0; i < exp.M; i++) {
+            block.doors.push(lines[l].trim());
+            l++;
+        }
+
+        // read feature names
+        block.features = [];
+        for (var i = 0; i < exp.D; i++) {
+            block.features.push(lines[l].trim());
+            l++;
+        }
+
+        exp.blocks.push(block); 
     }
 
     // read training tasks
@@ -170,43 +182,54 @@ function readTasks(lines, l, n) {
 function genExp(exp) {
     console.log("genExp");
 
-    // shuffle state names
-    exp.doors = shuffle(exp.doors);
+    // for every block
+    for (var b = 0; b < exp.nblocks; b++) {
 
-    // preload doors
-    for (var i = 0; i < exp.doors.length; i++) {
-        preloadImage(exp.doors[i]);
+        // shuffle doors
+        exp.blocks[b].doors = shuffle(exp.blocks[b].doors);
+
+        // preload doors
+        for (var i = 0; i < exp.blocks[b].doors.length; i++) {
+            preloadImage(exp.blocks[b].doors[i]);
+        }
+
+        // generate training trials
+        exp.blocks[b].train_trials = genTrials(exp.train);
+
+        // generate test trials
+        exp.blocks[b].test_trials = genTrials(exp.test);
+
+        // randomly shuffle next states
+        exp.blocks[b].adj = JSON.parse(JSON.stringify(exp.adj)); // deep copy adjacency structure
+        for (var i = 0; i < exp.N; i++) {
+            exp.blocks[b].adj[i] = shuffle(exp.blocks[b].adj[i]);
+        }
+
+        // shuffle feature names
+        exp.blocks[b].features = shuffle(exp.blocks[b].features);
+
+        // preload features
+        for (var i = 0; i < exp.blocks[b].features.length; i++) {
+            preloadImage(exp.blocks[b].features[i]);
+        }
+
+        // shuffle state features
+        var fid = [];
+        for (var j = 0; j < exp.D; j++) {
+            fid.push(j);
+        }
+        fid = shuffle(fid);
+        exp.fid = fid;
+        shuffleStateFeatures(exp.blocks[b].adj, fid);
+        shuffleTrialFeatures(exp.blocks[b].train_trials, fid);
+        shuffleTrialFeatures(exp.blocks[b].test_trials, fid);
     }
 
-    // generate training trials
-    exp.train_trials = genTrials(exp.train);
+    // Shuffle blocks
+    exp.blocks = shuffle(exp.blocks);
 
-    // generate test trials
-    exp.test_trials = genTrials(exp.test);
-
-    // randomly shuffle next states
-    for (var i = 0; i < exp.N; i++) {
-        exp.adj[i] = shuffle(exp.adj[i]);
-    }
-
-    // shuffle feature names
-    exp.features = shuffle(exp.features);
-
-    // preload features
-    for (var i = 0; i < exp.features.length; i++) {
-        preloadImage(exp.features[i]);
-    }
-
-    // shuffle state features
-    var fid = [];
-    for (var j = 0; j < exp.D; j++) {
-        fid.push(j);
-    }
-    fid = shuffle(fid);
-    exp.fid = fid;
-    shuffleStateFeatures(exp.adj, fid);
-    shuffleTrialFeatures(exp.train_trials, fid);
-    shuffleTrialFeatures(exp.test_trials, fid);
+    // remove global adjacency structure
+    delete exp.adj;
 
     return exp;
 }
@@ -302,9 +325,9 @@ function nextTrial() {
 
     trial_idx++;
     if (stage == "train") {
-        trials = exp.train_trials;
+        trials = exp.blocks[block_idx].train_trials;
     } else {
-        trials = exp.test_trials;
+        trials = exp.blocks[block_idx].test_trials;
     }
 
     if (trial_idx >= trials.length) {
@@ -335,9 +358,9 @@ function nextTrial() {
     goal_orig = trials[trial_idx].w_orig;
 
     if (stage == "train") {
-        trials_left = exp.train_trials.length + exp.test_trials.length - trial_idx;
+        trials_left = exp.blocks[block_idx].train_trials.length + exp.blocks[block_idx].test_trials.length - trial_idx;
     } else {
-        trials_left = exp.test_trials.length - trial_idx;
+        trials_left = exp.blocks[block_idx].test_trials.length - trial_idx;
     }
     $('#trials_left').html(trials_left.toString());
 
@@ -392,9 +415,9 @@ function checkKeyPressed(e) {
             last_a = 3;
         }
 
-        for (var i = 0; i < exp.adj[cur - 1].length; i++) {
-            if (exp.adj[cur - 1][i].a == last_a) {
-                adj = exp.adj[cur - 1][i];
+        for (var i = 0; i < exp.blocks[block_idx].adj[cur - 1].length; i++) {
+            if (exp.blocks[block_idx].adj[cur - 1][i].a == last_a) {
+                adj = exp.blocks[block_idx].adj[cur - 1][i];
                 next = adj.s_next;
                 last_a_index = i;
             }
@@ -438,6 +461,7 @@ function checkKeyPressed(e) {
     } else if (in_trial == 3) {
 
         // if goal is reached => start next trial
+        // if not, continue trial
         if ((e).key === ' ' || (e).key === 'Spacebar') {
             if (exp.is_term[cur - 1]) {
                 rewards.push(reward);
@@ -505,7 +529,7 @@ function logTrial() {
     var goal_str = ("[" + goal_orig.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
-    var row = "A," + subj_id + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
+    var row = "A," + subj_id + "," + block_idx.toString() + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
 }
@@ -542,27 +566,27 @@ function redraw() {
     var sum_str = "";
     var phi_objects = [];
     if (last_a != -1) {
-        var phi = exp.adj[cur - 1][last_a_index].phi;
-        var door_id = exp.adj[cur - 1][last_a_index].door_id;
+        var phi = exp.blocks[block_idx].adj[cur - 1][last_a_index].phi;
+        var door_id = exp.blocks[block_idx].adj[cur - 1][last_a_index].door_id;
     }
     for (var i = 0; i < exp.D; i++) {
         if (i > 0) { 
             goal_str += "<br />";
         }
         // TODO less hacky with img
-        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='50px'>";
-        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.features[i] + "' height='20px'><br />";
+        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='50px'>";
+        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='20px'><br />";
         
         if (last_a != -1) {
-            //sum_str += phi[i].toString() + " <img src='" + exp.features[i] + "' height='20px'> x $" + goal[i].toString();
+            //sum_str += phi[i].toString() + " <img src='" + exp.blocks[block_idx].features[i] + "' height='20px'> x $" + goal[i].toString();
             var phi_object = "";
             if (phi[i] > 0) {
                 if (sum_str != "") {
                     sum_str += " + ";
                 }
                 for (var j = 0; j < phi[i]; j++) {
-                    phi_object += "<img src='" + exp.features[i] + "' height='50px'>";
-                    sum_str += "<img src='" + exp.features[i] + "' height='20px'>";
+                    phi_object += "<img src='" + exp.blocks[block_idx].features[i] + "' height='50px'>";
+                    sum_str += "<img src='" + exp.blocks[block_idx].features[i] + "' height='20px'>";
                 }
                 sum_str += " x $" + goal[i].toString();
             }
@@ -576,13 +600,13 @@ function redraw() {
 
     // show doors or resources
     if (last_a != -1) {
-        $("#cur_door").attr("src", exp.doors[door_id - 1]);
+        $("#cur_door").attr("src", exp.blocks[block_idx].doors[door_id - 1]);
         $("#cur_door").show();
     } else {
         $("#cur_door").hide();
     }
     if (in_trial == 1 || in_trial == 2) {
-        var adj = exp.adj[cur - 1];
+        var adj = exp.blocks[block_idx].adj[cur - 1];
         $("#message").html("");
         // TODO dynamic DOM
         $("#phi1").html("");
@@ -596,13 +620,13 @@ function redraw() {
         }
         for (var i = 0; i < adj.length; i++) {
             var a = adj[i].a;
-            $(door_objects[a - 1]).attr("src", exp.doors[adj[i].door_id - 1]);
+            $(door_objects[a - 1]).attr("src", exp.blocks[block_idx].doors[adj[i].door_id - 1]);
             $(door_objects[a - 1]).show();
             $(number_objects[a - 1]).show();
         }
-        $("#door1").attr("src", exp.doors[exp.adj[cur - 1][0] - 1]);
-        $("#door2").attr("src", exp.doors[exp.adj[cur - 1][1] - 1]);
-        $("#door3").attr("src", exp.doors[exp.adj[cur - 1][2] - 1]);
+        $("#door1").attr("src", exp.blocks[block_idx].doors[adj[cur - 1][0] - 1]);
+        $("#door2").attr("src", exp.blocks[block_idx].doors[adj[cur - 1][1] - 1]);
+        $("#door3").attr("src", exp.blocks[block_idx].doors[adj[cur - 1][2] - 1]);
         $("#doors").show();
         $("#phis").hide();
         $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
@@ -619,9 +643,9 @@ function redraw() {
         // TODO dynamic DOM
         $("#phi1").html(phi_objects[0]);
         $("#phi2").html(phi_objects[1]);
-        //$("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.features[0] + "' height='50px'>");
-        //$("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.features[1] + "' height='50px'>");
-        //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.features[2] + "' height='50px'>");
+        //$("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[0] + "' height='50px'>");
+        //$("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[1] + "' height='50px'>");
+        //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[2] + "' height='50px'>");
         $("#doors").hide();
         $("#phis").show();
         $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
