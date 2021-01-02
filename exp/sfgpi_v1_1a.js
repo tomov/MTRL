@@ -14,27 +14,13 @@ function initExp() {
     extra_file_name = dirname + '/' + subj_id + "_extra.csv";
     bonus_filename = dirname + '/bonus.csv';
 
-    stage = "train";
-    trial_idx = -1;
     in_trial = -1;
-
-    RTs = [];
-    keys = [];
-    path = [];
-    rewards = [];
-    cur = -1;
-    start = -1;
-    goal = -1;
-    reward = 0;
-    delta_reward = -1;
-    last_a = -1;
-    last_a_index = -1;
-    next = -1;
+    rewards = []; // rewards across all blocks were competing bonus
     block_idx = -1;
 
     $.post("results_data.php", {postresult: "group, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
-    nextTrial();
+    nextBlock();
 }
 
 
@@ -315,15 +301,40 @@ function shuffle(array) {
   return array;
 }
 
+function nextBlock() {
+    console.log("nextBlock " + block_idx);
+
+    block_idx++;
+    trial_idx = -1;
+    stage = "train";
+    in_trial = 0;
+
+    // reset everything else
+    RTs = [];
+    keys = [];
+    path = [];
+    cur = -1;
+    start = -1;
+    goal = -1;
+    reward = 0;
+    delta_reward = -1;
+    last_a = -1;
+    last_a_index = -1;
+    next = -1;
+
+    redraw();
+    $("#new_block_page").show();
+}
 
 function nextTrial() {
     console.log("nextTrial " + trial_idx);
 
     $("#trial_page").hide();
     $("#message").text("");
-    in_trial = 0;
 
+    //in_trial = -1; TODO potentially remove
     trial_idx++;
+
     if (stage == "train") {
         trials = exp.blocks[block_idx].train_trials;
     } else {
@@ -338,16 +349,25 @@ function nextTrial() {
 
             //$("#test_page").show();
             nextTrial(); // directly advance to next trial
+
         } else {
-            // finished
-            bonus = rewards[Math.floor(Math.random() * rewards.length)];
-            if (bonus < 0) {
-                bonus = 0;
+            assert(stage.equals("test"));
+
+            if (block_idx + 1 < exp.nblocks) {
+                // new block
+                nextBlock();
+
+            } else {
+                // finished
+                bonus = rewards[Math.floor(Math.random() * rewards.length)];
+                if (bonus < 0) {
+                    bonus = 0;
+                }
+                $('#bonus').text((bonus * bonus_scale).toFixed(2));
+                //$("#final_page").show();
+                logBonus();
+                $("#cheat_page").show();
             }
-            $('#bonus').text((bonus * bonus_scale).toFixed(2));
-            //$("#final_page").show();
-            logBonus();
-            $("#cheat_page").show();
         }
         return;
     }
@@ -385,7 +405,16 @@ function checkKeyPressed(e) {
 
     console.log("key press " + e.which);
 
-    if (in_trial == 1) { // new trial page (prices)
+    if (in_trial == 0) { // new block page
+
+        if ((e).key === ' ' || (e).key === 'Spacebar') {
+
+            // begin block
+            $("#new_block_page").hide();
+            nextTrial();
+        }
+
+    }  else if (in_trial == 1) { // new trial page (prices)
 
         if ((e).key === ' ' || (e).key === 'Spacebar') {
 
@@ -594,9 +623,12 @@ function redraw() {
         }
     }
     
+    $("#welcome").html("Welcome to " + exp.blocks[block_idx].castle_name + "!");
+
     // show goal / prices
     $("#goal_state").html("Prices:<br />" + goal_str_small);
     $("#prices").html(goal_str);
+    $("#castle_day").html("Day " + (trial_idx + 1).toString() + " in " + exp.block[blog_idx].castle_name);
 
     // show doors or resources
     if (last_a != -1) {
