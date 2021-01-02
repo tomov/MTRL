@@ -351,7 +351,7 @@ function nextTrial() {
             nextTrial(); // directly advance to next trial
 
         } else {
-            assert(stage.equals("test"));
+            console.assert(stage.localeCompare("test"));
 
             if (block_idx + 1 < exp.nblocks) {
                 // new block
@@ -626,7 +626,13 @@ function redraw() {
     // show goal / prices
     $("#goal_state").html("Prices:<br />" + goal_str_small);
     $("#prices").html(goal_str);
-    $("#castle_day").html("Day " + (trial_idx + 1).toString() + " in " + exp.blocks[block_idx].castle_name);
+    var day;
+    if (stage == "train") {
+        day = trial_idx + 1;
+    } else {
+        day = trial_idx + 1 + exp.blocks[block_idx].train_trials.length;
+    }
+    $("#castle_day").html("Day " + day.toString() + " in " + exp.blocks[block_idx].castle_name);
 
     // show doors or resources
     if (last_a != -1) {
