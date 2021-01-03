@@ -87,6 +87,7 @@ function readExp() {
         var block = {};
 
         block.castle_name = lines[l++].trim();
+        block.castle_image = lines[l++].trim();
 
         // read state doors
         block.doors = [];
@@ -323,6 +324,8 @@ function nextBlock() {
     next = -1;
 
     $("#welcome").html("Welcome to " + exp.blocks[block_idx].castle_name + "!");
+    $(".new_block_background").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
+    //$(".new_block .shady").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
     $("#new_block_page").show();
 }
 

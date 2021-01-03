@@ -8,3 +8,22 @@ html, body {
     color: white;
     min-height: 99%;
 }
+
+.new_block {
+    background-color: black;
+    text-align: center;
+    color: white;
+    min-height: 99%;
+}
+
+.new_block_background {
+    content: "";
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.2;
+    min-height: 99%;
+}
