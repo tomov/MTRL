@@ -89,6 +89,16 @@ function readExp() {
         block.castle_name = lines[l++].trim();
         block.castle_image = lines[l++].trim();
 
+        // read state colors of non terminal states
+        block.non_term_colors = [];
+        for (var i = 0; i < exp.N; i++) {
+            if (exp.is_term[i]) {
+                // skip terminal states, we deal with them later after we shuffle
+            } else {
+                block.non_term_colors.push(lines[l++].trim());
+            }
+        }
+
         // read state doors
         block.doors = [];
         for (var i = 0; i < exp.M; i++) {
@@ -171,6 +181,19 @@ function genExp(exp) {
 
     // for every block
     for (var b = 0; b < exp.nblocks; b++) {
+
+        // shuffle non_term_colors
+        exp.blocks[b].non_term_colors = shuffle(exp.blocks[b].non_term_colors);
+
+        // assign all colors
+        exp.blocks[b].colors = [];
+        for (var i = 0, j = 0; i < exp.N; i++) {
+            if (exp.is_term[i]) {
+                exp.blocks[b].colors.push("black");
+            } else {
+                exp.blocks[b].colors.push(exp.blocks[b].non_term_colors[j++]);
+            }
+        }
 
         // shuffle doors
         exp.blocks[b].doors = shuffle(exp.blocks[b].doors);
@@ -645,6 +668,10 @@ function redraw() {
         $("#cur_door").hide();
     }
     if (in_trial == 1 || in_trial == 2) {
+        // doors
+        //
+        $("#trial_page").css("background-color", exp.blocks[block_idx].colors[cur - 1]);
+
         var adj = exp.blocks[block_idx].adj[cur - 1];
         $("#message").html("");
         // TODO dynamic DOM
@@ -670,6 +697,9 @@ function redraw() {
         $("#phis").hide();
         $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
     } else {
+        // rewards
+        //
+        $("#trial_page").css("background-color", "black");
         if (delta_reward < 0)
         {
             color = "red";

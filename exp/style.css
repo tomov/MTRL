@@ -9,6 +9,17 @@ html, body {
     min-height: 99%;
 }
 
+.new_trial_background {
+    content: "";
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    min-height: 99%;
+}
+
 .new_block {
     background-color: black;
     text-align: center;
