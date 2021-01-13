@@ -20,7 +20,6 @@ function initExp() {
 
     $.post("results_data.php", {postresult: "group, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
-    nextBlock();
 }
 
 
@@ -181,6 +180,9 @@ function genExp(exp) {
 
     // for every block
     for (var b = 0; b < exp.nblocks; b++) {
+        
+        // preload castle image
+        preloadImage(exp.blocks[b].castle_image);
 
         // shuffle non_term_colors
         exp.blocks[b].non_term_colors = shuffle(exp.blocks[b].non_term_colors);

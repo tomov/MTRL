@@ -95,8 +95,8 @@
             images/flowers.png
             images/chocolate.png
             2
-            1 -> 1 0 x 10
-            1 -> 0 1 x 10
+            1 -> 1 0 x 1
+            1 -> 0 1 x 1
             1
             1 -> 1 1 x 1
       </textarea>
@@ -212,8 +212,9 @@
   <script type="text/javascript">
       $("#consent_page").hide();
       $("#captcha").hide();
-      $("#instruction_page").hide();
+      $("#instruction_page").show();
       $("#check_page").hide();
+      $("#new_block_page").hide();
       $("#new_trial_page").hide();
       $("#trial_page").hide();
       $("#test_page").hide();
@@ -246,13 +247,14 @@
 
       $("#continue").click(function () {
           $("#instruction_page").hide();
-          $("#check_page").show()
+      //    $("#check_page").show()
+          nextBlock(); // tODO remove this an uncommon line above before actually starting experiment
       })
 
       $("#check_answers").click(function () {
           if (instructionsCheck()) {
               $("#check_page").hide();
-              initExp();
+              nextBlock();
           } else {
               check_fails++;
               alert('You have answered some of the questions incorrectly. Please read the instructions again.');
