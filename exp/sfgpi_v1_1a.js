@@ -60,7 +60,7 @@ function readExp() {
         var a = lines[i + 1].trim().split(" ");
         var adj = {};
         adj.s = parseInt(a[0], 10);
-        adj.a = parseInt(a[1], 10);
+        //adj.a = parseInt(a[1], 10); // TODO action shuffling is broken
         adj.s_next = parseInt(a[2], 10);
         var phi = [];
         for (var j = 0; j < exp.D; j++) {
@@ -211,7 +211,7 @@ function genExp(exp) {
         // generate test trials
         exp.blocks[b].test_trials = genTrials(exp.test);
 
-        // randomly shuffle next states
+        // randomly shuffle next states TODO action shuffling is based on indices
         exp.blocks[b].adj = JSON.parse(JSON.stringify(exp.adj)); // deep copy adjacency structure
         for (var i = 0; i < exp.N; i++) {
             exp.blocks[b].adj[i] = shuffle(exp.blocks[b].adj[i]);
@@ -238,7 +238,7 @@ function genExp(exp) {
     }
 
     // Shuffle blocks
-    //exp.blocks = shuffle(exp.blocks);
+    exp.blocks = shuffle(exp.blocks);
 
     // remove global adjacency structure
     delete exp.adj;
@@ -472,6 +472,8 @@ function checkKeyPressed(e) {
             last_a = 3;
         }
 
+        //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
+        /*
         for (var i = 0; i < exp.blocks[block_idx].adj[cur - 1].length; i++) {
             if (exp.blocks[block_idx].adj[cur - 1][i].a == last_a) {
                 adj = exp.blocks[block_idx].adj[cur - 1][i];
@@ -479,6 +481,11 @@ function checkKeyPressed(e) {
                 last_a_index = i;
             }
         }
+        */
+        i = last_a - 1;
+        adj = exp.blocks[block_idx].adj[cur - 1][i];
+        next = adj.s_next;
+        last_a_index = i;
 
         // move to next state 
         if (next >= 0) {
@@ -687,7 +694,7 @@ function redraw() {
             $(number_objects[i]).hide();
         }
         for (var i = 0; i < adj.length; i++) {
-            var a = adj[i].a;
+            var a = i + 1; //adj[i].a; TODO action shuffling is broken
             $(door_objects[a - 1]).attr("src", exp.blocks[block_idx].doors[adj[i].door_id - 1]);
             $(door_objects[a - 1]).show();
             $(number_objects[a - 1]).show();
