@@ -238,7 +238,7 @@ function genExp(exp) {
     }
 
     // Shuffle blocks
-    exp.blocks = shuffle(exp.blocks);
+    //exp.blocks = shuffle(exp.blocks);
 
     // remove global adjacency structure
     delete exp.adj;
@@ -497,7 +497,7 @@ function checkKeyPressed(e) {
             path.push(next);
             valid_keys.push(keys.length - 1);
 
-            in_trial = 0;
+            in_trial = -1; // disable keypresses
 
             sleep(1000).then(() => {
                 $("#door1").css("border", "");
@@ -631,8 +631,8 @@ function redraw() {
             goal_str += "<br />";
         }
         // TODO less hacky with img
-        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='50px'>";
-        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='20px'><br />";
+        goal_str += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='70px'>";
+        goal_str_small += "$" + goal[i].toString() + " / <img src='" + exp.blocks[block_idx].features[i] + "' height='30px'><br />";
         
         if (last_a != -1) {
             //sum_str += phi[i].toString() + " <img src='" + exp.blocks[block_idx].features[i] + "' height='20px'> x $" + goal[i].toString();
@@ -642,8 +642,8 @@ function redraw() {
                     sum_str += " + ";
                 }
                 for (var j = 0; j < phi[i]; j++) {
-                    phi_object += "<img src='" + exp.blocks[block_idx].features[i] + "' height='50px'>";
-                    sum_str += "<img src='" + exp.blocks[block_idx].features[i] + "' height='20px'>";
+                    phi_object += "<img src='" + exp.blocks[block_idx].features[i] + "' height='70px'>";
+                    sum_str += "<img src='" + exp.blocks[block_idx].features[i] + "' height='30px'>";
                 }
                 sum_str += " x $" + goal[i].toString();
             }
