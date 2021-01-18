@@ -431,11 +431,11 @@ function nextTrial() {
 function checkKeyPressed(e) {
     var e = window.event || e;
 
-    console.log("key press " + e.which);
+    console.log("key press " + e.which + ", in_trial " + in_trial.toString());
 
     if (in_trial == 0) { // new block page
 
-        if ((e).key === ' ' || (e).key === 'Spacebar') {
+        if ((e).key === '\n' || (e).which === 13) {
 
             // begin block
             $("#new_block_page").hide();

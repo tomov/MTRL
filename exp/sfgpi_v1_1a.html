@@ -21,11 +21,11 @@
   <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
       <h3>Consent form for participation in this online experiment</h3>
       <p>
-          Designed by: Momchil Tomov and Eric Schulz<br>
+          Designed by: Momchil Tomov, Andre Barreto, and Sam Gershman <br>
       </p>
       <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
       <p>The study provides information about the nature of learning and decision making</p>
-      <p>The study will take about <b>15 minutes on average</b>. You will <b>receive $1.5</b> for your participation, plus an <b>additional bonus</b> based on performance.</p>
+      <p>The study will take about <b>50 minutes on average</b>. You will <b>receive $7</b> for your participation, plus <b>up to an additional $7</b> based on performance.</p>
       <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
       <br>
       <p>By clicking on the button below, you agree to the following:</p>
@@ -40,25 +40,26 @@
 
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
       <h2>Medieval Trading</h2>
-      <p>Imagine you are a tradesperson scavenging a medieval castle for resources to trade.</p>
-      <p>There are different types of resources that you can sell for different prices.</p>
-      <p>Some resources cannot be sold but instead need to be disposed of at a cost. The prices for those resources will be shown as negative.</p>
-      <p>Every day, you will see today's market price for each resource:</p>
-      <p><img src="images/new_trial_v1_1d.png" height="300px" ></p>
-      <p>In this example, you earn $1 for each unit of wood, you lose $1 for each unit of stone, and you earn nothing for iron.</p>
+      <p>Imagine you are a tradesperson scavenging medieval castles for goods to trade.</p>
+      <p><img src="images/sfgpi_screen_1.png" height="300px" ></p>
+      <p>Press the <b>enter key</b> to begin scavenging the first castle.</p>
+      <p>In each castle, there are different types of goods that you can sell for different prices.</p>
+      <p>Every day, you will see today's market price for each good:</p>
+      <p><img src="images/sfgpi_screen_2.png" height="300px" ></p>
+      <p>In this example, you earn $1 for each piece of armor and you earn nothing for chalices.</p>
       <p>Press the <b>space key</b> to enter the castle.</p>
-      <p>The castle has different rooms. Some rooms have doors which lead to other rooms:</p>
-      <p><img src="images/doors_v1_1d.png" height="300px" ></p>
-      <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>. As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. Note that you can only go forward; you cannot go back to the previous room.</p>
-      <p>Behind some doors, there are resources which you can sell (or dispose of) at today's market prices:</p>
-      <p><img src="images/resources_v1_1d.png" height="300px" ></p>
-      <p>Here, there are 100 units of wood, 90 units of stone, and 0 units of iron.</p>
-      <p>In this example, you earned $1 x 100 = $100 for the wood, $-1 x 90 = $-90 for the stone, and $0 x 0 = $0 for the iron, adding up to a total of $10 for the day.</p>
-      <p>You can press the <b>space key</b> to sell (or dispose of) the resources and continue exploring the castle, or if you have reached the end of the castle, begin the next day. Your earnings for the day will be displayed below.</p>
-      <p><b>Your goal is to earn as much as you can by finding the room with resources that will sell for the most on the given day.</b></p>
-      <p>You will always start from the same room in the castle. The castle layout will not change and the same doors will always lead to the same rooms. The rooms with resources will always have the same amount of resources.</p>
-      <p>There will be 21 days (trials) in the castle. After that, you will scavenge different a castle with a different layout and resources. Overall, you will scavenge ten castles, for total of 210 days.</p>
-      <p>To encourage you to perform well, we will pay you a bonus equal to your earnings from a randomly chosen day in cents. So in the above example, you would be paid a $0.10 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>The castle has different rooms. Rooms have doors which lead to other rooms:</p>
+      <p><img src="images/sfgpi_screen_3.png" height="300px" ></p>
+      <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>Behind the doors, there are goods which you collect to sell at today's market prices:</p>
+      <p><img src="images/sfgpi_screen_4.png" height="300px" ></p>
+      <p>Here, there are four pieces of armor. In this example, this will earn you $1 x 4 = $4 at the end of the day at the current market prices.</p>
+      <p>You can press the <b>space key</b> to collect the goods from that room and continue exploring the castle. Once you reach the end of the castle, all goods collected throughout the day are sold and the next day begins.</p>
+      <p><b>Your goal is to earn as much as you can every day by finding the rooms with goods that will sell for the most on the given day.</b></p>
+      <p>As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. The total value of all goods collected throughout the day will be displayed below.</p>
+      <p>You will always start from the same room in the castle. The layout of the castle will not change and the same doors will always lead to the same rooms. The same rooms will always have the same goods.</p>
+      <p>There will be 21 days (trials) in the castle. After that, you will scavenge a different castle with a different layout and goods. Overall, you will scavenge 10 castles, for total of 210 days.</p>
+      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $5.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
 
@@ -183,8 +184,8 @@
             images/flowers.png
             images/chocolate.png
             2
-            1 -> 1 0 x 0
-            1 -> 0 1 x 0
+            1 -> 1 0 x 10
+            1 -> 0 1 x 10
             1
             1 -> 1 1 x 1
       </textarea>
@@ -211,11 +212,11 @@
             <input type="radio" name="q2">2100<br>
         </fieldset>
         <fieldset style="width:500px;margin:5px">
-            Today, wood sells for $1, stone sells for $0, and iron sells for $-2 (that is, you lose $2 for each unit of iron). You found 100 units of wood, 50 units of stone, and 10 units of iron. How much will you earn?<br> <br />
-            <input type="radio" name="q3">$100<br>
-            <input type="radio" name="q3">$-100<br>
-            <input type="radio" name="q3">$50<br>
-            <input type="radio" name="q3" id="icheck3">$80<br>
+            Today, wood sells for $1 and iron sells for $2. You found 5 pieces of wood and 5 pieces of iron. How much will you earn?<br> <br />
+            <input type="radio" name="q3">$5<br>
+            <input type="radio" name="q3">$10<br>
+            <input type="radio" name="q3" id="icheck3">$15<br>
+            <input type="radio" name="q3">$20<br>
         </fieldset>
       </fieldset>
       <br><br><br>
@@ -232,7 +233,7 @@
           <h1 id="welcome" style="font-size: 50px;">WELCOME</h1>
       </div>
 
-      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: rgb(199,199,199);">Press <b>space</b> to begin.</p>
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: rgb(199,199,199);">Press <b>enter</b> to begin.</p>
   </div>
 
 
@@ -298,7 +299,7 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").hide();
+      $("#consent_page").show();
       $("#captcha").hide();
       $("#instruction_page").hide();
       $("#check_page").hide();
@@ -311,7 +312,7 @@
 
       initExp();
 
-      nextBlock();
+      //nextBlock();
 
       $("#agree").click(function () {
           // skip captcha b/c we have the instruction check 
@@ -337,8 +338,8 @@
 
       $("#continue").click(function () {
           $("#instruction_page").hide();
-      //    $("#check_page").show()
-          nextBlock(); // TODO remove this an uncommon line above before actually starting experiment
+          $("#check_page").show()
+          //nextBlock(); // TODO remove this an uncommon line above before actually starting experiment
       })
 
       $("#check_answers").click(function () {
