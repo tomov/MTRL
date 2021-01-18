@@ -1,6 +1,6 @@
 check_fails = 0;
 in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = new trial page; 2 = in trial; 3 = features, rewards
-bonus_scale = 0.01; // USD per point
+bonus_scale = 1; // USD per point
 
 function initExp() {
     console.log("initExp");
@@ -9,16 +9,17 @@ function initExp() {
     exp = genExp(exp);
 
     subj_id = "1" + Math.random().toString().substring(3,15);
+    var workerID = turkGetParam('workerId');
     dirname = 'results/sfgpi_v1_1a';
-    file_name = dirname + '/' + subj_id + ".csv";
-    extra_file_name = dirname + '/' + subj_id + "_extra.csv";
+    file_name = dirname + '/' + workerID.toString() + "_" + subj_id + ".csv";
+    extra_file_name = dirname + '/' + workerID.toString() + "_" + subj_id + "_extra.csv";
     bonus_filename = dirname + '/bonus.csv';
 
     in_trial = -1;
     rewards = []; // rewards across all blocks were competing bonus
     block_idx = -1;
 
-    $.post("results_data.php", {postresult: "group, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
+    $.post("results_data.php", {postresult: "group, workerId, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
 
 }
 
@@ -387,10 +388,14 @@ function nextTrial() {
 
             } else {
                 // finished
+                in_trial = -1;
+
+                // log bonus
                 bonus = rewards[Math.floor(Math.random() * rewards.length)];
                 if (bonus < 0) {
                     bonus = 0;
                 }
+                console.log("logging bonus");
                 $('#bonus').text((bonus * bonus_scale).toFixed(2));
                 //$("#final_page").show();
                 logBonus();
@@ -593,7 +598,8 @@ function logTrial() {
     var goal_str = ("[" + goal_orig.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
-    var row = "A," + subj_id + "," + block_idx.toString() + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
+    var workerID = turkGetParam('workerId');
+    var row = "A," + workerID.toString() + "," + subj_id + "," + block_idx.toString() + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
 }
@@ -601,7 +607,8 @@ function logTrial() {
 function logExtra(cheated) {
     var assignmentID = turkGetParam('assignmentId');
     var workerID = turkGetParam('workerId');
-    var row = workerID.toString() + "," + assignmentID.toString() + "," + cheated.toString() + "\n";
+    var hitID = turkGetParam('hitId');
+    var row = workerID.toString() + "," + assignmentID.toString() + "," + hitID.toString() + "," + subj_id.toString() + "," + cheated.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: extra_file_name});
 }
