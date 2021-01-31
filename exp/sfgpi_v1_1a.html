@@ -299,7 +299,7 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").hide();
+      $("#consent_page").show();
       $("#captcha").hide();
       $("#instruction_page").hide();
       $("#check_page").hide();
@@ -312,7 +312,7 @@
 
       initExp();
 
-      nextBlock();
+      //nextBlock();
 
       $("#agree").click(function () {
           // skip captcha b/c we have the instruction check 
@@ -339,7 +339,6 @@
       $("#continue").click(function () {
           $("#instruction_page").hide();
           $("#check_page").show()
-          //nextBlock(); // TODO remove this an uncommon line above before actually starting experiment
       })
 
       $("#check_answers").click(function () {
