@@ -16,10 +16,10 @@ function initExp() {
     bonus_filename = dirname + '/bonus.csv';
 
     in_trial = -1;
-    rewards = []; // rewards across all blocks were competing bonus
+    all_rewards = []; // rewards across all blocks for competing bonus
     block_idx = -1;
 
-    $.post("results_data.php", {postresult: "group, workerId, subj_id, block, stage, start, goal, path, length, RTs, keys, valid_keys, RT_tot, reward, timestamp, datetime, check_fails\n", postfile: file_name })
+    $.post("results_data.php", {postresult: "group, workerId, subj_id, block, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails\n", postfile: file_name })
 
 }
 
@@ -61,7 +61,7 @@ function readExp() {
         var a = lines[i + 1].trim().split(" ");
         var adj = {};
         adj.s = parseInt(a[0], 10);
-        //adj.a = parseInt(a[1], 10); // TODO action shuffling is broken
+        adj.a = parseInt(a[1], 10); // TODO action shuffling is broken
         adj.s_next = parseInt(a[2], 10);
         var phi = [];
         for (var j = 0; j < exp.D; j++) {
@@ -232,7 +232,7 @@ function genExp(exp) {
             fid.push(j);
         }
         fid = shuffle(fid);
-        exp.fid = fid;
+        exp.blocks[b].fid = fid;
         shuffleStateFeatures(exp.blocks[b].adj, fid);
         shuffleTrialFeatures(exp.blocks[b].train_trials, fid);
         shuffleTrialFeatures(exp.blocks[b].test_trials, fid);
@@ -339,7 +339,11 @@ function nextBlock() {
     // reset everything else
     RTs = [];
     keys = [];
-    path = [];
+    state_path = [];
+    action_path = [];
+    feature_path = [];
+    reward_path = [];
+    
     cur = -1;
     start = -1;
     goal = -1;
@@ -391,7 +395,7 @@ function nextTrial() {
                 in_trial = -1;
 
                 // log bonus
-                bonus = rewards[Math.floor(Math.random() * rewards.length)];
+                bonus = all_rewards[Math.floor(Math.random() * all_rewards.length)];
                 if (bonus < 0) {
                     bonus = 0;
                 }
@@ -421,7 +425,10 @@ function nextTrial() {
     RTs = [];
     keys = [];
     valid_keys = [];
-    path = [cur];
+    state_path = [cur];
+    action_path = [];
+    feature_path = [];
+    reward_path = [];
     reward = 0;
     delta_reward = -1;
     last_a = -1;
@@ -475,6 +482,8 @@ function checkKeyPressed(e) {
             last_a = 2;
         } else if ((e).key == "3") {
             last_a = 3;
+        } else {
+            return true;
         }
 
         //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
@@ -506,7 +515,10 @@ function checkKeyPressed(e) {
 
             delta_reward = calculate_reward(goal, adj.phi);
             reward += delta_reward;
-            path.push(next);
+            state_path.push(next);
+            action_path.push(adj.a);
+            feature_path.push(adj.phi);
+            reward_path.push(delta_reward);
             valid_keys.push(keys.length - 1);
 
             in_trial = -1; // disable keypresses
@@ -533,7 +545,7 @@ function checkKeyPressed(e) {
         // if not, continue trial
         if ((e).key === ' ' || (e).key === 'Spacebar') {
             if (exp.is_term[cur - 1]) {
-                rewards.push(reward);
+                all_rewards.push(reward);
                 in_trial = 0;
                 logTrial();
                 nextTrial();
@@ -592,14 +604,25 @@ function preloadImage(src) {
 
 function logTrial() {
     var RT_str = (RTs.toString()).replace(/,/g, ' ');
-    var path_str = (path.toString()).replace(/,/g, ' ');
+    var state_path_str = (state_path.toString()).replace(/,/g, ' ');
+    var action_path_str = (action_path.toString()).replace(/,/g, ' ');
+    var feature_path_str = "";
+    for (var i = 0; i < feature_path.length; i++) {
+        if (i > 0) {
+            feature_path_str += ";";
+        }
+        feature_path_str += "[" + (feature_path[i].toString()).replace(/,/g, ' ') + "]";
+    }
+    var reward_path_str = (reward_path.toString()).replace(/,/g, ' ');
     var key_str = (keys.toString()).replace(/,/g, ' ');
     var valid_key_str = (valid_keys.toString()).replace(/,/g, ' ');
-    var goal_str = ("[" + goal_orig.toString() + "]").replace(/,/g, ' ');
+    var goal_orig_str = ("[" + goal_orig.toString() + "]").replace(/,/g, ' ');
+    var goal_str = ("[" + goal.toString() + "]").replace(/,/g, ' ');
+    var fid_str = ("[" + exp.blocks[block_idx].fid.toString() + "]").replace(/,/g, ' ');
     var d = new Date();
     var t = d.getTime() / 1000;
     var workerID = turkGetParam('workerId');
-    var row = "A," + workerID.toString() + "," + subj_id + "," + block_idx.toString() + "," + stage + "," + start.toString() + "," + goal_str + "," + path_str + "," + path.length.toString() + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
+    var row = "A," + workerID.toString() + "," + subj_id + "," + block_idx.toString() + "," + stage + "," + start.toString() + "," + goal_orig_str + "," + goal_str + "," + state_path_str + "," + state_path.length.toString() + "," + action_path_str + "," + feature_path_str + "," + reward_path_str + "," + RT_str + "," + key_str + "," + valid_key_str + "," + RT_tot.toString() + "," + reward.toString() + "," + fid_str  + "," + t.toString() + "," + d.toString() + "," + check_fails.toString() + "\n";
     console.log(row);
     $.post("results_data.php", {postresult: row, postfile: file_name});
 }
