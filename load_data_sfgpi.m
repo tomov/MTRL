@@ -1,4 +1,4 @@
-%function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
+function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
 
     if ~exist('dirname', 'var')
         dirname = 'exp/results/sfgpi_v1_1a'; 
@@ -28,7 +28,7 @@
             continue;
         end
 
-        if size(T, 1) ~= expected_number_of_rows && false
+        if size(T, 1) ~= expected_number_of_rows  
             fprintf('Skipping %s: it has only %d rows\n', files(idx).name, size(T,1));
             if exist('bad_dirname', 'var')
                 movefile(filepath, bad_dirname);
@@ -44,7 +44,7 @@
             cheated = Textra{1,3}{1};
             if ~strcmp(cheated, 'no')
                 fprintf('Skipping %s: cheated (%s)\n', files(idx).name, cheated);
-                continue
+                %continue
             end
         catch e
             fprintf('Error reading file %s\n', extra_filepath);
@@ -57,6 +57,9 @@
 
         for i = 1:length(T.Properties.VariableNames)
             data(subj).(T.Properties.VariableNames{i}) = T.(T.Properties.VariableNames{i});
+        end
+        if ~ismember('trial', T.Properties.VariableNames)
+            data(subj).trial = mod(1:length(data(subj).block), 21)
         end
 
         dur = T.timestamp(end) - T.timestamp(1);
