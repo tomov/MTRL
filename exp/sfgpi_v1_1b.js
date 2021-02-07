@@ -6,8 +6,8 @@ timer = -1;
 new_block_duration = 4000;
 new_trial_duration = 3000;
 choice_duration = 2000;
-selection_duration = 1000;
-feedback_duration = 2000;
+selection_duration = 750;
+feedback_duration = 3000;
 
 
 function initExp() {
@@ -366,6 +366,8 @@ function nextBlock() {
     $(".new_block_background").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
     //$(".new_block .shady").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
     $("#new_block_page").show();
+
+    startTimer(function() { checkKeyPressed(fakeKey('\n')); }, new_block_duration);
 }
 
 function nextTrial() {
@@ -452,31 +454,45 @@ function nextTrial() {
 
 function checkKeyPressed(e) {
     var e = window.event || e;
+    var is_fake = e.code == "fake"; // this means it's part of an automatic transition
 
     console.log("key press " + e.keyCode.toString() + ", in_trial " + in_trial.toString());
+    // TODO there are many race conditions around stop timer
 
     if (in_trial == 0) { // new block page
+        if (!is_fake) {
+            return true; // disallow manual transitions from new block page to new trial page
+        }
 
         if ((e).key === '\n' || (e).keyCode === 13) {
+            stopTimer();
 
             // begin block
             $("#new_block_page").hide();
             nextTrial();
+            
+            startTimer(function() { checkKeyPressed(fakeKey(' ')); }, new_trial_duration);
         }
 
     }  else if (in_trial == 1) { // new trial page (prices)
+        if (!is_fake) {
+            return true; // disallow manual transitions from new trial page to choice page
+        }
 
         if ((e).key === ' ' || (e).key === 'Spacebar') {
+            stopTimer();
 
-            // begin trial (previously countdown in nextTrial)
+            // begin trial 
             $("#new_trial_page").hide();
             $("#trial_page").show();
             in_trial = 2;
             //redraw();
             last_keypress_time = (new Date()).getTime();
+
+            startTimer(function() { checkKeyPressed(fakeKey('t')); }, choice_duration);
         }
 
-    } else if (in_trial == 2) { // in trial
+    } else if (in_trial == 2) { // choice 
         RT = (new Date()).getTime() - last_keypress_time;
         last_keypress_time = (new Date()).getTime();
         RTs.push(RT);
@@ -504,6 +520,9 @@ function checkKeyPressed(e) {
             // invalid action
             return true;
         }
+
+        stopTimer(); // stop the timer after a valid action TODO  race condition
+
         //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
         /*
         for (var i = 0; i < exp.blocks[block_idx].adj[cur - 1].length; i++) {
@@ -545,6 +564,8 @@ function checkKeyPressed(e) {
             cur = next;
             last_a = -1;
             next = -1;
+            
+            startTimer(function() { checkKeyPressed(fakeKey(' ')); }, feedback_duration);
 
         } else {
 
@@ -595,25 +616,36 @@ function checkKeyPressed(e) {
                     cur = next;
                     last_a = -1;
                     next = -1;
+
+                    startTimer(function() { checkKeyPressed(fakeKey(' ')); }, feedback_duration);
                 }, selection_duration);
 
             }
         }
 
 
-    } else if (in_trial == 3) {
+    } else if (in_trial == 3) { // feedback
+        if (!is_fake) {
+            return true; // disallow manual transitions from feedback page
+        }
 
         // if goal is reached => start next trial
         // if not, continue trial
         if ((e).key === ' ' || (e).key === 'Spacebar') {
+            stopTimer();
+
             if (exp.is_term[cur - 1]) {
                 all_rewards.push(reward);
                 in_trial = 0;
                 logTrial();
                 nextTrial();
+                
+                startTimer(function() { checkKeyPressed(fakeKey(' ')); }, new_trial_duration);
             } else {
                 in_trial = 2;
                 redraw();
+
+                startTimer(function() { checkKeyPressed(fakeKey('t')); }, choice_duration);
             }
         }
     }
@@ -797,7 +829,7 @@ function redraw() {
         $("#door3").attr("src", exp.blocks[block_idx].doors[adj[cur - 1][2] - 1]);
         $("#doors").show();
         $("#phis").hide();
-        $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
+        $("#tip").html("");
         
     } else {
 
@@ -820,6 +852,8 @@ function redraw() {
             $("#phi2").html("");
             $("#doors").hide();
             $("#phis").show();
+            $("#tip").html("");
+
         }  else {
 
             // subject made a choice
@@ -829,7 +863,7 @@ function redraw() {
             $("#phi2").html(phi_objects[1]);
             $("#doors").hide();
             $("#phis").show();
-            $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
+            $("#tip").html("");
         }
     }
 }
@@ -849,15 +883,17 @@ function startTimer(f, ms) {
 }
 
 function stopTimer() {
-    console.assert(timer >= 0);
     clearTimeout(timer);
+    timer = -1;
 }
 
+// use fake keys for automatic transitions TODO  HACK
+//
 function fakeKey(key) {
     e = new KeyboardEvent("fakeKey", {
         "key": key,
         "which": key.charCodeAt(0), // TODO why is this not working
-        "code": key.charCodeAt(0),
+        "code": "fake", // this is how we signal that it's a fake key
         "keyCode": key.charCodeAt(0)
     });
     return e;
