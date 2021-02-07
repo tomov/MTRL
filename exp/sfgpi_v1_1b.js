@@ -3,6 +3,13 @@ in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = prices (n
 bonus_scale = 1; // USD per point
 timer = -1;
 
+new_block_duration = 4000;
+new_trial_duration = 3000;
+choice_duration = 2000;
+selection_duration = 1000;
+feedback_duration = 2000;
+
+
 function initExp() {
     console.log("initExp");
 
@@ -351,6 +358,7 @@ function nextBlock() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
+    is_timeout = false;
     last_a_index = -1;
     next = -1;
 
@@ -433,6 +441,7 @@ function nextTrial() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
+    is_timeout = false;
     last_a_index = -1;
     next = -1;
 
@@ -441,19 +450,14 @@ function nextTrial() {
     $("#new_trial_page").show();
 }
 
-function testTimeout() {
-    timeout = setTimeout(function () { alert("hello"); }, 10000);
-    console.log("testing");
-}
-
 function checkKeyPressed(e) {
     var e = window.event || e;
 
-    console.log("key press " + e.which + ", in_trial " + in_trial.toString());
+    console.log("key press " + e.keyCode.toString() + ", in_trial " + in_trial.toString());
 
     if (in_trial == 0) { // new block page
 
-        if ((e).key === '\n' || (e).which === 13) {
+        if ((e).key === '\n' || (e).keyCode === 13) {
 
             // begin block
             $("#new_block_page").hide();
@@ -480,6 +484,7 @@ function checkKeyPressed(e) {
         RT_tot += RT;
         var next = -1;
         var adj = {};
+        is_timeout = false;
 
         // get next state
         if ((e).key == "1") {
@@ -488,11 +493,15 @@ function checkKeyPressed(e) {
             last_a = 2;
         } else if ((e).key == "3") {
             last_a = 3;
+        } else if ((e).key == "t") { // special timeout key
+            last_a = -1;
+            is_timeout = true;
         } else {
             return true;
         }
 
         if (last_a > exp.blocks[block_idx].adj[cur - 1].length) {
+            // invalid action
             return true;
         }
         //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
@@ -505,48 +514,92 @@ function checkKeyPressed(e) {
             }
         }
         */
-        i = last_a - 1;
-        adj = exp.blocks[block_idx].adj[cur - 1][i];
-        next = adj.s_next;
-        last_a_index = i;
 
-        // move to next state 
-        if (next >= 0) {
-            console.assert(adj.s == cur);
+        if (is_timeout) {
 
-            if (last_a == 1) {
-                $("#door1").css("border", "10px solid white");
-            } else if (last_a == 2) {
-                $("#door2").css("border", "10px solid white");
-            } else if (last_a == 3) {
-                $("#door3").css("border", "10px solid white");
-            }
+            // timeout
+            //
+            console.assert(last_a == -1);
 
-            delta_reward = calculate_reward(goal, adj.phi);
+            i = 0; // TODO HACK move to the next state as if the first action was chosen, this relies strongly on the fact that there is a single next state
+            adj = exp.blocks[block_idx].adj[cur - 1][i];
+            next = adj.s_next;
+            last_a_index = -1;
+
+            delta_reward = 0; 
             reward += delta_reward;
+
+            // bookkeeping
             state_path.push(next);
-            action_path.push(adj.a);
-            feature_path.push(adj.phi);
+            action_path.push(-1); // this is how we signal in the log that the subject timed out
+            feature_path.push([]);
             reward_path.push(delta_reward);
             valid_keys.push(keys.length - 1);
 
-            in_trial = -1; // disable keypresses
+            in_trial = 3;
+            redraw();
 
-            startTimer(function() {
-                $("#door1").css("border", "");
-                $("#door2").css("border", "");
-                $("#door3").css("border", "");
+            // move to next state
+            is_timeout = false;
+            console.assert(next != -1);
+            cur = next;
+            last_a = -1;
+            next = -1;
 
-                in_trial = 3;
-                redraw();
+        } else {
 
-                console.assert(next != 1);
-                cur = next;
-                last_a = -1;
-                next = -1;
-            }, 1000);
+            // not a timeout
+            //
+            i = last_a - 1;
+            adj = exp.blocks[block_idx].adj[cur - 1][i];
+            next = adj.s_next;
+            last_a_index = i;
 
+            // move to next state 
+            if (next >= 0) {
+                console.assert(adj.s == cur);
+
+                // highlight selection
+                if (last_a == 1) {
+                    $("#door1").css("border", "10px solid white");
+                } else if (last_a == 2) {
+                    $("#door2").css("border", "10px solid white");
+                } else if (last_a == 3) {
+                    $("#door3").css("border", "10px solid white");
+                }
+
+                delta_reward = calculate_reward(goal, adj.phi);
+                reward += delta_reward;
+
+                // bookkeeping
+                state_path.push(next);
+                action_path.push(adj.a);
+                feature_path.push(adj.phi);
+                reward_path.push(delta_reward);
+                valid_keys.push(keys.length - 1);
+
+                in_trial = -1; // disable keypresses during selection
+
+                // move to feedback after some delay
+                startTimer(function() {
+                    $("#door1").css("border", "");
+                    $("#door2").css("border", "");
+                    $("#door3").css("border", "");
+
+                    in_trial = 3;
+                    redraw();
+
+                    // move to next state
+                    console.assert(!is_timeout);
+                    console.assert(next != -1);
+                    cur = next;
+                    last_a = -1;
+                    next = -1;
+                }, selection_duration);
+
+            }
         }
+
 
     } else if (in_trial == 3) {
 
@@ -716,7 +769,8 @@ function redraw() {
         $("#cur_door").hide();
     }
     if (in_trial == 1 || in_trial == 2) {
-        // doors
+
+        // choice/doors
         //
         $("#trial_page").css("background-color", exp.blocks[block_idx].colors[cur - 1]);
 
@@ -744,28 +798,39 @@ function redraw() {
         $("#doors").show();
         $("#phis").hide();
         $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
+        
     } else {
-        // rewards
+
+        // feedback/rewards
         //
+        console.assert(in_trial == 3);
         $("#trial_page").css("background-color", "black");
-        if (delta_reward < 0)
-        {
+        if (delta_reward < 0) {
             color = "red";
         }
-        else
-        {
+        else {
             color = "green";
         }
-        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
-        // TODO dynamic DOM
-        $("#phi1").html(phi_objects[0]);
-        $("#phi2").html(phi_objects[1]);
-        //$("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[0] + "' height='50px'>");
-        //$("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[1] + "' height='50px'>");
-        //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[2] + "' height='50px'>");
-        $("#doors").hide();
-        $("#phis").show();
-        $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
+        if (is_timeout) {
+
+            // subject timed out
+            $("#message").html("You earned <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
+            // TODO dynamic DOM
+            $("#phi1").html("TIMEOUT");
+            $("#phi2").html("");
+            $("#doors").hide();
+            $("#phis").show();
+        }  else {
+
+            // subject made a choice
+            $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
+            // TODO dynamic DOM
+            $("#phi1").html(phi_objects[0]);
+            $("#phi2").html(phi_objects[1]);
+            $("#doors").hide();
+            $("#phis").show();
+            $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
+        }
     }
 }
 
@@ -792,7 +857,8 @@ function fakeKey(key) {
     e = new KeyboardEvent("fakeKey", {
         "key": key,
         "which": key.charCodeAt(0), // TODO why is this not working
-        "code": key.charCodeAt(0)
+        "code": key.charCodeAt(0),
+        "keyCode": key.charCodeAt(0)
     });
     return e;
 }
