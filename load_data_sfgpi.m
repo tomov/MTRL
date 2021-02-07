@@ -59,7 +59,7 @@ function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
             data(subj).(T.Properties.VariableNames{i}) = T.(T.Properties.VariableNames{i});
         end
         %if ~ismember('trial', T.Properties.VariableNames) do this regardless because we log trials ffrom the test stage starting from zero
-        data(subj).trial = mod(0:length(data(subj).block-1), 21)
+        data(subj).trial = mod(0:length(data(subj).block-1), 21);
         %end
 
         dur = T.timestamp(end) - T.timestamp(1);
