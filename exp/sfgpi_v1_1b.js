@@ -450,6 +450,8 @@ function nextTrial() {
     in_trial = 1;
     redraw();
     $("#new_trial_page").show();
+
+    startTimer(function() { checkKeyPressed(fakeKey(' ')); }, new_trial_duration);
 }
 
 function checkKeyPressed(e) {
@@ -471,7 +473,7 @@ function checkKeyPressed(e) {
             $("#new_block_page").hide();
             nextTrial();
             
-            startTimer(function() { checkKeyPressed(fakeKey(' ')); }, new_trial_duration);
+            // start timer inside next trial, depends on whether we started the new block
         }
 
     }  else if (in_trial == 1) { // new trial page (prices)
@@ -640,7 +642,7 @@ function checkKeyPressed(e) {
                 logTrial();
                 nextTrial();
                 
-                startTimer(function() { checkKeyPressed(fakeKey(' ')); }, new_trial_duration);
+                // start timer inside next trial, depends on whether we started the new block
             } else {
                 in_trial = 2;
                 redraw();
