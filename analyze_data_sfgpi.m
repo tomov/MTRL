@@ -1,7 +1,8 @@
 close all;
 clear all;
 
-[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1a', 210);
+%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1a', 210);
+[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1b', 210);
 
 figure;
 

@@ -395,7 +395,6 @@ function nextTrial() {
             nextTrial(); // directly advance to next trial
 
         } else {
-            console.assert(stage.localeCompare("test"));
 
             if (block_idx + 1 < exp.nblocks) {
                 // new block

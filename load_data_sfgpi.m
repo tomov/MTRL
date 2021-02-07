@@ -41,10 +41,11 @@ function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
         extra_filepath = fullfile(fpath, [fname, '_extra.csv']);
         try
             Textra = readtable(extra_filepath, 'Delimiter', ',', 'ReadVariableNames',false);
-            cheated = Textra{1,3}{1};
+            cheated = Textra{1,5}{1};
+            cheated
             if ~strcmp(cheated, 'no')
                 fprintf('Skipping %s: cheated (%s)\n', files(idx).name, cheated);
-                %continue
+                continue
             end
         catch e
             fprintf('Error reading file %s\n', extra_filepath);
@@ -65,6 +66,7 @@ function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
         dur = T.timestamp(end) - T.timestamp(1);
         durs = [durs, dur];
         fprintf('             duration = %.2f mins\n', dur / 60);
+        fprintf('                       timeouts = %d out of %d\n', sum(contains(data(subj).action_path, '-1')), length(data(subj).action_path));
         
         filenames{subj} = filepath;
 
