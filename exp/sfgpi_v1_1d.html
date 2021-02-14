@@ -41,28 +41,28 @@
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
       <h2>Medieval Trading</h2>
       <p>Imagine you are a tradesperson scavenging medieval castles for goods to trade.</p>
-      <p><img src="images/sfgpi_screen_1_no_tip.png" height="300px" ></p>
+      <p><img src="images/sfgpi_v1_1d_screen1.png" height="300px" ></p>
       <p>In each castle, there are different types of goods that you can sell for different prices.</p>
       <p>Every day, you will see today's market price for each good:</p>
-      <p><img src="images/sfgpi_screen_2_no_tip.png" height="300px" ></p>
+      <p><img src="images/sfgpi_v1_1d_screen2.png" height="300px" ></p>
       <p>In this example, you earn $1 for each piece of armor and you earn nothing for chalices.</p>
       <p>After <b>3 seconds</b>, you automatically enter the castle.</p>
       <p>The castle has different rooms. Rooms have doors which lead to other rooms:</p>
-      <p><img src="images/sfgpi_screen_3.png" height="300px" ></p>
-      <p>You can choose a door and go to the next room using the <b>keys space, j, k, l, ;</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p><img src="images/sfgpi_v1_1d_screen3.png" height="300px" ></p>
+      <p>You can choose a door and go to the next room using the keys <b>space, j, k, l, ;</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
       <p>You have <b>2 seconds</b> to make your choice.</p>
-      <p>To respond faster, place the fingers of your right hand on the keys like so:</p>
-      <p><img src="images/sfgpi_keyboard.png" height="300px" ></p>
+      <p>To respond faster, place the fingers of your right hand on the keys, like so:</p>
+      <p><img src="images/sfgpi_v1_1d_keyboard.jpeg" height="300px" ></p>
       <p>Use your thumb to press the <b>space</b> key, your index finger for the <b>j</b> key, middle finger for <b>k</b>, ring finger for <b>l</b>, and pinky for <b>;</b>.
       <p>Behind the doors, there are goods which you collect to sell at today's market prices:</p>
-      <p><img src="images/sfgpi_screen_4.png" height="300px" ></p>
-      <p>Here, there are four pieces of armor. In this example, this will earn you $1 x 4 = $4 at the end of the day at the current market prices.</p>
+      <p><img src="images/sfgpi_v1_1d_screen4.png" height="300px" ></p>
+      <p>Here, there are three pieces of armor and two chalices. In this example, this will earn you $1 x 3 = $3 at the end of the day at the current market prices.</p>
       <p>After <b>3 seconds</b>, you automatically collect the goods from that room and continue exploring the castle. Once you reach the end of the castle, all goods collected throughout the day are sold and the next day begins.</p>
       <p><b>Your goal is to earn as much as you can every day by finding the rooms with goods that sell for high prices on the given day.</b></p>
       <p>As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. The total value of all goods collected throughout the day will be displayed below.</p>
-      <p>You will always start from the same room in the castle. The layout of the castle will not change and the same doors will always lead to the same rooms. The same rooms will always have the same goods.</p>
+      <p>You will always start from the same room in the castle. The layout of the castle will not change and the same doors will always lead to the same rooms. The same goods will be behind the same doors.</p>
       <p>There will be 41 days (trials) in the castle. After that, you will scavenge a different castle with a different layout and goods. Overall, you will scavenge 5 castles, for total of 205 days.</p>
-      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $5.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $6.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer with a standard QWERTY keyboard. <u>Once started, the experiment cannot be stopped and must be completed in one sitting</u>. The whole experiment takes about <b>45 minutes</b>. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
 
@@ -185,9 +185,9 @@
         <fieldset style="width:500px;margin:5px">
             How many days (trials) are there overall?<br><br />
             <input type="radio" name="q2">1<br>
-            <input type="radio" name="q2">10<br>
-            <input type="radio" name="q2"  id="icheck2">210<br>
-            <input type="radio" name="q2">2100<br>
+            <input type="radio" name="q2">25<br>
+            <input type="radio" name="q2"  id="icheck2">205<br>
+            <input type="radio" name="q2">2005<br>
         </fieldset>
         <fieldset style="width:500px;margin:5px">
             Today, wood sells for $1 and iron sells for $2. You found 5 pieces of wood and 5 pieces of iron. How much will you earn?<br> <br />
@@ -236,17 +236,17 @@
       <img id="cur_door" src="" height="15%" style="position: absolute; right: 5%; top: 5%; text-align: right;" hidden>
       <h2 id="goal_state" style="position: absolute; left: 5%; top: 5%; text-align: left;">Goal</h2>
 
-      <div id="doors" style="position: absolute; left: 0; top: 30%; height: 40%; width: 100%; text-align: center;">
-          <h1 style="position: absolute; left: 15%; top: -35%; text-align: center; font-size: 300%;" id="number_one">1</h1>
-          <h1 style="position: absolute; left: 33%; top: -35%; text-align: center; font-size: 300%;" id="number_two">2</h1>
-          <h1 style="position: absolute; left: 50%; top: -35%; text-align: center; font-size: 300%;" id="number_three">3</h1>
-          <h1 style="position: absolute; left: 67%; top: -35%; text-align: center; font-size: 300%;" id="number_four">4</h1>
-          <h1 style="position: absolute; left: 85%; top: -35%; text-align: center; font-size: 300%;" id="number_five">5</h1>
-          <img style="position: absolute; left: 15%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door1" src="" height="100%"> &emsp;
-          <img style="position: absolute; left: 33%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door2" src="" height="100%"> &emsp;
-          <img style="position: absolute; left: 50%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door3" src="" height="100%"> &emsp;
-          <img style="position: absolute; left: 67%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door4" src="" height="100%"> &emsp;
-          <img style="position: absolute; left: 85%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door5" src="" height="100%">
+      <div id="doors" style="position: absolute; left: 0; top: 35%; height: 40%; width: 100%; text-align: center;">
+          <h1 style="position: absolute; left: 10%; top: -25%; text-align: center; font-size: 200%;" id="number_one">space</h1>
+          <h1 style="position: absolute; left: 30%; top: -25%; text-align: center; font-size: 200%;" id="number_two">j</h1>
+          <h1 style="position: absolute; left: 48%; top: -25%; text-align: center; font-size: 200%;" id="number_three">k</h1>
+          <h1 style="position: absolute; left: 65%; top: -25%; text-align: center; font-size: 200%;" id="number_four">l</h1>
+          <h1 style="position: absolute; left: 83%; top: -25%; text-align: center; font-size: 200%;" id="number_five">;</h1>
+          <img style="position: absolute; left: 05%; top: 0%; " id="door1" src="" height="70%"> &emsp;
+          <img style="position: absolute; left: 23%; top: 0%; " id="door2" src="" height="70%"> &emsp;
+          <img style="position: absolute; left: 40%; top: 0%; " id="door3" src="" height="70%"> &emsp;
+          <img style="position: absolute; left: 57%; top: 0%; " id="door4" src="" height="70%"> &emsp;
+          <img style="position: absolute; left: 75%; top: 0%; " id="door5" src="" height="70%">
       </div>
 
       <div id="phis" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">

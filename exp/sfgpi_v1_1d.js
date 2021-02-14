@@ -842,7 +842,7 @@ function redraw() {
         $("#door5").attr("src", exp.blocks[block_idx].doors[adj[cur - 1][4] - 1]);
         $("#doors").show();
         $("#phis").hide();
-        $("#tip").html("Choose doors using the <b>keys space, j, k, l, ;</b>");
+        $("#tip").html("");
         
     } else {
 
