@@ -1,0 +1,360 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title> Medieval Trading </title>
+    <!--Load in ajax and jquery related API's-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="jquery-1.10.2.min.js"></script>
+    <script type ="text/javascript" src ="sfgpi_v1_1d.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+</head>
+
+<!-- subway 10 but no associative chunks -->
+
+<body>
+
+  <script type="text/javascript"> document.body.addEventListener('keydown', checkKeyPressed); </script>
+
+  <div  id = "captcha" data-type="image" class="g-recaptcha" data-sitekey="6Lcv-WkUAAAAAEdcoHLA76IUW4_6tUkw1e-L5nUy" data-callback="correctCaptcha" style="position:absolute; top:650px;left:600px;"></div>
+
+
+  <div id="consent_page" style = "font-size: 20px; display: block;" align = "center">
+      <h3>Consent form for participation in this online experiment</h3>
+      <p>
+          Designed by: Momchil Tomov, Andre Barreto, and Sam Gershman <br>
+      </p>
+      <p>Before you decide whether you want to take part, it is important for you to <br>read the following information carefully.</p>
+      <p>The study provides information about the nature of learning and decision making</p>
+      <p>The study will take about <b>55 minutes on average</b>. You will <b>receive $5</b> for your participation, plus <b>up to an additional $10</b> based on performance.</p>
+      <p>If you have any suggestions on how we can improve this or future HITs, <br> please do not hesitate to get in touch.</p>
+      <br>
+      <p>By clicking on the button below, you agree to the following:</p>
+      <p>I have read the above information.</p>
+      <p>I understand that I am free to withdraw from the study without penalty if I so wish.</p>
+      <p>I understand that my information will be treated as strictly confidential and handled in <br>accordance with the Data Protection Act 1998. </p>
+      <p>I understand that the information I have submitted will be published as a report; <br>confidentiality and anonymity will be maintained.</p>
+      <br>
+      <button type="button" name="button" style="font-size: 22px;" id="agree" ;>Agree</button>
+  </div>
+
+
+  <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
+      <h2>Medieval Trading</h2>
+      <p>Imagine you are a tradesperson scavenging medieval castles for goods to trade.</p>
+      <p><img src="images/sfgpi_screen_1_no_tip.png" height="300px" ></p>
+      <p>In each castle, there are different types of goods that you can sell for different prices.</p>
+      <p>Every day, you will see today's market price for each good:</p>
+      <p><img src="images/sfgpi_screen_2_no_tip.png" height="300px" ></p>
+      <p>In this example, you earn $1 for each piece of armor and you earn nothing for chalices.</p>
+      <p>After <b>3 seconds</b>, you automatically enter the castle.</p>
+      <p>The castle has different rooms. Rooms have doors which lead to other rooms:</p>
+      <p><img src="images/sfgpi_screen_3.png" height="300px" ></p>
+      <p>You can choose a door and go to the next room using the <b>keys space, j, k, l, ;</b>. Note that you can only go forward; you cannot go back to the previous room.</p>
+      <p>You have <b>2 seconds</b> to make your choice.</p>
+      <p>To respond faster, place the fingers of your right hand on the keys like so:</p>
+      <p><img src="images/sfgpi_keyboard.png" height="300px" ></p>
+      <p>Use your thumb to press the <b>space</b> key, your index finger for the <b>j</b> key, middle finger for <b>k</b>, ring finger for <b>l</b>, and pinky for <b>;</b>.
+      <p>Behind the doors, there are goods which you collect to sell at today's market prices:</p>
+      <p><img src="images/sfgpi_screen_4.png" height="300px" ></p>
+      <p>Here, there are four pieces of armor. In this example, this will earn you $1 x 4 = $4 at the end of the day at the current market prices.</p>
+      <p>After <b>3 seconds</b>, you automatically collect the goods from that room and continue exploring the castle. Once you reach the end of the castle, all goods collected throughout the day are sold and the next day begins.</p>
+      <p><b>Your goal is to earn as much as you can every day by finding the rooms with goods that sell for high prices on the given day.</b></p>
+      <p>As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. The total value of all goods collected throughout the day will be displayed below.</p>
+      <p>You will always start from the same room in the castle. The layout of the castle will not change and the same doors will always lead to the same rooms. The same rooms will always have the same goods.</p>
+      <p>There will be 41 days (trials) in the castle. After that, you will scavenge a different castle with a different layout and goods. Overall, you will scavenge 5 castles, for total of 205 days.</p>
+      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $5.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>The experiment can only be performed on a computer with a standard QWERTY keyboard. <u>Once started, the experiment cannot be stopped and must be completed in one sitting</u>. The whole experiment takes about <b>45 minutes</b>. Please disable any ad-blockers before starting the experiment.</p>
+      <button type="button" id="continue" style="font-size: 22px;">Continue</button>
+
+      <br/><br/>
+      <textarea id="experiment" rows=30 cols=20 hidden>
+            3 10 2 
+            1 1 2 2 0 1
+            1 2 2 3 0 2
+            1 3 2 1 1 3
+            1 4 2 0 2 4
+            1 5 2 0 1 5
+            2 1 3 3 2 6
+            2 2 3 5 1 7
+            2 3 3 4 4 8
+            2 4 3 1 6 9
+            2 5 3 1 4 10
+            0 0 1
+            5
+            Crona Castle
+            images/Castle Crona.jpg
+            rgb(5,23,20)
+            rgb(49,0,39)
+            images/Door 38.png
+            images/Door 39.png
+            images/Door 40.png
+            images/Door 41.png
+            images/Door 42.png
+            images/Door 33.png
+            images/Door 34.png
+            images/Door 35.png
+            images/Door 36.png
+            images/Door 37.png
+            images/armor.png
+            images/chalace.png
+            Tsubaki Castle
+            images/Castle Tsubaki.jpg
+            rgb(0,0,49)
+            rgb(49,0,0)
+            images/Door 28.png
+            images/Door 29.png
+            images/Door 30.png
+            images/Door 31.png
+            images/Door 32.png
+            images/Door 21.png
+            images/Door 22.png
+            images/Door 25.png
+            images/Door 26.png
+            images/Door 27.png
+            images/coin.png
+            images/dagger.png
+            Stein Castle
+            images/Castle Stein.jpg
+            rgb(0,49,0)
+            rgb(0,0,49)
+            images/door1.png
+            images/door2.png
+            images/door3.png
+            images/door4.png
+            images/door5.png
+            images/door6.png
+            images/door7.png
+            images/door8.png
+            images/door9.png
+            images/door10.png
+            images/gauntlet.png
+            images/helmet.png
+            Scythe Castle
+            images/Castle Scythe.jpg
+            rgb(0,49,49)
+            rgb(49,49,0)
+            images/Door 16.png
+            images/Door 17.png
+            images/Door 18.png
+            images/Door 19.png
+            images/Door 20.png
+            images/Door 1.png
+            images/Door 2.png
+            images/Door 3.png
+            images/Door 4.png
+            images/Door 5.png
+            images/horseshoe.png
+            images/saddle.png
+            Resonance Castle
+            images/Castle Resonance.jpg
+            rgb(49,49,0)
+            rgb(49,0,49)
+            images/Door 11.png
+            images/Door 12.png
+            images/Door 13.png
+            images/Door 14.png
+            images/Door 15.png
+            images/Door 6.png
+            images/Door 7.png
+            images/Door 8.png
+            images/Door 9.png
+            images/Door 10.png
+            images/necklace.png
+            images/ring.png
+            2
+            1 -> 1 0 x 20
+            1 -> 0 1 x 20
+            1
+            1 -> 1 1 x 1
+      </textarea>
+  </div>
+
+
+
+  <div id = "check_page" style="font-size: 22px; display:block;">
+      <h2>Medieval Trading</h2>
+      <fieldset>
+        <legend>Please answer a few questions before we begin.</legend>
+        <fieldset style="width:500px;margin:5px">
+            What is your task?<br><br />
+            <input type="radio" name="q1"  >Fight dungeon dragons in a medieval castle.<br>
+            <input type="radio" name="q1" id="icheck1" >Maximize earnings by selling resources.<br>
+            <input type="radio" name="q1" >Build a medieval castle.<br>
+            <input type="radio" name="q1" >I do not know.<br>
+        </fieldset>
+        <fieldset style="width:500px;margin:5px">
+            How many days (trials) are there overall?<br><br />
+            <input type="radio" name="q2">1<br>
+            <input type="radio" name="q2">10<br>
+            <input type="radio" name="q2"  id="icheck2">210<br>
+            <input type="radio" name="q2">2100<br>
+        </fieldset>
+        <fieldset style="width:500px;margin:5px">
+            Today, wood sells for $1 and iron sells for $2. You found 5 pieces of wood and 5 pieces of iron. How much will you earn?<br> <br />
+            <input type="radio" name="q3">$5<br>
+            <input type="radio" name="q3">$10<br>
+            <input type="radio" name="q3" id="icheck3">$15<br>
+            <input type="radio" name="q3">$20<br>
+        </fieldset>
+      </fieldset>
+      <br><br><br>
+      <p>You will only be directed to the next page if you manage to answer all of the questions correctly.</p>
+      <button type="button" name="button"; id="check_answers"; style="font-size: 22px;">Check answers</button>  
+  </div>
+
+
+
+  <div id = "new_block_page" class="new_block"  >
+      <div class = "new_block_background" style="opacity: 0.5"> </div>
+
+      <div style="position: absolute; left: 0; top: 0%; width: 100%; text-align: center;">
+          <h1 id="welcome" style="font-size: 50px;">WELCOME</h1>
+      </div>
+
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: rgb(199,199,199);"> </p>
+  </div>
+
+
+
+  <div id = "new_trial_page" class="trial_page" >
+      <div class = "new_block_background"> </div>
+
+      <div style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h1 id="castle_day" style="font-size: 40px;">CASTLE DAY</h1>
+          <h3 style="font-size: 20px;">Today's market prices:</h3>
+          <h1 id="prices" style="font-size: 50px;">PRICES</h1>
+      </div>
+
+      <p id="tip1" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: rgb(199,199,199);"> </p>
+  </div>
+
+
+
+  <div id = "trial_page" class="trial_page">
+      <!--<div class = "new_trial_background" style="background-color: rgba(255,0,0,0.2);"> </div>-->
+
+      <img id="cur_door" src="" height="15%" style="position: absolute; right: 5%; top: 5%; text-align: right;" hidden>
+      <h2 id="goal_state" style="position: absolute; left: 5%; top: 5%; text-align: left;">Goal</h2>
+
+      <div id="doors" style="position: absolute; left: 0; top: 30%; height: 40%; width: 100%; text-align: center;">
+          <h1 style="position: absolute; left: 15%; top: -35%; text-align: center; font-size: 300%;" id="number_one">1</h1>
+          <h1 style="position: absolute; left: 33%; top: -35%; text-align: center; font-size: 300%;" id="number_two">2</h1>
+          <h1 style="position: absolute; left: 50%; top: -35%; text-align: center; font-size: 300%;" id="number_three">3</h1>
+          <h1 style="position: absolute; left: 67%; top: -35%; text-align: center; font-size: 300%;" id="number_four">4</h1>
+          <h1 style="position: absolute; left: 85%; top: -35%; text-align: center; font-size: 300%;" id="number_five">5</h1>
+          <img style="position: absolute; left: 15%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door1" src="" height="100%"> &emsp;
+          <img style="position: absolute; left: 33%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door2" src="" height="100%"> &emsp;
+          <img style="position: absolute; left: 50%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door3" src="" height="100%"> &emsp;
+          <img style="position: absolute; left: 67%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door4" src="" height="100%"> &emsp;
+          <img style="position: absolute; left: 85%; top: 0%; transform: (-50%, -50%); text-align: center; font-size: 300%;" id="door5" src="" height="100%">
+      </div>
+
+      <div id="phis" style="position: absolute; left: 0; top: 30%; width: 100%; text-align: center;">
+          <h1 id="phi1" style="font-size: 50px;">phi 1</h1>
+          <h1 id="phi2" style="font-size: 50px;">phi 2</h1>
+          <h1 id="phi3" style="font-size: 50px;">phi 3</h1>
+      </div>
+
+      <h1 id="message" style="position: absolute; left: 0; top: 70%; width: 100%; text-align: center;">message</h1>
+      <p id="tip" style="position: absolute; left: 0; top: 90%; width: 100%; text-align: center; color: grey;">Choose doors using the <b>keys space, j, k, l, ;</b>. </p>
+      <p style="position: absolute; left: 0; top: 92%; width: 100%; text-align: center; color: grey;">You have <span id='trials_left'></span> days left.</p>
+  </div>
+
+  <div id = "cheat_page" style="font-size: 22px; display:block;">
+      <h2>Medieval Trading</h2>
+      <fieldset>
+          <legend>One last thing</legend>
+        <fieldset style="width:500px;margin:5px">
+             Did you take notes or use any memory aids, such as pen and paper, to remember where resources were located during the experiment? Your answer will <strong>not</strong> affect your payment or performance bonus, or your ability to partake in future studies.<br><br />
+            <input type="radio" name="qcheat" id="icheatyes" >Yes.<br>
+            <input type="radio" name="qcheat" id="icheatno" >No.<br>
+            <input type="radio" name="qcheat" id="icheatmaybe">Prefer not to say.<br>
+        </fieldset>
+      </fieldset>
+      <button type="button" name="button"; id="check_cheat"; style="font-size: 22px;">Submit answer</button>  
+  </div>
+
+  <div id = "final_page">
+      <p>Congratulations! You have completed the experiment. Your completion code is <strong>SFGPFTU457</strong></p>
+      <p>Your bonus is <b>$<span id='bonus'>NaN</span></b>! You will be paid within 1 business day.</p>
+  </div>
+
+
+  <script type="text/javascript">
+      $("#consent_page").show();
+      $("#captcha").hide();
+      $("#instruction_page").hide();
+      $("#check_page").hide();
+      $("#new_block_page").hide();
+      $("#new_trial_page").hide();
+      $("#trial_page").hide();
+      $("#test_page").hide();
+      $("#cheat_page").hide();
+      $("#final_page").hide();
+
+      initExp();
+
+      //nextBlock();
+
+      $("#agree").click(function () {
+          // skip captcha b/c we have the instruction check 
+          /*
+          $("#captcha").show();
+
+          var response = grecaptcha.getResponse(); var correctCaptcha = function(response) {
+              console.log(response);
+              if (response.length == 0) console.log("You can't proceed!");
+              else {
+                $("#captcha").hide();
+                $("#consent_page").hide();
+                $("#instruction_page").show();
+              }
+          };
+
+          window.correctCaptcha = correctCaptcha;
+          */
+
+          $("#consent_page").hide();
+          $("#instruction_page").show()
+      })
+
+      $("#continue").click(function () {
+          $("#instruction_page").hide();
+          $("#check_page").show()
+      })
+
+      $("#check_answers").click(function () {
+          if (instructionsCheck()) {
+              $("#check_page").hide();
+              nextBlock();
+          } else {
+              check_fails++;
+              alert('You have answered some of the questions incorrectly. Please read the instructions again.');
+              $("#check_page").hide();
+              $("#instruction_page").show();
+          }
+      })
+
+      $("#check_cheat").click(function () {
+            if (document.getElementById('icheatyes').checked) {
+                logExtra("yes"); 
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else if (document.getElementById('icheatno').checked) { 
+                logExtra("no"); 
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else if (document.getElementById('icheatmaybe').checked) { 
+                logExtra("maybe");
+                $("#cheat_page").hide();
+                $("#final_page").show();
+            } else {
+              alert('Please select an answer.');
+            }
+      })
+
+  </script>
+
+
+</body>
+</html>
