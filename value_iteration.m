@@ -2,11 +2,6 @@ function [V, pi] = value_iteration(env, w, gamma, beta)
 
     V = zeros(1, env.N);
 
-    % important to init at least terminal states
-    for s = env.S
-        V(s) = env.phi{s} * w';
-    end
-
     threshold = 0.01;
     % compute values
     while true
@@ -15,12 +10,12 @@ function [V, pi] = value_iteration(env, w, gamma, beta)
             %fprintf('   s = %d\n', s);
             v = V(s);
 
-            r = env.phi{s} * w';
-
-            Q = [];
+            Q = zeros(1, length(env.A));
             for a = env.A
+                r = env.phi{s,a} * w';
+
                 tmp = r + sum(squeeze(env.T(s, a, :))' .* (gamma * V));
-                Q = [Q, tmp];
+                Q(a) = tmp;
             end
             V(s) = max(Q);
 
@@ -35,5 +30,6 @@ function [V, pi] = value_iteration(env, w, gamma, beta)
             break;
         end
     end
+
 end
 

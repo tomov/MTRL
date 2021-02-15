@@ -68,7 +68,9 @@ function plot_perf(env, w_test, tot_r, model_names)
     subplot(3, 1, 3);
     h = plot(G);
     for s = 1:env.N
-        labelnode(h, s, sprintf('phi(%d) = [%s]', s, sprintf('%.0f  ', env.phi{s} * 10)));
+        for a = 1:length(env.A)
+            labelnode(h, s, sprintf('phi(%d,%d) = [%s]', s, sprintf('%.0f  ', env.phi{s,a})));
+        end
     end
     ylim([-0.5 4]);
     xlim([0.5 11]);

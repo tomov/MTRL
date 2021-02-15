@@ -6,7 +6,7 @@ function Q = train_MF(env, w_train, gamma, alpha, eps)
     % unroll training tasks
     ws = [];
     for t = 1:length(w_train)
-        for i = 1:200
+        for i = 1:1000
             ws = [ws; w_train{t}];
         end
     end
@@ -33,9 +33,12 @@ function Q = train_MF(env, w_train, gamma, alpha, eps)
             % next state and reward
             s_new = find(mnrnd(1, squeeze(env.T(s, a, :))));
 
-            r = env.phi{s_new} * ws(i,:)';
-
             [~, a_new] = max(Q(s_new,:)); % best next action
+            
+            phi = env.phi{s,a};
+            w = ws(i,:);
+            %r = env.phi{s_new,a_new} * ws(i,:)';
+            r = phi * w';
 
             Q(s,a) = Q(s,a) + alpha * (r + gamma * Q(s_new,a_new) - Q(s,a));
 

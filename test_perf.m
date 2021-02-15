@@ -8,11 +8,11 @@ function [r, s] = test_perf(env, pi, w)
     r = 0;
     s = 1;
     while true
-        r = r + env.phi{s} * w';
         if env.terminal(s)
             break
         end
         a = find(mnrnd(1, pi{s}));
+        r = r + env.phi{s,a} * w';
         s = find(mnrnd(1, squeeze(env.T(s, a, :))));
     end
     
