@@ -8,7 +8,7 @@ function plot_action_paths(env, w_test, as, action_paths, model_names)
         task_names{t} = sprintf('w = [%s]', sprintf('%.0f ', w_test{t}));
     end
 
-    figure;
+    figure('position', [500 500 1000 1000]);
 
     plot_idx = 0;
     for i = 1:length(model_names)

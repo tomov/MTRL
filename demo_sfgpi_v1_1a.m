@@ -171,3 +171,4 @@ plot_perf(env, w_test, tot_r_test, model_names);
 %plot_final_states(env, w_test, term_s_test, model_names);
 
 plot_action_paths(env, w_test, as_test, action_paths, model_names);
+
