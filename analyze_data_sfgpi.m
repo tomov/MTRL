@@ -1,10 +1,27 @@
 close all;
 clear all;
 
-%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1a', 210);
-%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1b', 210);
-%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1c', 210);
-[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1d', 205);
+% v1_1 a,b,c
+%design_params.n_blocks = 10;
+%design_params.n_train_trials = 20;
+%design_params.n_trials_per_block = 21;
+%design_params.action_paths = {'1 1', '1 2', '1 3', '2 1', '2 2', '2 3'};
+
+% v1_1 d
+design_params.n_blocks = 5;
+design_params.n_train_trials = 40;
+design_params.n_trials_per_block = 41;
+design_params.action_paths = {'1 1', '1 2', '1 3', '1 4', '1 5', ...
+                              '2 1', '2 2', '2 3', '2 4', '2 5', ...
+                              '3 1', '3 2', '3 3', '3 4', '3 5', ...
+                              '4 1', '4 2', '4 3', '4 4', '4 5', ...
+                              '5 1', '5 2', '5 3', '5 4', '5 5'};
+
+%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1a', design_params);
+%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1b', design_params);
+%[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1c', design_params);
+[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1d', design_params);
+
 
 figure;
 
@@ -22,35 +39,35 @@ plot_subject_histogram(data);
 figure;
 
 subplot(2,2,1);
-plot_training_reward_over_time(data);
+plot_training_reward_over_time(data, design_params);
 
 subplot(2,2,2);
-plot_training_reward_split_by_block(data);
+plot_training_reward_split_by_block(data, design_params);
 
 subplot(2,2,3);
-plot_training_reward_over_blocks(data);
+plot_training_reward_over_blocks(data, design_params);
 
 subplot(2,2,4);
-plot_test_reward_over_blocks(data);
+plot_test_reward_over_blocks(data, design_params);
 
 
 figure;
 
 subplot(1,3,1);
-plot_action_path_counts(data, '[1 0]');
+plot_action_path_counts(data, '[1 0]', design_params);
 
 subplot(1,3,2);
-plot_action_path_counts(data, '[0 1]');
+plot_action_path_counts(data, '[0 1]', design_params);
 
 subplot(1,3,3);
-plot_action_path_counts(data, '[1 1]');
+plot_action_path_counts(data, '[1 1]', design_params);
 
 
 
-function [rb, rse, leg] = training_reward_split_by_block(data)
-    rb = nan(10,20);
-    for b = 1:10
-        rs = nan(length(data),20);
+function [rb, rse, leg] = training_reward_split_by_block(data, design_params)
+    rb = nan(design_params.n_blocks, design_params.n_train_trials);
+    for b = 1:design_params.n_blocks
+        rs = nan(length(data),design_params.n_train_trials);
         for s = 1:length(data)
             r = data(s).reward(data(s).block == b-1 & strcmp(data(s).stage, 'train'));
             rs(s,:) = r;
@@ -61,11 +78,11 @@ function [rb, rse, leg] = training_reward_split_by_block(data)
     end
 end
 
-function [r, rse] = training_reward_over_time(data)
-    rs = nan(length(data), 20);
+function [r, rse] = training_reward_over_time(data, design_params)
+    rs = nan(length(data), design_params.n_train_trials);
     for s = 1:length(data)
-        rb = nan(10,20);
-        for b = 1:10
+        rb = nan(design_params.n_blocks,design_params.n_train_trials);
+        for b = 1:design_params.n_blocks
             rb(b,:) = data(s).reward(data(s).block == b-1 & strcmp(data(s).stage, 'train'));
         end
         rs(s,:) = mean(rb,1);
@@ -74,11 +91,11 @@ function [r, rse] = training_reward_over_time(data)
     rse = std(rs,1)/sqrt(size(rs,1));
 end
 
-function [r, rse] = training_reward_over_blocks(data)
-    rs = nan(length(data), 10);
+function [r, rse] = training_reward_over_blocks(data, design_params)
+    rs = nan(length(data), design_params.n_blocks);
     for s = 1:length(data)
-        rb = nan(10,20);
-        for b = 1:10
+        rb = nan(design_params.n_blocks,design_params.n_train_trials);
+        for b = 1:design_params.n_blocks
             rb(b,:) = data(s).reward(data(s).block == b-1 & strcmp(data(s).stage, 'train'));
         end
         rs(s,:) = mean(rb,2);
@@ -87,12 +104,11 @@ function [r, rse] = training_reward_over_blocks(data)
     rse = std(rs,1)/sqrt(size(rs,1));
 end
 
-function [c, cse, action_paths] = action_path_counts(data, goal)
-    action_paths = {'1 1', '1 2', '1 3', '2 1', '2 2', '2 3'};
-    counts = nan(length(data), length(action_paths));
-    for i = 1:length(action_paths)
+function [c, cse] = action_path_counts(data, goal, design_params)
+    counts = nan(length(data), length(design_params.action_paths));
+    for i = 1:length(design_params.action_paths)
         for s = 1:length(data)
-            which = strcmp(data(s).goal_original, goal) & strcmp(data(s).action_path, action_paths{i});
+            which = strcmp(data(s).goal_original, goal) & strcmp(data(s).action_path, design_params.action_paths{i});
             counts(s,i) = sum(which);
         end
     end
@@ -100,8 +116,8 @@ function [c, cse, action_paths] = action_path_counts(data, goal)
     cse = std(counts,1)/sqrt(size(counts,1));
 end
 
-function [r, rse] = test_reward_over_blocks(data)
-    rs = nan(length(data), 10);
+function [r, rse] = test_reward_over_blocks(data, design_params)
+    rs = nan(length(data), design_params.n_blocks);
     for s = 1:length(data)
         rs(s,:) = data(s).reward(strcmp(data(s).stage, 'test'));
     end
@@ -109,13 +125,14 @@ function [r, rse] = test_reward_over_blocks(data)
     rse = std(rs,1)/sqrt(size(rs,1));
 end
 
-function plot_action_path_counts(data, goal)
-    [c, cse, action_paths] = action_path_counts(data, goal);
+function plot_action_path_counts(data, goal, design_params)
+    [c, cse] = action_path_counts(data, goal, design_params);
 
     bar(c);
     hold on;
     errorbar(c, cse, 'color', [0 0 0], 'linestyle', 'none');
-    xticklabels(action_paths);
+    set(gca, 'xtick', 1:length(design_params.action_paths), 'xticklabel', design_params.action_paths);
+    %xticklabels(design_params.action_paths);
     xtickangle(40);
     title(['Task ', goal]);
     ylabel('# trials per subject');
@@ -135,8 +152,8 @@ function plot_subject_histogram(data)
 end
 
 
-function plot_training_reward_over_time(data)
-    [r, rse] = training_reward_over_time(data);
+function plot_training_reward_over_time(data, design_params)
+    [r, rse] = training_reward_over_time(data, design_params);
     errorbar(r, rse);
     xlabel('trial');
     ylabel('reward');
@@ -144,8 +161,8 @@ function plot_training_reward_over_time(data)
 end
 
 
-function plot_training_reward_split_by_block(data)
-    [rb, rse, leg] = training_reward_split_by_block(data);
+function plot_training_reward_split_by_block(data, design_params)
+    [rb, rse, leg] = training_reward_split_by_block(data, design_params);
     errorbar(rb, rse);
     legend(leg);
     xlabel('trial');
@@ -153,16 +170,16 @@ function plot_training_reward_split_by_block(data)
     title('Training performance by block');
 end
 
-function plot_test_reward_over_blocks(data)
-    [r, rse] = test_reward_over_blocks(data)
+function plot_test_reward_over_blocks(data, design_params)
+    [r, rse] = test_reward_over_blocks(data, design_params)
     errorbar(r, rse);
     xlabel('block');
     ylabel('reward');
     title('Test performance');
 end
 
-function plot_training_reward_over_blocks(data)
-    [r, rse] = training_reward_over_blocks(data)
+function plot_training_reward_over_blocks(data, design_params)
+    [r, rse] = training_reward_over_blocks(data, design_params)
     errorbar(r, rse);
     xlabel('block');
     ylabel('reward');

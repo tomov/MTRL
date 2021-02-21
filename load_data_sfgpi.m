@@ -1,13 +1,11 @@
-function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
+function [data, Ts, filenames] = load_data(dirname, design_params)
 
     if ~exist('dirname', 'var')
         dirname = 'exp/results/sfgpi_v1_1a'; 
         %bad_dirname = 'exp/results/bad';
     end
 
-    if ~exist('expected_number_of_rows', 'var')
-        expected_number_of_rows = 210;
-    end
+    expected_number_of_rows = design_params.n_blocks * design_params.n_trials_per_block;
 
     files = dir(dirname);
     subj = 1;
@@ -60,7 +58,7 @@ function [data, Ts, filenames] = load_data(dirname, expected_number_of_rows)
             data(subj).(T.Properties.VariableNames{i}) = T.(T.Properties.VariableNames{i});
         end
         %if ~ismember('trial', T.Properties.VariableNames) do this regardless because we log trials ffrom the test stage starting from zero
-        data(subj).trial = mod(0:length(data(subj).block-1), 21);
+        data(subj).trial = mod(0:length(data(subj).block)-1, design_params.n_trials_per_block);
         %end
 
         dur = T.timestamp(end) - T.timestamp(1);
