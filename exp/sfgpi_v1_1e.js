@@ -486,6 +486,10 @@ function checkKeyPressed(e) {
             return true;
         }
 
+        if (last_a > exp.blocks[block_idx].adj[cur - 1].length) {
+            // invalid action
+            return true;
+        }
         //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
         /*
         for (var i = 0; i < exp.blocks[block_idx].adj[cur - 1].length; i++) {
