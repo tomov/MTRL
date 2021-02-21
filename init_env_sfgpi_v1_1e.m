@@ -43,6 +43,9 @@ env.phi{4, 3} = [0 7];
 env.phi{5, 1} = [4 2];
 env.phi{5, 2} = [1 9];
 env.phi{5, 3} = [2 5];
+env.phi{6, 1} = [0 0];
+env.phi{6, 2} = [0 0];
+env.phi{6, 3} = [0 0];
 
 % terminal states
 env.terminal = zeros(1, env.N);
