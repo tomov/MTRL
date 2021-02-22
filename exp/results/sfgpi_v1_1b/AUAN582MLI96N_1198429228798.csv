@@ -1,0 +1,9 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,AUAN582MLI96N,1198429228798,0,0,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2003 5020,116 116,0 1,7023,0,[0 1],1612747981.021,Sun Feb 07 2021 19:33:01 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,1,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2004 5027,116 116,0 1,7031,0,[0 1],1612747994.081,Sun Feb 07 2021 19:33:14 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,2,train,1,[1 0],[1 0],1 2 3,3,-1 -1,[];[],0 0,2002 5010,116 116,0 1,7012,0,[0 1],1612748007.12,Sun Feb 07 2021 19:33:27 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,3,train,1,[1 0],[1 0],1 2 3,3,-1 -1,[];[],0 0,2004 6214,116 116,0 1,8218,0,[0 1],1612748022.352,Sun Feb 07 2021 19:33:42 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,4,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2995 7003,116 116,0 1,9998,0,[0 1],1612748040.356,Sun Feb 07 2021 19:34:00 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,5,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,3000 19870,116 116,0 1,22870,0,[0 1],1612748070.233,Sun Feb 07 2021 19:34:30 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,6,train,1,[1 0],[1 0],1 2 3,3,-1 -1,[];[],0 0,2001 5014,116 116,0 1,7015,0,[0 1],1612748083.265,Sun Feb 07 2021 19:34:43 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1198429228798,0,7,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2000 5019,116 116,0 1,7019,0,[0 1],1612748096.306,Sun Feb 07 2021 19:34:56 GMT-0600 (Central Standard Time),0

@@ -1,0 +1,4 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,AUAN582MLI96N,1672685953158,0,0,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2002 5019,116 116,0 1,7021,0,[0 1],1612748136.416,Sun Feb 07 2021 19:35:36 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1672685953158,0,1,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2001 5016,116 116,0 1,7017,0,[0 1],1612748149.457,Sun Feb 07 2021 19:35:49 GMT-0600 (Central Standard Time),0
+A,AUAN582MLI96N,1672685953158,0,2,train,1,[0 1],[0 1],1 2 3,3,-1 -1,[];[],0 0,2752 6232,116 116,0 1,8984,0,[0 1],1612748164.461,Sun Feb 07 2021 19:36:04 GMT-0600 (Central Standard Time),0

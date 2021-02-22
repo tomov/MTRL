@@ -1,0 +1,5 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,,1434109186979,0,0,train,1,[0 1],[1 0],1 2 3,3,2 -1,[1 0];[],1 0,373 242 3770,51 50 116,1 2,4385,1,[1 0],1613139305.251,Fri Feb 12 2021 09:15:05 GMT-0500 (Eastern Standard Time),0
+A,,1434109186979,0,1,train,1,[1 0],[0 1],1 2 3,3,2 2,[1 0];[3 2],0 2,252 3187,50 49,0 1,3439,2,[1 0],1613139314.464,Fri Feb 12 2021 09:15:14 GMT-0500 (Eastern Standard Time),0
+A,,1434109186979,0,2,train,1,[0 1],[1 0],1 2 3,3,2 2,[1 0];[3 2],1 3,267 3143,50 49,0 1,3410,4,[1 0],1613139323.644,Fri Feb 12 2021 09:15:23 GMT-0500 (Eastern Standard Time),0
+A,,1434109186979,0,3,train,1,[0 1],[1 0],1 2 3,3,2 3,[1 0];[4 0],1 4,341 3343,50 50,0 1,3684,5,[1 0],1613139333.095,Fri Feb 12 2021 09:15:33 GMT-0500 (Eastern Standard Time),0

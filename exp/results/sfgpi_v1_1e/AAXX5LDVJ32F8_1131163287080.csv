@@ -1,0 +1,3 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,AAXX5LDVJ32F8,1131163287080,0,0,train,1,[1 0],[0 1],1 2 4 6,4,2 2 1,[2 0];[1 1];[0 6],0 1 6,3868 14240 5838,49 49 49,0 1 2,23946,7,[1 0],1613953194.09,Sun Feb 21 2021 17:19:54 GMT-0700 (Mountain Standard Time),0
+A,AAXX5LDVJ32F8,1131163287080,0,1,train,1,[0 1],[1 0],1 2 4 6,4,1 2 1,[0 3];[1 1];[0 6],0 1 0,1600 19656 4353,50 49 49,0 1 2,25609,1,[1 0],1613953227.509,Sun Feb 21 2021 17:20:27 GMT-0700 (Mountain Standard Time),0
