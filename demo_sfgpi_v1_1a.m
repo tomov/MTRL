@@ -1,4 +1,5 @@
 clear all;
+close all;
 
 %env = init_env_sfgpi_v1_1a;
 %filename = 'demo_sfgpi_v1_1a.mat'; 

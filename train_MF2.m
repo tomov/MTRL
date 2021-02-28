@@ -13,8 +13,8 @@ function Q = train_MF2(env, w_train, gamma, alpha, eps)
 
         % Q-learn
         Q{t} = rand(env.N, length(env.A)) * 0.00001; % to break ties initially
-        eps = 0.9;
-        alpha = 0.1;
+        %eps = 0.9;
+        %alpha = 0.1;
         for i = 1:size(ws,1)
             r = 0;
             s = 1;

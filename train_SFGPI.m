@@ -24,6 +24,8 @@ function [psi] = train_SFGPI(env, w_train, gamma, beta, threshold)
             end
         end
 
+        %disp(w_train{t});
+
         while true
             delta = 0;
             for s = env.S
@@ -39,7 +41,7 @@ function [psi] = train_SFGPI(env, w_train, gamma, beta, threshold)
                     for s_new = 1:env.N
                         for a_new = env.A
                             psi{t}{s,a} = psi{t}{s,a} + pi{t}{s}(a) * env.T(s, a, s_new) * gamma * pi{t}{s_new}(a_new) * psi{t}{s_new,a_new};
- %                           fprintf('          s = %d, a = %d, s_new = %d, a_new = %d, T(s,a,s_new) = %f, psi{t}{s_new} = [%f %f]\n', s, a, s_new, a_new, env.T(s, a, s_new), psi{t}{s_new, a_new});
+                            %fprintf('          s = %d, a = %d, s_new = %d, a_new = %d, T(s,a,s_new) = %f, psi{t}{s_new} = [%f %f]\n', s, a, s_new, a_new, env.T(s, a, s_new), psi{t}{s_new, a_new});
 % pi{t}{s}(a)
 %pi{t}{s_new}(a_new) 
                         end
@@ -55,3 +57,4 @@ function [psi] = train_SFGPI(env, w_train, gamma, beta, threshold)
         end
     end
 
+        %save('temp2.mat');

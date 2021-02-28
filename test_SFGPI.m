@@ -25,6 +25,7 @@ function [pi_test_SF] = test_SFGPI(env, w_test, gamma, beta, psi)
             P = P / sum(P);
             pi_test_SF{t}{s} = P;
         end
+%        save('temp.mat');
     end
 
 

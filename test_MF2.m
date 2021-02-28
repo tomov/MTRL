@@ -16,7 +16,6 @@ function pi_test_MF2 = test_MF2(env, w_test, beta, Q, w_train)
 
         % see what MF will do
         for s = 1:env.N
-
             P = exp(Q{tr_closest}(s,:) * beta);
             P = P / sum(P);
             pi_test_MF2{t}{s} = P;
