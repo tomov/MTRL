@@ -29,19 +29,19 @@ env.T(5, 3, 6) = 1;
 % features phi(s)
 % TODO make random choices when indifferent; currently order matters b/c of ties
 env.phi{1, 1} = [4 0];
-env.phi{1, 2} = [0 1];
+env.phi{1, 2} = [0 2];
 env.phi{1, 3} = [-1000 -1000]; % Hector make this work because implementation assumes that all states cap all actions
 env.phi{2, 1} = [1 1];
 env.phi{2, 2} = [1 1];
 env.phi{2, 3} = [1 1];
 env.phi{3, 1} = [5 3];
-env.phi{3, 2} = [7 1];
+env.phi{3, 2} = [8 0];
 env.phi{3, 3} = [3 4];
 env.phi{4, 1} = [6 0];
 env.phi{4, 2} = [5 6];
 env.phi{4, 3} = [0 7];
 env.phi{5, 1} = [4 2];
-env.phi{5, 2} = [1 9];
+env.phi{5, 2} = [0 10];
 env.phi{5, 3} = [2 5];
 env.phi{6, 1} = [0 0];
 env.phi{6, 2} = [0 0];
