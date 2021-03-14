@@ -44,7 +44,7 @@ design_params.action_paths = { ...
 %[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1b', design_params);
 %[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1c', design_params);
 %[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1d', design_params);
-[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1e', design_params);
+[data, Ts, filenames] = load_data_sfgpi('exp/results/sfgpi_v1_1e_v1', design_params);
 
 
 figure;
