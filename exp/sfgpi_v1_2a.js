@@ -1,14 +1,6 @@
 check_fails = 0;
-in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = prices (new trial page); 2 = in trial (choice); 3 = features, rewards (feedback)
+in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = new trial page; 2 = in trial; 3 = features, rewards
 bonus_scale = 1; // USD per point
-timer = -1;
-
-new_block_duration = 4000;
-new_trial_duration = 3000;
-choice_duration = 2000;
-selection_duration = 750;
-feedback_duration = 3000;
-
 
 function initExp() {
     console.log("initExp");
@@ -18,7 +10,7 @@ function initExp() {
 
     subj_id = "1" + Math.random().toString().substring(3,15);
     var workerID = turkGetParam('workerId');
-    dirname = 'results/sfgpi_v1_1d';
+    dirname = 'results/sfgpi_v1_2a';
     file_name = dirname + '/' + workerID.toString() + "_" + subj_id + ".csv";
     extra_file_name = dirname + '/' + workerID.toString() + "_" + subj_id + "_extra.csv";
     bonus_filename = dirname + '/bonus.csv';
@@ -358,7 +350,6 @@ function nextBlock() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
-    is_timeout = false;
     last_a_index = -1;
     next = -1;
 
@@ -366,8 +357,6 @@ function nextBlock() {
     $(".new_block_background").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
     //$(".new_block .shady").css('background-image', 'url("' + exp.blocks[block_idx].castle_image + '")');
     $("#new_block_page").show();
-
-    startTimer(function() { checkKeyPressed(fakeKey('\n')); }, new_block_duration);
 }
 
 function nextTrial() {
@@ -395,6 +384,7 @@ function nextTrial() {
             nextTrial(); // directly advance to next trial
 
         } else {
+            console.assert(stage.localeCompare("test"));
 
             if (block_idx + 1 < exp.nblocks) {
                 // new block
@@ -442,58 +432,41 @@ function nextTrial() {
     reward = 0;
     delta_reward = -1;
     last_a = -1;
-    is_timeout = false;
     last_a_index = -1;
     next = -1;
 
     in_trial = 1;
     redraw();
     $("#new_trial_page").show();
-
-    startTimer(function() { checkKeyPressed(fakeKey('c')); }, new_trial_duration);
 }
 
 function checkKeyPressed(e) {
     var e = window.event || e;
-    var is_fake = e.code == "fake"; // this means it's part of an automatic transition
 
-    console.log("key press " + e.keyCode.toString() + ", in_trial " + in_trial.toString());
-    // TODO there are many race conditions around stop timer
+    console.log("key press " + e.which + ", in_trial " + in_trial.toString());
 
     if (in_trial == 0) { // new block page
-        if (!is_fake) {
-            return true; // disallow manual transitions from new block page to new trial page
-        }
 
-        if ((e).key === '\n' || (e).keyCode === 13) {
-            stopTimer();
+        if ((e).key === '\n' || (e).which === 13) {
 
             // begin block
             $("#new_block_page").hide();
             nextTrial();
-            
-            // start timer inside next trial, depends on whether we started the new block
         }
 
     }  else if (in_trial == 1) { // new trial page (prices)
-        if (!is_fake) {
-            return true; // disallow manual transitions from new trial page to choice page
-        }
 
-        if ((e).key === 'c') {
-            stopTimer();
+        if ((e).key === ' ' || (e).key === 'Spacebar') {
 
-            // begin trial 
+            // begin trial (previously countdown in nextTrial)
             $("#new_trial_page").hide();
             $("#trial_page").show();
             in_trial = 2;
             //redraw();
             last_keypress_time = (new Date()).getTime();
-
-            startTimer(function() { checkKeyPressed(fakeKey('t')); }, choice_duration);
         }
 
-    } else if (in_trial == 2) { // choice 
+    } else if (in_trial == 2) { // in trial
         RT = (new Date()).getTime() - last_keypress_time;
         last_keypress_time = (new Date()).getTime();
         RTs.push(RT);
@@ -501,22 +474,16 @@ function checkKeyPressed(e) {
         RT_tot += RT;
         var next = -1;
         var adj = {};
-        is_timeout = false;
 
         // get next state
-        if ((e).key == ' ') {
+        if ((e).key == "1") {
             last_a = 1;
-        } else if ((e).key == 'j') {
+        } else if ((e).key == "2") {
             last_a = 2;
-        } else if ((e).key == 'k') {
+        } else if ((e).key == "3") {
             last_a = 3;
-        } else if ((e).key == 'l') {
+        } else if ((e).key == "4") {
             last_a = 4;
-        } else if ((e).key == ';') {
-            last_a = 5;
-        } else if ((e).key == 't') { // special timeout key
-            last_a = -1;
-            is_timeout = true;
         } else {
             return true;
         }
@@ -525,9 +492,6 @@ function checkKeyPressed(e) {
             // invalid action
             return true;
         }
-
-        stopTimer(); // stop the timer after a valid action TODO  race condition
-
         //  TODO action shuffling is broken, we currently index based on position in the adjacency structure
         /*
         for (var i = 0; i < exp.blocks[block_idx].adj[cur - 1].length; i++) {
@@ -538,125 +502,65 @@ function checkKeyPressed(e) {
             }
         }
         */
+        i = last_a - 1;
+        adj = exp.blocks[block_idx].adj[cur - 1][i];
+        next = adj.s_next;
+        last_a_index = i;
 
-        if (is_timeout) {
+        // move to next state 
+        if (next >= 0) {
+            console.assert(adj.s == cur);
 
-            // timeout
-            //
-            console.assert(last_a == -1);
+            if (last_a == 1) {
+                $("#door1").css("border", "10px solid white");
+            } else if (last_a == 2) {
+                $("#door2").css("border", "10px solid white");
+            } else if (last_a == 3) {
+                $("#door3").css("border", "10px solid white");
+            } else if (last_a == 4) {
+                $("#door4").css("border", "10px solid white");
+            }
 
-            i = 0; // TODO HACK move to the next state as if the first action was chosen, this relies strongly on the fact that there is a single next state
-            adj = exp.blocks[block_idx].adj[cur - 1][i];
-            next = adj.s_next;
-            last_a_index = -1;
-
-            delta_reward = 0; 
+            delta_reward = calculate_reward(goal, adj.phi);
             reward += delta_reward;
-
-            // bookkeeping
             state_path.push(next);
-            action_path.push(-1); // this is how we signal in the log that the subject timed out
-            feature_path.push([]);
+            action_path.push(adj.a);
+            feature_path.push(adj.phi);
             reward_path.push(delta_reward);
             valid_keys.push(keys.length - 1);
 
-            in_trial = 3;
-            redraw();
+            in_trial = -1; // disable keypresses
 
-            // move to next state
-            is_timeout = false;
-            console.assert(next != -1);
-            cur = next;
-            last_a = -1;
-            next = -1;
-            
-            startTimer(function() { checkKeyPressed(fakeKey('c')); }, feedback_duration);
+            sleep(1000).then(() => {
+                $("#door1").css("border", "");
+                $("#door2").css("border", "");
+                $("#door3").css("border", "");
+                $("#door4").css("border", "");
 
-        } else {
+                in_trial = 3;
+                redraw();
 
-            // not a timeout
-            //
-            i = last_a - 1;
-            adj = exp.blocks[block_idx].adj[cur - 1][i];
-            next = adj.s_next;
-            last_a_index = i;
+                console.assert(next != 1);
+                cur = next;
+                last_a = -1;
+                next = -1;
+            });
 
-            // move to next state 
-            if (next >= 0) {
-                console.assert(adj.s == cur);
-
-                // highlight selection
-                if (last_a == 1) {
-                    $("#door1").css("border", "10px solid white");
-                } else if (last_a == 2) {
-                    $("#door2").css("border", "10px solid white");
-                } else if (last_a == 3) {
-                    $("#door3").css("border", "10px solid white");
-                } else if (last_a == 4) {
-                    $("#door4").css("border", "10px solid white");
-                } else if (last_a == 5) {
-                    $("#door5").css("border", "10px solid white");
-                }
-
-                delta_reward = calculate_reward(goal, adj.phi);
-                reward += delta_reward;
-
-                // bookkeeping
-                state_path.push(next);
-                action_path.push(adj.a);
-                feature_path.push(adj.phi);
-                reward_path.push(delta_reward);
-                valid_keys.push(keys.length - 1);
-
-                in_trial = -1; // disable keypresses during selection
-
-                // move to feedback after some delay
-                startTimer(function() {
-                    $("#door1").css("border", "");
-                    $("#door2").css("border", "");
-                    $("#door3").css("border", "");
-                    $("#door4").css("border", "");
-                    $("#door5").css("border", "");
-
-                    in_trial = 3;
-                    redraw();
-
-                    // move to next state
-                    console.assert(!is_timeout);
-                    console.assert(next != -1);
-                    cur = next;
-                    last_a = -1;
-                    next = -1;
-
-                    startTimer(function() { checkKeyPressed(fakeKey('c')); }, feedback_duration);
-                }, selection_duration);
-
-            }
         }
 
-
-    } else if (in_trial == 3) { // feedback
-        if (!is_fake) {
-            return true; // disallow manual transitions from feedback page
-        }
+    } else if (in_trial == 3) {
 
         // if goal is reached => start next trial
         // if not, continue trial
-        if ((e).key === 'c') {
-            stopTimer();
-
+        if ((e).key === ' ' || (e).key === 'Spacebar') {
             if (exp.is_term[cur - 1]) {
                 all_rewards.push(reward);
                 in_trial = 0;
                 logTrial();
                 nextTrial();
-                
-                // start timer inside next trial, depends on whether we started the new block
             } else {
                 in_trial = 2;
                 redraw();
-
-                startTimer(function() { checkKeyPressed(fakeKey('t')); }, choice_duration);
             }
         }
     }
@@ -812,8 +716,7 @@ function redraw() {
         $("#cur_door").hide();
     }
     if (in_trial == 1 || in_trial == 2) {
-
-        // choice/doors
+        // doors
         //
         $("#trial_page").css("background-color", exp.blocks[block_idx].colors[cur - 1]);
 
@@ -823,8 +726,8 @@ function redraw() {
         $("#phi1").html("");
         $("#phi2").html("");
         $("#phi3").html("");
-        var door_objects = ["#door1", "#door2", "#door3", "#door4", "#door5"];
-        var number_objects = ["#number_one", "#number_two", "#number_three", "#number_four", "#number_five"];
+        var door_objects = ["#door1", "#door2", "#door3", "#door4"];
+        var number_objects = ["#number_one", "#number_two", "#number_three", "#number_four"];
         for (var i = 0; i < door_objects.length; i++) {
             $(door_objects[i]).hide();
             $(number_objects[i]).hide();
@@ -837,42 +740,29 @@ function redraw() {
         }
         $("#doors").show();
         $("#phis").hide();
-        $("#tip").html("");
-        
+        $("#tip").html("Choose doors using the <b>number keys 1, 2, 3</br>");
     } else {
-
-        // feedback/rewards
+        // rewards
         //
-        console.assert(in_trial == 3);
         $("#trial_page").css("background-color", "black");
-        if (delta_reward < 0) {
+        if (delta_reward < 0)
+        {
             color = "red";
         }
-        else {
+        else
+        {
             color = "green";
         }
-        if (is_timeout) {
-
-            // subject timed out
-            $("#message").html("You earned <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
-            // TODO dynamic DOM
-            $("#phi1").html("TIMEOUT");
-            $("#phi2").html("");
-            $("#doors").hide();
-            $("#phis").show();
-            $("#tip").html("");
-
-        }  else {
-
-            // subject made a choice
-            $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
-            // TODO dynamic DOM
-            $("#phi1").html(phi_objects[0]);
-            $("#phi2").html(phi_objects[1]);
-            $("#doors").hide();
-            $("#phis").show();
-            $("#tip").html("");
-        }
+        $("#message").html("You earned " + sum_str + "<br /> = <span style='font-size: 50px; color: " + color + ";'> $" + delta_reward.toString() + "</span> <br /> for a total of $" + reward.toString() + " for the day");
+        // TODO dynamic DOM
+        $("#phi1").html(phi_objects[0]);
+        $("#phi2").html(phi_objects[1]);
+        //$("#phi1").html(phi[0].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[0] + "' height='50px'>");
+        //$("#phi2").html(phi[1].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[1] + "' height='50px'>");
+        //$("#phi3").html(phi[2].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[2] + "' height='50px'>");
+        $("#doors").hide();
+        $("#phis").show();
+        $("#tip").html("Press <b>space</b> to sell the resouces.<br/>");
     }
 }
 
@@ -880,29 +770,4 @@ function redraw() {
 // helper f'n
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function startTimer(f, ms) {
-    console.assert(timer == -1);
-    timer = setTimeout(function() {
-        timer = -1;
-        f();
-    }, ms);
-}
-
-function stopTimer() {
-    clearTimeout(timer);
-    timer = -1;
-}
-
-// use fake keys for automatic transitions TODO  HACK
-//
-function fakeKey(key) {
-    e = new KeyboardEvent("fakeKey", {
-        "key": key,
-        "which": key.charCodeAt(0), // TODO why is this not working
-        "code": "fake", // this is how we signal that it's a fake key
-        "keyCode": key.charCodeAt(0)
-    });
-    return e;
 }
