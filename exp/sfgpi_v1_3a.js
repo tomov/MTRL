@@ -1,10 +1,16 @@
+check_fails = 0;
+in_trial = -1; // -1 = not in trial, or pause; 0 = new block page; 1 = new trial page; 2 = in trial; 3 = features, rewards
+bonus_scale = 1; // USD per point
+
+function initExp() {
+    console.log("initExp");
 
     exp = readExp();
     exp = genExp(exp);
 
     subj_id = "1" + Math.random().toString().substring(3,15);
     var workerID = turkGetParam('workerId');
-    dirname = 'results/sfgpi_v1_2a';
+    dirname = 'results/sfgpi_v1_3a';
     file_name = dirname + '/' + workerID.toString() + "_" + subj_id + ".csv";
     extra_file_name = dirname + '/' + workerID.toString() + "_" + subj_id + "_extra.csv";
     bonus_filename = dirname + '/bonus.csv';
@@ -679,7 +685,8 @@ function redraw() {
         if (last_a != -1) {
             //sum_str += phi[i].toString() + " <img src='" + exp.blocks[block_idx].features[i] + "' height='20px'> x $" + goal[i].toString();
             var phi_object = "";
-            if (phi[i] > 0) {
+            //if (phi[i] > 0) {
+            {
                 if (sum_str != "") {
                     sum_str += " + ";
                 }
@@ -687,8 +694,8 @@ function redraw() {
                 //    phi_object += "<img src='" + exp.blocks[block_idx].features[i] + "' height='70px'>";
                 //    sum_str += "<img src='" + exp.blocks[block_idx].features[i] + "' height='30px'>";
                 //}
-                phi_object += phi[i].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[i] + "' height='70px'>";
-                sum_str += phi[i].toString() + " &emsp; <img src='" + exp.blocks[block_idx].features[i] + "' height='30px'>";
+                phi_object += phi[i].toString() + " x <img src='" + exp.blocks[block_idx].features[i] + "' height='70px'>";
+                sum_str += phi[i].toString() + "<img src='" + exp.blocks[block_idx].features[i] + "' height='30px'>";
                 sum_str += " x $" + goal[i].toString();
             }
             phi_objects.push(phi_object);

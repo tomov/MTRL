@@ -5,7 +5,7 @@
     <!--Load in ajax and jquery related API's-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="jquery-1.10.2.min.js"></script>
-    <script type ="text/javascript" src ="sfgpi_v1_2a.js"></script>
+    <script type ="text/javascript" src ="sfgpi_v1_3a.js"></script>
     <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 
@@ -41,25 +41,25 @@
   <div id="instruction_page" style="font-size: 22px; display:block;" align = "center" >
       <h2>Medieval Trading</h2>
       <p>Imagine you are a tradesperson scavenging medieval castles for goods to trade.</p>
-      <p><img src="images/sfgpi_screen_1.png" height="300px" ></p>
+      <p><img src="images/sfgpi_v1_3a_castle.png" height="300px" ></p>
       <p>Press the <b>enter key</b> to begin scavenging the first castle.</p>
       <p>In each castle, there are different types of goods that you can sell for different prices.</p>
       <p>Every day, you will see today's market price for each good:</p>
-      <p><img src="images/sfgpi_screen_2.png" height="300px" ></p>
-      <p>In this example, you earn $1 for each piece of armor and you earn nothing for chalices.</p>
+      <p><img src="images/sfgpi_v1_3a_prices.png" height="300px" ></p>
+      <p>In this example, you earn $1 for each ring and you earn nothing for necklaces.</p>
       <p>Press the <b>space key</b> to enter the castle.</p>
       <p>The castle has different rooms. Rooms have doors which lead to other rooms:</p>
-      <p><img src="images/sfgpi_screen_3.png" height="300px" ></p>
+      <p><img src="images/sfgpi_v1_3a_doors.png" height="300px" ></p>
       <p>You can choose a door and go to the next room using the <b>number keys 1, 2, 3</b>.</p>
       <p>Behind the doors, there are goods which you collect to sell at today's market prices:</p>
-      <p><img src="images/sfgpi_screen_4.png" height="300px" ></p>
-      <p>Here, there are four pieces of armor. In this example, this will earn you $1 x 4 = $4 at the end of the day at the current market prices.</p>
+      <p><img src="images/sfgpi_v1_3a_goods.png" height="300px" ></p>
+      <p>Here, there are seven rings and no necklaces. In this example, this will earn you $1 x 7 = $7 at the end of the day at the current market prices.</p>
       <p>You can press the <b>space key</b> to collect the goods from that room and continue exploring the castle. Once you reach the end of the castle, all goods collected throughout the day are sold and the next day begins.</p>
       <p><b>Your goal is to earn as much as you can every day by finding the rooms with goods that will sell for the most on the given day.</b></p>
       <p>As a reminder, today's market prices will be displayed in the top left corner and the door which let you in the current room will be displayed in the top right corner. The total value of all goods collected throughout the day will be displayed below.</p>
       <p>You will always start from the same room in the castle. The layout of the castle will not change and the same doors will always lead to the same rooms. The same rooms will always have the same goods.</p>
       <p>There will be 49 days (trials) in the castle. After that, you will scavenge a different castle with a different layout and goods. Overall, you will scavenge 6 castles, for total of 294 days.</p>
-      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $5.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
+      <p>To encourage you to perform well, we will pay you a <u>bonus equal to your earnings from a randomly chosen day</u>. So in the above example, you would be paid a $11.00 bonus, if that day was chosen. There is no way to know in advance which day will be chosen, so do your best every time.</p>
       <p>The experiment can only be performed on a computer. Please disable any ad-blockers before starting the experiment.</p>
       <button type="button" id="continue" style="font-size: 22px;">Continue</button>
 
@@ -162,8 +162,6 @@
             images/door6.png
             images/door7.png
             images/door8.png
-            images/door9.png
-            images/door10.png
             images/armor.png
             images/chalace.png
             Tsubaki Castle
@@ -299,9 +297,9 @@
 
 
   <script type="text/javascript">
-      $("#consent_page").show();
+      $("#consent_page").hide();
       $("#captcha").hide();
-      $("#instruction_page").hide();
+      $("#instruction_page").show();
       $("#check_page").hide();
       $("#new_block_page").hide();
       $("#new_trial_page").hide();
