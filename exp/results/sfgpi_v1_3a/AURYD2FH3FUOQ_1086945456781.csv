@@ -1,0 +1,7 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,AURYD2FH3FUOQ,1086945456781,0,0,train,1,[1 0],[1 0],1 2 3 6,4,2 1 2,[0 2];[0 0];[7 0],0 0 7,2326 8054 4788,98 97 97,0 1 2,15168,7,[0 1],1616361738.95,Sun Mar 21 2021 15:22:18 GMT-0600 (Mountain Daylight Time),0
+A,AURYD2FH3FUOQ,1086945456781,0,1,train,1,[0 1],[0 1],1 2 4 6,4,2 2 2,[0 2];[0 0];[4 6],2 0 6,766 3990 3229,98 98 97,0 1 2,7985,8,[0 1],1616361756.404,Sun Mar 21 2021 15:22:36 GMT-0600 (Mountain Daylight Time),0
+A,AURYD2FH3FUOQ,1086945456781,0,2,train,1,[0 1],[0 1],1 2 4 6,4,1 2 2,[4 0];[0 0];[4 6],0 0 6,732 4342 3543,97 98 97,0 1 2,8617,6,[0 1],1616361771.397,Sun Mar 21 2021 15:22:51 GMT-0600 (Mountain Daylight Time),0
+A,AURYD2FH3FUOQ,1086945456781,0,3,train,1,[1 0],[1 0],1 2 4 6,4,1 2 2,[4 0];[0 0];[4 6],4 0 4,1123 35306 2835,97 98 97,0 1 2,39264,8,[0 1],1616361814.293,Sun Mar 21 2021 15:23:34 GMT-0600 (Mountain Daylight Time),0
+A,AURYD2FH3FUOQ,1086945456781,0,4,train,1,[1 0],[1 0],1 2 3 6,4,2 1 2,[0 2];[0 0];[7 0],0 0 7,1487 3882 3342,98 97 97,0 1 2,8711,7,[0 1],1616361828.038,Sun Mar 21 2021 15:23:48 GMT-0600 (Mountain Daylight Time),0
+A,AURYD2FH3FUOQ,1086945456781,0,5,train,1,[0 1],[0 1],1 2 3 2 5 6,6,2 1 1 3 2,[0 2];[0 0];[0 0];[0 0];[0 8],2 0 0 0 8,1118 3737 2929 2999 3464,98 97 98 99 98,0 1 2 3 4,14247,10,[0 1],1616361845.927,Sun Mar 21 2021 15:24:05 GMT-0600 (Mountain Daylight Time),0
