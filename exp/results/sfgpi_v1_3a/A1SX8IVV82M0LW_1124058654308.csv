@@ -1,0 +1,5 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,A1SX8IVV82M0LW,1124058654308,0,0,train,1,[0 1],[1 0],1 2 3 6,4,2 1 2,[2 0];[0 0];[0 7],2 0 0,1902 5219 3023,98 97 97,0 1 2,10144,2,[1 0],1616992867.545,Sun Mar 28 2021 23:41:07 GMT-0500 (Central Daylight Time),0
+A,A1SX8IVV82M0LW,1124058654308,0,1,train,1,[0 1],[1 0],1 2 5 6,4,2 3 2,[2 0];[0 0];[8 0],2 0 8,821 2831 2001,98 98 98,0 1 2,5653,10,[1 0],1616992877.804,Sun Mar 28 2021 23:41:17 GMT-0500 (Central Daylight Time),0
+A,A1SX8IVV82M0LW,1124058654308,0,2,train,1,[1 0],[0 1],1 2 4 2 3 6,6,2 2 1 1 2,[2 0];[0 0];[0 0];[0 0];[0 7],0 0 0 0 7,585 1599 1302 2440 2069,98 99 98 97 97,0 1 2 3 4,7995,7,[1 0],1616992887.628,Sun Mar 28 2021 23:41:27 GMT-0500 (Central Daylight Time),0
+A,A1SX8IVV82M0LW,1124058654308,0,3,train,1,[0 1],[1 0],1 2 3 6,4,2 1 2,[2 0];[0 0];[0 7],2 0 0,237 2401 1718,98 97 97,0 1 2,4356,2,[1 0],1616992894.409,Sun Mar 28 2021 23:41:34 GMT-0500 (Central Daylight Time),0
