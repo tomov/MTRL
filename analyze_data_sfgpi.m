@@ -102,6 +102,7 @@ figure;
 
 subplot(2,2,1);
 plot_training_reward_over_time(data, design_params);
+%blah blah
 
 subplot(2,2,2);
 plot_training_reward_split_by_block(data, design_params);
@@ -144,6 +145,8 @@ function [r, rse] = training_reward_over_time(data, design_params)
     rs = nan(length(data), design_params.n_train_trials);
     for s = 1:length(data)
         rb = nan(design_params.n_blocks,design_params.n_train_trials);
+        %rb = nan(1,design_params.n_train_trials);
+        %for b = 6:6
         for b = 1:design_params.n_blocks
             rb(b,:) = data(s).reward(data(s).block == b-1 & strcmp(data(s).stage, 'train'));
         end
@@ -167,12 +170,17 @@ function [r, rse] = training_reward_over_blocks(data, design_params)
 end
 
 function [c, cse] = action_path_counts(data, goal, design_params)
-    counts = nan(length(data), length(design_params.action_paths));
+    %counts = nan(length(data), length(design_params.action_paths));
+    j = 0;
     for i = 1:length(design_params.action_paths)
         for s = 1:length(data)
-            which = strcmp(data(s).goal_original, goal) & strcmp(data(s).action_path, design_params.action_paths{i});
-            %which = strcmp(data(s).goal_original, goal) & startsWith(data(s).action_path, design_params.action_paths{i}) & data(s).block < 1;
-            counts(s,i) = sum(which);
+            %if startsWith(data(s).action_path{49}, '1 3 2')
+
+                which = strcmp(data(s).goal_original, goal) & strcmp(data(s).action_path, design_params.action_paths{i});
+                %which = strcmp(data(s).goal_original, goal) & startsWith(data(s).action_path, design_params.action_paths{i}) & data(s).block < 1;
+                j = j + 1;
+                counts(j,i) = sum(which);
+            %end
         end
     end
     c = mean(counts,1);
