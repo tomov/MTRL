@@ -1,0 +1,2 @@
+group, workerId, subj_id, block, trial, stage, start, goal_original, goal, state_path, length, action_path, feature_path, reward_path, RTs, keys, valid_keys, RT_tot, reward, feature_shuffle, timestamp, datetime, check_fails
+A,A1HKYY6XI2OHO1,1422349786784,0,0,train,1,[1 0],[0 1],1 2 3 10,4,1 1 2,[0 4];[0 0];[0 7],4 0 7,26569 2045 2040,  ,0 1 2,30654,11,[1 0],1617584541.216,Sun Apr 04 2021 20:02:21 GMT-0500 (Central Daylight Time),0
