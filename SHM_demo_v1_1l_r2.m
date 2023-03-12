@@ -24,6 +24,7 @@ for subj = 1:N
     UVFA{subj} = train_UVFA(env, w_train, params.gamma, 100);
 
     psi{subj} = train_SFGPI(env, w_train, params.gamma, params.beta);
+    %psi{subj} = train_SFGPI2(env, w_train, params.gamma, params.beta);
 
     Q{subj} = train_MF(env, w_train, params.gamma, params.alpha, params.eps);
 
@@ -43,9 +44,11 @@ save(filename);
 
 for subj = 1:N
 
-    % compute test policies
+    % compute training policies
     pi_train_UVFA = test_UVFA(env, w_train, params.gamma, params.beta, UVFA{subj});
-    pi_train_SF = test_SFGPI(env, w_train, params.gamma, params.beta, psi{subj});
+    %pi_train_SF = test_SFGPI(env, w_train, params.gamma, params.beta, psi{subj});
+    pi_train_SF = test_SFGPI1(env, w_train, w_train, params.gamma, params.beta, psi{subj});
+    %pi_train_SF = test_SFGPI2(env, w_train, params.gamma, params.beta, psi{subj});
     pi_train_MB = test_MB(env, w_train, params.gamma, params.beta);
     pi_train_MF = test_MF(env, w_train, params.beta, Q{subj});
     pi_train_MF2 = test_MF2(env, w_train, params.beta, Q2{subj}, w_train);
@@ -89,7 +92,9 @@ for subj = 1:N
 
     % compute test policies
     pi_test_UVFA = test_UVFA(env, w_test, params.gamma, params.beta, UVFA{subj});
-    pi_test_SF = test_SFGPI(env, w_test, params.gamma, params.beta, psi{subj});
+    %pi_test_SF = test_SFGPI(env, w_test, params.gamma, params.beta, psi{subj});
+    pi_test_SF = test_SFGPI1(env, w_test, w_train, params.gamma, params.beta, psi{subj});
+    %pi_test_SF = test_SFGPI2(env, w_test, params.gamma, params.beta, psi{subj});
     pi_test_MB = test_MB(env, w_test, params.gamma, params.beta);
     pi_test_MF = test_MF(env, w_test, params.beta, Q{subj});
     pi_test_MF2 = test_MF2(env, w_test, params.beta, Q2{subj}, w_train);

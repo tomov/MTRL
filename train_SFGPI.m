@@ -1,5 +1,9 @@
 function [psi] = train_SFGPI(env, w_train, gamma, beta, threshold)
 
+    % learns psi{training task}{state}; 
+    % NOT psi{training task}{state, action} (as in paper)
+    % we used this in Tomov et. al (2021) NHB
+
     if ~exist('threshold', 'var')
         threshold = 0.01;
     end

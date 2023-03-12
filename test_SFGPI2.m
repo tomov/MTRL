@@ -1,8 +1,8 @@
 function [pi_test_SF] = test_SFGPI2(env, w_test, gamma, beta, psi)
 
-    % Following the equations more closely
+    % Following from Barreto et al. 2020 PNAS more closely
 
-    % see what SF will do 
+    % see what SF will do on each test task
     for t = 1:length(w_test)
         % compute Q (eq. 7 from Barreto et al. 2020 PNAS)
         clear Q;
