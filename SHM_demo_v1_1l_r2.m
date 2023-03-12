@@ -24,7 +24,8 @@ for subj = 1:N
     UVFA{subj} = train_UVFA(env, w_train, params.gamma, 100);
 
     psi{subj} = train_SFGPI(env, w_train, params.gamma, params.beta);
-    %psi{subj} = train_SFGPI2(env, w_train, params.gamma, params.beta);
+    
+    psi2{subj} = train_SFGPI2(env, w_train, params.gamma, params.beta);
 
     Q{subj} = train_MF(env, w_train, params.gamma, params.alpha, params.eps);
 
@@ -46,9 +47,9 @@ for subj = 1:N
 
     % compute training policies
     pi_train_UVFA = test_UVFA(env, w_train, params.gamma, params.beta, UVFA{subj});
-    %pi_train_SF = test_SFGPI(env, w_train, params.gamma, params.beta, psi{subj});
-    pi_train_SF = test_SFGPI1(env, w_train, w_train, params.gamma, params.beta, psi{subj});
-    %pi_train_SF = test_SFGPI2(env, w_train, params.gamma, params.beta, psi{subj});
+    pi_train_SF = test_SFGPI(env, w_train, params.gamma, params.beta, psi{subj});
+    pi_train_SF1 = test_SFGPI1(env, w_train, w_train, params.gamma, params.beta, psi{subj});
+    pi_train_SF2 = test_SFGPI2(env, w_train, params.gamma, params.beta, psi2{subj});
     pi_train_MB = test_MB(env, w_train, params.gamma, params.beta);
     pi_train_MF = test_MF(env, w_train, params.beta, Q{subj});
     pi_train_MF2 = test_MF2(env, w_train, params.beta, Q2{subj}, w_train);
@@ -59,26 +60,36 @@ for subj = 1:N
         [r, s] = test_perf(env, pi_train_UVFA{t}, w_train{t});
         term_s_train(t, 1, subj) = s;
         tot_r_train(t, 1, subj) = r;
-
-        % test SF 
+        
+        % test SF
         [r, s] = test_perf(env, pi_train_SF{t}, w_train{t});
         term_s_train(t, 2, subj) = s;
         tot_r_train(t, 2, subj) = r;
 
-        % test MB 
-        [r, s] = test_perf(env, pi_train_MB{t}, w_train{t});
+        % test SF1 
+        [r, s] = test_perf(env, pi_train_SF1{t}, w_train{t});
         term_s_train(t, 3, subj) = s;
         tot_r_train(t, 3, subj) = r;
+        
+        % test SF2
+        [r, s] = test_perf(env, pi_train_SF2{t}, w_train{t});
+        term_s_train(t, 4, subj) = s;
+        tot_r_train(t, 4, subj) = r;
+        
+        % test MB 
+        [r, s] = test_perf(env, pi_train_MB{t}, w_train{t});
+        term_s_train(t, 5, subj) = s;
+        tot_r_train(t, 5, subj) = r;
 
         % test MF 
         [r, s] = test_perf(env, pi_train_MF, w_train{t});
-        term_s_train(t, 4, subj) = s;
-        tot_r_train(t, 4, subj) = r;
+        term_s_train(t, 6, subj) = s;
+        tot_r_train(t, 6, subj) = r;
 
         % test MF2
         [r, s] = test_perf(env, pi_train_MF2{t}, w_train{t});
-        term_s_train(t, 5, subj) = s;
-        tot_r_train(t, 5, subj) = r;
+        term_s_train(t, 7, subj) = s;
+        tot_r_train(t, 7, subj) = r;
     end
 
 end
@@ -92,9 +103,9 @@ for subj = 1:N
 
     % compute test policies
     pi_test_UVFA = test_UVFA(env, w_test, params.gamma, params.beta, UVFA{subj});
-    %pi_test_SF = test_SFGPI(env, w_test, params.gamma, params.beta, psi{subj});
-    pi_test_SF = test_SFGPI1(env, w_test, w_train, params.gamma, params.beta, psi{subj});
-    %pi_test_SF = test_SFGPI2(env, w_test, params.gamma, params.beta, psi{subj});
+    pi_test_SF = test_SFGPI(env, w_test, params.gamma, params.beta, psi{subj});
+    pi_test_SF1 = test_SFGPI1(env, w_test, w_train, params.gamma, params.beta, psi{subj});
+    pi_test_SF2 = test_SFGPI2(env, w_test, params.gamma, params.beta, psi2{subj});
     pi_test_MB = test_MB(env, w_test, params.gamma, params.beta);
     pi_test_MF = test_MF(env, w_test, params.beta, Q{subj});
     pi_test_MF2 = test_MF2(env, w_test, params.beta, Q2{subj}, w_train);
@@ -111,20 +122,30 @@ for subj = 1:N
         term_s_test(t, 2, subj) = s;
         tot_r_test(t, 2, subj) = r;
 
-        % test MB 
-        [r, s] = test_perf(env, pi_test_MB{t}, w_test{t});
+        % test SF1
+        [r, s] = test_perf(env, pi_test_SF1{t}, w_test{t});
         term_s_test(t, 3, subj) = s;
         tot_r_test(t, 3, subj) = r;
 
-        % test MF 
-        [r, s] = test_perf(env, pi_test_MF, w_test{t});
+        % test SF2
+        [r, s] = test_perf(env, pi_test_SF2{t}, w_test{t});
         term_s_test(t, 4, subj) = s;
         tot_r_test(t, 4, subj) = r;
 
-        % test MF2
-        [r, s] = test_perf(env, pi_test_MF2{t}, w_test{t});
+        % test MB 
+        [r, s] = test_perf(env, pi_test_MB{t}, w_test{t});
         term_s_test(t, 5, subj) = s;
         tot_r_test(t, 5, subj) = r;
+
+        % test MF 
+        [r, s] = test_perf(env, pi_test_MF, w_test{t});
+        term_s_test(t, 6, subj) = s;
+        tot_r_test(t, 6, subj) = r;
+
+        % test MF2
+        [r, s] = test_perf(env, pi_test_MF2{t}, w_test{t});
+        term_s_test(t, 7, subj) = s;
+        tot_r_test(t, 7, subj) = r;
     end
 end
 
@@ -133,7 +154,7 @@ save(filename);
 
 %load(filename);
 
-model_names = {'UVFA', 'SF&GPI', 'MB', 'MF', 'MF2'};
+model_names = {'UVFA', 'SF&GPI', 'SF&GPI1', 'SF&GPI2', 'MB', 'MF', 'MF2'};
 
 %plot_perf(env, w_train, tot_r_train, model_names); % <-- boring
 
