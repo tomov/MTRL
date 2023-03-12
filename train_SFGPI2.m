@@ -37,7 +37,7 @@ function [psi] = train_SFGPI2(env, w_train, gamma, beta, threshold)
                     for s_new = 1:env.N
                         assert(abs(sum(pi{t}{s}) - 1) < 1e-12);
                         for a_new = env.A
-                            psi{t}{s,a} = psi{t}{s,a} + pi{t}{s}(a) * env.T(s, a, s_new) * gamma * pi{t}{s_new}(a_new) * psi{t}{s_new,a_new};
+                            psi{t}{s,a} = psi{t}{s,a} + env.T(s, a, s_new) * gamma * pi{t}{s_new}(a_new) * psi{t}{s_new,a_new};
                             %fprintf('          s_new = %d, a_new = %d, T(s,a,s_new) = %f, psi{t}{s_new,a_new} = [%f %f %f]\n', s_new, a_new, env.T(s, a, s_new), psi{t}{s_new,a_new});
                         end
                     end
